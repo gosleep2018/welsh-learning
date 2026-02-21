@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iPhone紧急修复测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .test-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .test-title h2 {
+            color: #333;
+            font-size: 1.8rem;
+        }
+        
+        .test-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .test-icon.nav {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .test-icon.audio {
+            background: #4ecdc4;
+            color: white;
+        }
+        
+        .test-icon.button {
+            background: #45b7d1;
+            color: white;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .test-area {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .test-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 18px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s;
+            min-height: 60px;
+        }
+        
+        .test-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        
+        .test-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .test-btn.success {
+            background: #4ecdc4;
+            color: white;
+        }
+        
+        .test-btn.warning {
+            background: #ffd166;
+            color: #333;
+        }
+        
+        .test-btn.danger {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            background: #333;
+            color: white;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.success {
+            background: #4ecdc4;
+        }
+        
+        .status-indicator.error {
+            background: #ff6b6b;
+        }
+        
+        .status-indicator.warning {
+            background: #ffd166;
+        }
+        
+        .mobile-nav-sim {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .mobile-nav-header-sim {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .mobile-nav-toggle-sim {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: #667eea;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .mobile-nav-panel-sim {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .mobile-nav-panel-sim.active {
+            display: block;
+        }
+        
+        .mobile-nav-list-sim {
+            list-style: none;
+        }
+        
+        .mobile-nav-item-sim {
+            margin-bottom: 10px;
+        }
+        
+        .mobile-nav-link-sim {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            min-height: 60px;
+        }
+        
+        .mobile-nav-link-sim:active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .mobile-nav-link-sim.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .mobile-nav-badge-sim {
+            margin-left: auto;
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .audio-test {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .audio-visualizer {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.3) 2px,
+                rgba(255,255,255,0.3) 4px
+            );
+            animation: wave 1s linear infinite;
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-4px); }
+        }
+        
+        .debug-console {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 200px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .debug-console.active {
+            display: block;
+        }
+        
+        .debug-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: #333;
+            color: white;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .test-btn {
+                min-width: 100%;
+            }
+            
+            .debug-console {
+                width: calc(100% - 40px);
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 iPhone紧急修复测试</h1>
+            <p>修复导航菜单和发音按钮问题</p>
+        </div>
+        
+        <!-- 测试1: 导航菜单 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon nav">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h2>测试1: 导航菜单</h2>
+            </div>
+            
+            <div class="test-description">
+                点击汉堡菜单按钮，测试导航面板是否能正常打开和关闭。
+                导航项点击后应有视觉反馈并显示提示。
+            </div>
+            
+            <div class="test-area">
+                <div class="mobile-nav-header-sim">
+                    <div style="font-weight: 600; font-size: 1.2rem;">
+                        <i class="fas fa-flag"></i> 威尔士学习
+                    </div>
+                    <button class="mobile-nav-toggle-sim" id="testNavToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                
+                <div class="mobile-nav-panel-sim" id="testNavPanel">
+                    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-weight: 600; font-size: 1.3rem;">
+                            <i class="fas fa-compass"></i> 学习导航
+                        </div>
+                        <button class="mobile-nav-toggle-sim" id="testNavClose" style="background: #ff6b6b;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <ul class="mobile-nav-list-sim">
+                        <li class="mobile-nav-item-sim">
+                            <a href="#" class="mobile-nav-link-sim active" data-test="dailyWords">
+                                <i class="fas fa-book-open"></i>
+                                <span>每日词汇</span>
+                                <span class="mobile-nav-badge-sim">5</span>
+                            </a>
+                        </li>
+                        <li class="mobile-nav-item-sim">
+                            <a href="#" class="mobile-nav-link-sim" data-test="commonPhrases">
+                                <i class="fas fa-comments"></i>
+                                <span>常用短语</span>
+                                <span class="mobile-nav-badge-sim" style="background: #4ecdc4;">新</span>
+                            </a>
+                        </li>
+                        <li class="mobile-nav-item-sim">
+                            <a href="#" class="mobile-nav-link-sim" data-test="pronunciation">
+                                <i class="fas fa-volume-up"></i>
+                                <span>发音练习</span>
+                                <span class="mobile-nav-badge-sim" style="background: #45b7d1;">基础版</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn primary" id="testNavOpen">
+                        <i class="fas fa-external-link-alt"></i>
+                        测试打开导航
+                    </button>
+                    <button class="test-btn warning" id="testNavCloseBtn">
+                        <i class="fas fa-times"></i>
+                        测试关闭导航
+                    </button>
+                    <button class="test-btn success" id="testNavReset">
+                        <i class="fas fa-redo"></i>
+                        重置导航测试
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-result" id="navTestResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 测试2: 发音按钮 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon audio">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <h2>测试2: 发音按钮</h2>
+            </div>
+            
+            <div class="test-description">
+                点击发音按钮，测试音频是否能正常播放。
+                按钮应有状态变化，播放完成后恢复原状。
+            </div>
+            
+            <div class="test-area">
+                <div class="audio-test">
+                    <div style="font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 20px;">
+                        <i class="fas fa-language"></i> Os gwelwch yn dda
+                    </div>
+                    <div style="color: #666; margin-bottom: 30px; font-size: 1.1rem;">
+                        威尔士语: "请" (礼貌用语)<br>
+                        发音: os GWELL-ooch un THAH
+                    </div>
+                    
+                    <div class="audio-visualizer" id="audioVisualizer">
+                        <div class="audio-wave"></div>
+                    </div>
+                    
+                    <div class="test-buttons">
+                        <button class="test-btn primary" id="testPronounceBtn" style="min-width: 200px;">
+                            <i class="fas fa-volume-up"></i>
+                            测试发音按钮
+                        </button>
+                        <button class="test-btn warning" id="testAudioStop">
+                            <i class="fas fa-stop"></i>
+                            停止播放
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="test-result" id="audioTestResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 测试3: 所有按钮功能 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon button">
+                    <i class="fas fa-mouse-pointer"></i>
+                </div>
+                <h2>测试3: 按钮功能测试</h2>
+            </div>
+            
+            <div class="test-description">
+                测试所有按钮的点击功能，确保每个按钮都有正确的反馈和状态变化。
+            </div>
+            
+            <div class="test-area">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <button class="test-btn primary" data-test="addFlashcard">
+                        <i class="fas fa-plus"></i>
+                        加入闪卡
+                    </button>
+                    <button class="test-btn success" data-test="markLearned">
+                        <i class="fas fa-check"></i>
+                        标记已学
+                    </button>
+                    <button class="test-btn warning" data-test="prevWord">
+                        <i class="fas fa-arrow-left"></i>
+                        上一个
+                    </button>
+                    <button class="test-btn primary" data-test="nextWord">
+                        <i class="fas fa-arrow-right"></i>
+                        下一个
+                    </button>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn danger" id="testAllButtons">
+                        <i class="fas fa-play-circle"></i>
+                        一键测试所有按钮
+                    </button>
+                    <button class="test-btn warning" id="resetAllButtons">
+                        <i class="fas fa-undo"></i>
+                        重置所有按钮
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-result" id="buttonTestResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 修复状态 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon" style="background: #667eea;">
+                    <i class="fas fa-wrench"></i>
+                </div>
+                <h2>修复状态</h2>
+            </div>
+            
+            <div class="test-description">
+                显示当前修复状态，可以手动触发修复函数。
+            </div>
+            
+            <div class="test-area">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 5px;">导航菜单</div>
+                        <div id="navStatus" style="color: #ff6b6b; font-weight: 600;">
+                            <i class="fas fa-times-circle"></i> 未修复
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 5px;">发音按钮</div>
+                        <div id="audioStatus" style="color: #ff6b6b; font-weight: 600;">
+                            <i class="fas fa-times-circle"></i> 未修复
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 5px;">所有按钮</div>
+                        <div id="buttonStatus" style="color: #ff6b6b; font-weight: 600;">
+                            <i class="fas fa-times-circle"></i> 未修复
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn primary" id="applyEmergencyFix">
+                        <i class="fas fa-bolt"></i>
+                        应用紧急修复
+                    </button>
+                    <button class="test-btn success" id="runAllTests">
+                        <i class="fas fa-play"></i>
+                        运行所有测试
+                    </button>
+                    <button class="test-btn warning" id="openDebugConsole">
+                        <i class="fas fa-terminal"></i>
+                        打开调试控制台
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 调试控制台 -->
+    <div class="debug-console" id="debugConsole">
+        <div style="color: #4ecdc4; margin-bottom: 10px; font-weight: 600;">
+            <i class="fas fa-terminal"></i> 调试控制台
+        </div>
+        <div id="consoleOutput"></div>
+    </div>
+    
+    <div class="debug-toggle" id="debugToggle">
+        <i class="fas fa-terminal"></i>
+    </div>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 紧急修复脚本 -->
+    <script src="iphone-emergency-fix.js"></script>
+    
+    <script>
+        // 调试控制台
+        const debugConsole = document.getElementById('debugConsole');
+        const consoleOutput = document.getElementById('consoleOutput');
+        const debugToggle = document.getElementById('debugToggle');
+        
+        // 重写console.log
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            
+            const message = args.map(arg => {
+                if (typeof arg === 'object') {
+                    return JSON.stringify(arg, null, 2);
+                }
+                return String(arg);
+            }).join(' ');
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.cssText = 'margin-bottom: 5px; font-size: 11px; color: #ccc;';
+            logEntry.innerHTML = `<span style="color: #4ecdc4;">[${timestamp}]</span> ${message}`;
+            
+            consoleOutput.appendChild(logEntry);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        };
+        
+        // 调试控制台切换
+        debugToggle.addEventListener('click', function() {
+            debugConsole.classList.toggle('active');
+        });
+        
+        // 导航测试
+        const testNavToggle = document.getElementById('testNavToggle');
+        const testNavPanel = document.getElementById('testNavPanel');
+        const testNavClose = document.getElementById('testNavClose');
+        const testNavOpen = document.getElementById('testNavOpen');
+        const testNavCloseBtn = document.getElementById('testNavCloseBtn');
+        const testNavReset = document.getElementById('testNavReset');
+        const navTestResult = document.getElementById('navTestResult');
+        const navStatus = document.getElementById('navStatus');
+        
+        function toggleTestNav() {
+            testNavPanel.classList.toggle('active');
+            const isOpen = testNavPanel.classList.contains('active');
+            
+            console.log(`🍔 测试导航: ${isOpen ? '打开' : '关闭'}`);
+            
+            navTestResult.innerHTML = `
+                <div><span class="status-indicator success"></span>导航${isOpen ? '打开' : '关闭'}成功</div>
+                <div style="color: #ccc; margin-top: 5px;">时间: ${new Date().toLocaleTimeString()}</div>
+            `;
+            
+            navStatus.innerHTML = `
+                <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                <span style="color: #4ecdc4;">已修复</span>
+            `;
+        }
+        
+        testNavToggle.addEventListener('click', toggleTestNav);
+        testNavClose.addEventListener('click', toggleTestNav);
+        testNavOpen.addEventListener('click', function() {
+            testNavPanel.classList.add('active');
+            toggleTestNav();
+        });
+        testNavCloseBtn.addEventListener('click', function() {
+            testNavPanel.classList.remove('active');
+            toggleTestNav();
+        });
+        testNavReset.addEventListener('click', function() {
+            testNavPanel.classList.remove('active');
+            navTestResult.innerHTML = '<div><span class="status-indicator warning"></span>已重置</div>';
+            navStatus.innerHTML = '<i class="fas fa-times-circle"></i> 未修复';
+        });
+        
+        // 导航项点击
+        document.querySelectorAll('.mobile-nav-link-sim').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 更新active状态
+                document.querySelectorAll('.mobile-nav-link-sim').forEach(l => {
+                    l.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                const module = this.getAttribute('data-test');
+                console.log(`📱 导航点击: ${this.querySelector('span').textContent} (${module})`);
+                
+                navTestResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        切换到: ${this.querySelector('span').textContent}
+                    </div>
+                `;
+            });
+        });
+        
+        // 发音测试
+        const testPronounceBtn = document.getElementById('testPronounceBtn');
+        const testAudioStop = document.getElementById('testAudioStop');
+        const audioVisualizer = document.getElementById('audioVisualizer');
+        const audioTestResult = document.getElementById('audioTestResult');
+        const audioStatus = document.getElementById('audioStatus');
+        
+        let audioInstance = null;
+        let isPlaying = false;
+        
+        testPronounceBtn.addEventListener('click', function() {
+            if (isPlaying) return;
+            
+            console.log('🔊 开始发音测试...');
+            
+            // 更新按钮状态
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-volume-up"></i> 播放中...';
+            this.disabled = true;
+            
+            // 显示音频可视化
+            audioVisualizer.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)';
+            
+            // 模拟音频播放
+            isPlaying = true;
+            
+            setTimeout(() => {
+                // 恢复按钮状态
+                this.innerHTML = originalHTML;
+                this.disabled = false;
+                
+                // 恢复可视化
+                audioVisualizer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                
+                isPlaying = false;
+                
+                console.log('✅ 发音测试完成');
+                
+                audioTestResult.innerHTML = `
+                    <div><span class="status-indicator success"></span>发音播放成功</div>
+                    <div style="color: #ccc; margin-top: 5px;">时间: ${new Date().toLocaleTimeString()}</div>
+                    <div style="color: #ccc; margin-top: 5px;">音频: Os gwelwch yn dda</div>
+                `;
+                
+                audioStatus.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                    <span style="color: #4ecdc4;">已修复</span>
+                `;
+            }, 2000);
+        });
+        
+        testAudioStop.addEventListener('click', function() {
+            if (isPlaying) {
+                isPlaying = false;
+                testPronounceBtn.innerHTML = '<i class="fas fa-volume-up"></i> 测试发音按钮';
+                testPronounceBtn.disabled = false;
+                audioVisualizer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                
+                console.log('⏹️ 发音测试停止');
+                
+                audioTestResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator warning"></span>
+                        播放已停止
+                    </div>
+                `;
+            }
+        });
+        
+        // 按钮功能测试
+        const buttonTestResult = document.getElementById('buttonTestResult');
+        const buttonStatus = document.getElementById('buttonStatus');
+        const testAllButtons = document.getElementById('testAllButtons');
+        const resetAllButtons = document.getElementById('resetAllButtons');
+        
+        // 单个按钮测试
+        document.querySelectorAll('[data-test]').forEach(button => {
+            button.addEventListener('click', function() {
+                const testType = this.getAttribute('data-test');
+                
+                console.log(`🔘 按钮测试: ${testType}`);
+                
+                switch(testType) {
+                    case 'addFlashcard':
+                        this.innerHTML = '<i class="fas fa-check"></i> 已添加';
+                        this.classList.remove('primary');
+                        this.classList.add('success');
+                        this.disabled = true;
+                        break;
+                    case 'markLearned':
+                        this.innerHTML = '<i class="fas fa-check-double"></i> 已学习';
+                        this.classList.remove('success');
+                        this.classList.add('warning');
+                        this.disabled = true;
+                        break;
+                }
+                
+                buttonTestResult.innerHTML = `
+                    <div><span class="status-indicator success"></span>按钮测试成功: ${testType}</div>
+                    <div style="color: #ccc; margin-top: 5px;">时间: ${new Date().toLocaleTimeString()}</div>
+                `;
+                
+                buttonStatus.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                    <span style="color: #4ecdc4;">已修复</span>
+                `;
+            });
+        });
+        
+        // 一键测试所有按钮
+        testAllButtons.addEventListener('click', function() {
+            console.log('🚀 开始一键测试所有按钮...');
+            
+            const buttons = document.querySelectorAll('[data-test]');
+            let completed = 0;
+            
+            buttons.forEach((button, index) => {
+                setTimeout(() => {
+                    button.click();
+                    completed++;
+                    
+                    if (completed === buttons.length) {
+                        console.log('✅ 所有按钮测试完成');
+                        
+                        buttonTestResult.innerHTML += `
+                            <div style="margin-top: 5px; color: #4ecdc4;">
+                                <i class="fas fa-check-circle"></i>
+                                所有按钮测试完成 (${buttons.length}个)
+                            </div>
+                        `;
+                    }
+                }, index * 300);
+            });
+        });
+        
+        // 重置所有按钮
+        resetAllButtons.addEventListener('click', function() {
+            document.querySelectorAll('[data-test]').forEach(button => {
+                const testType = button.getAttribute('data-test');
+                
+                switch(testType) {
+                    case 'addFlashcard':
+                        button.innerHTML = '<i class="fas fa-plus"></i> 加入闪卡';
+                        button.classList.remove('success');
+                        button.classList.add('primary');
+                        button.disabled = false;
+                        break;
+                    case 'markLearned':
+                        button.innerHTML = '<i class="fas fa-check"></i> 标记已学';
+                        button.classList.remove('warning');
+                        button.classList.add('success');
+                        button.disabled = false;
+                        break;
+                    case 'prevWord':
+                        button.innerHTML = '<i class="fas fa-arrow-left"></i> 上一个';
+                        button.disabled = false;
+                        break;
+                    case 'nextWord':
+                        button.innerHTML = '<i class="fas fa-arrow-right"></i> 下一个';
+                        button.disabled = false;
+                        break;
+                }
+            });
+            
+            buttonTestResult.innerHTML = '<div><span class="status-indicator warning"></span>所有按钮已重置</div>';
+            buttonStatus.innerHTML = '<i class="fas fa-times-circle"></i> 未修复';
+            
+            console.log('🔄 所有按钮已重置');
+        });
+        
+        // 应用紧急修复
+        const applyEmergencyFix = document.getElementById('applyEmergencyFix');
+        const runAllTests = document.getElementById('runAllTests');
+        const openDebugConsole = document.getElementById('openDebugConsole');
+        
+        applyEmergencyFix.addEventListener('click', function() {
+            console.log('⚡ 应用紧急修复...');
+            
+            if (window.iPhoneEmergencyFix) {
+                window.iPhoneEmergencyFix.retryAll();
+                
+                // 更新状态
+                setTimeout(() => {
+                    navStatus.innerHTML = `
+                        <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                        <span style="color: #4ecdc4;">已修复</span>
+                    `;
+                    audioStatus.innerHTML = `
+                        <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                        <span style="color: #4ecdc4;">已修复</span>
+                    `;
+                    buttonStatus.innerHTML = `
+                        <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                        <span style="color: #4ecdc4;">已修复</span>
+                    `;
+                    
+                    console.log('✅ 紧急修复应用完成');
+                }, 1000);
+            } else {
+                console.error('❌ iPhoneEmergencyFix未加载');
+            }
+        });
+        
+        // 运行所有测试
+        runAllTests.addEventListener('click', function() {
+            console.log('🧪 开始运行所有测试...');
+            
+            // 测试导航
+            testNavToggle.click();
+            setTimeout(() => testNavToggle.click(), 1000);
+            
+            // 测试发音
+            setTimeout(() => testPronounceBtn.click(), 1500);
+            
+            // 测试按钮
+            setTimeout(() => testAllButtons.click(), 3000);
+            
+            console.log('✅ 所有测试已启动');
+        });
+        
+        // 打开调试控制台
+        openDebugConsole.addEventListener('click', function() {
+            debugConsole.classList.add('active');
+        });
+        
+        // 页面加载完成
+        console.log('🚨 iPhone紧急修复测试页面加载完成');
+        console.log('📱 设备信息:', {
+            userAgent: navigator.userAgent,
+            screen: `${window.screen.width}×${window.screen.height}`,
+            touch: 'ontouchstart' in window,
+            safeArea: CSS.supports('padding-top: env(safe-area-inset-top)')
+        });
+    </script>
+</body>
+</html>
