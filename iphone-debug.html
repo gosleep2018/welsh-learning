@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iPhone调试工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        .debug-container {
+            max-width: 100%;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .header h1 {
+            color: #d62828;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .test-section h2 {
+            color: #d62828;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .iframe-container {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .device-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .device-button {
+            padding: 12px;
+            background: #e8f4fc;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .device-button:hover {
+            background: #d4edfa;
+        }
+        
+        .device-button.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .debug-info {
+            background: #fff8e1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: #333;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+        
+        .fix-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .fix-button {
+            padding: 12px 20px;
+            background: #d62828;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .fix-button:hover {
+            background: #b71c1c;
+        }
+        
+        .fix-button.success {
+            background: #28a745;
+        }
+        
+        .fix-button.warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            z-index: 10000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-time {
+            color: #aaa;
+        }
+        
+        @media (max-width: 768px) {
+            .iframe-container {
+                height: 400px;
+            }
+            
+            .device-presets {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <div>iPhone调试工具</div>
+        <div class="status-time" id="currentTime"></div>
+    </div>
+    
+    <div class="debug-container" style="margin-top: 50px;">
+        <div class="header">
+            <h1>📱 iPhone适配调试工具</h1>
+            <p>诊断和修复导航看不见、显示不对的问题</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>实时预览</h2>
+            <div class="device-presets">
+                <div class="device-button active" data-width="375" data-height="812" data-name="iPhone 12/13/14">
+                    iPhone 12/13/14 (375×812)
+                </div>
+                <div class="device-button" data-width="390" data-height="844" data-name="iPhone 12 Pro">
+                    iPhone 12 Pro (390×844)
+                </div>
+                <div class="device-button" data-width="414" data-height="896" data-name="iPhone XR/11">
+                    iPhone XR/11 (414×896)
+                </div>
+                <div class="device-button" data-width="320" data-height="568" data-name="iPhone SE">
+                    iPhone SE (320×568)
+                </div>
+                <div class="device-button" data-width="768" data-height="1024" data-name="iPad竖屏">
+                    iPad竖屏 (768×1024)
+                </div>
+                <div class="device-button" data-width="1024" data-height="768" data-name="iPad横屏">
+                    iPad横屏 (1024×768)
+                </div>
+            </div>
+            
+            <div class="iframe-container">
+                <iframe id="previewFrame" src="https://welsh-learning.onrender.com" frameborder="0"></iframe>
+            </div>
+            
+            <div class="fix-buttons">
+                <button class="fix-button" onclick="reloadPreview()">
+                    🔄 重新加载
+                </button>
+                <button class="fix-button warning" onclick="injectDebugCSS()">
+                    🎨 注入调试CSS
+                </button>
+                <button class="fix-button" onclick="takeScreenshot()">
+                    📸 模拟截图
+                </button>
+                <button class="fix-button success" onclick="runDiagnostics()">
+                    🔍 运行诊断
+                </button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>诊断信息</h2>
+            <div class="debug-info">
+                <p><strong>问题描述：</strong>导航看不见，显示不对</p>
+                <p><strong>可能原因：</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>CSS布局问题（flexbox/grid）</li>
+                    <li>响应式断点错误</li>
+                    <li>z-index层级问题</li>
+                    <li>安全区域冲突</li>
+                    <li>JavaScript初始化失败</li>
+                </ul>
+            </div>
+            
+            <div class="info-grid" id="diagnosticsGrid">
+                <!-- 诊断信息将动态填充 -->
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>快速修复</h2>
+            <div class="fix-buttons">
+                <button class="fix-button" onclick="applyFix('sidebar-visible')">
+                    👁️ 显示侧边栏
+                </button>
+                <button class="fix-button" onclick="applyFix('reset-layout')">
+                    🏗️ 重置布局
+                </button>
+                <button class="fix-button warning" onclick="applyFix('force-mobile')">
+                    📱 强制移动端模式
+                </button>
+                <button class="fix-button success" onclick="applyFix('all-fixes')">
+                    🚀 应用所有修复
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <textarea id="customCSS" placeholder="输入自定义CSS修复..." style="
+                    width: 100%;
+                    height: 150px;
+                    padding: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    font-family: monospace;
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                "></textarea>
+                <button class="fix-button" onclick="applyCustomCSS()" style="width: 100%;">
+                    💾 应用自定义CSS
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 更新时间
+        function updateTime() {
+            document.getElementById('currentTime').textContent = 
+                new Date().toLocaleString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // 设备预设
+        const deviceButtons = document.querySelectorAll('.device-button');
+        deviceButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                deviceButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const width = this.dataset.width;
+                const height = this.dataset.height;
+                const name = this.dataset.name;
+                
+                const iframe = document.getElementById('previewFrame');
+                iframe.style.width = width + 'px';
+                iframe.style.height = height + 'px';
+                
+                console.log(`切换到: ${name} (${width}×${height})`);
+            });
+        });
+        
+        // 重新加载预览
+        function reloadPreview() {
+            const iframe = document.getElementById('previewFrame');
+            iframe.src = iframe.src;
+            console.log('🔄 重新加载预览');
+        }
+        
+        // 注入调试CSS
+        function injectDebugCSS() {
+            const iframe = document.getElementById('previewFrame');
+            const css = `
+                /* 调试CSS */
+                * {
+                    outline: 1px solid rgba(255,0,0,0.1) !important;
+                }
+                
+                .sidebar, .nav-list, .nav-item {
+                    outline: 2px solid #00ff00 !important;
+                    background: rgba(0,255,0,0.1) !important;
+                }
+                
+                .main-content {
+                    outline: 2px solid #0000ff !important;
+                    background: rgba(0,0,255,0.1) !important;
+                }
+                
+                body:before {
+                    content: 'DEBUG MODE';
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    background: #ff0000;
+                    color: white;
+                    padding: 5px 10px;
+                    z-index: 9999;
+                    font-size: 12px;
+                }
+            `;
+            
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const style = doc.createElement('style');
+                style.textContent = css;
+                doc.head.appendChild(style);
+                console.log('🎨 调试CSS已注入');
+            } catch (e) {
+                console.error('❌ 无法注入CSS:', e);
+            }
+        }
+        
+        // 运行诊断
+        function runDiagnostics() {
+            const grid = document.getElementById('diagnosticsGrid');
+            grid.innerHTML = '';
+            
+            const tests = [
+                { id: 'viewport', label: 'Viewport Meta', test: testViewport },
+                { id: 'sidebar', label: '侧边栏存在', test: testSidebar },
+                { id: 'nav-items', label: '导航项目', test: testNavItems },
+                { id: 'css-loaded', label: 'CSS加载', test: testCSSLoaded },
+                { id: 'js-loaded', label: 'JS加载', test: testJSLoaded },
+                { id: 'safe-area', label: '安全区域', test: testSafeArea },
+                { id: 'responsive', label: '响应式设计', test: testResponsive },
+                { id: 'scroll', label: '滚动功能', test: testScroll }
+            ];
+            
+            tests.forEach(test => {
+                const result = test.test();
+                const item = document.createElement('div');
+                item.className = 'info-item';
+                item.innerHTML = `
+                    <div class="info-label">${test.label}</div>
+                    <div class="info-value" style="color: ${result.pass ? '#28a745' : '#dc3545'}">
+                        ${result.pass ? '✅' : '❌'} ${result.message}
+                    </div>
+                `;
+                grid.appendChild(item);
+            });
+            
+            console.log('🔍 诊断完成');
+        }
+        
+        // 诊断测试函数
+        function testViewport() {
+            const iframe = document.getElementById('previewFrame');
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const viewport = doc.querySelector('meta[name="viewport"]');
+                return {
+                    pass: !!viewport,
+                    message: viewport ? 'Viewport设置正常' : '缺少Viewport Meta'
+                };
+            } catch (e) {
+                return { pass: false, message: '无法访问文档' };
+            }
+        }
+        
+        function testSidebar() {
+            const iframe = document.getElementById('previewFrame');
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const sidebar = doc.querySelector('.sidebar');
+                const isVisible = sidebar ? getComputedStyle(sidebar).display !== 'none' : false;
+                return {
+                    pass: !!sidebar && isVisible,
+                    message: sidebar ? (isVisible ? '侧边栏可见' : '侧边栏隐藏') : '侧边栏不存在'
+                };
+            } catch (e) {
+                return { pass: false, message: '无法访问文档' };
+            }
+        }
+        
+        function testNavItems() {
+            const iframe = document.getElementById('previewFrame');
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const navItems = doc.querySelectorAll('.nav-item');
+                return {
+                    pass: navItems.length > 0,
+                    message: `找到 ${navItems.length} 个导航项目`
+                };
+            } catch (e) {
+                return { pass: false, message: '无法访问文档' };
+            }
+        }
+        
+        function testCSSLoaded() {
+            const iframe = document.getElementById('previewFrame');
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const styles = doc.querySelectorAll('link[rel="stylesheet"], style');
+                return {
+                    pass: styles.length > 0,
+                    message: `加载了 ${styles.length} 个样式表`
+                };
+            } catch (e) {
+                return { pass: false, message: '无法访问文档' };
+            }
+        }
+        
+        function testJSLoaded() {
+            const iframe = document.getElementById('previewFrame');
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const scripts = doc.querySelectorAll('script[src]');
+                return {
+                    pass: scripts.length > 0,
+                    message: `加载了 ${scripts.length} 个脚本`
+                };
+            } catch (e) {
+                return { pass: false, message: '无法访问文档' };
+            }
+        }
+        
+        function testSafeArea() {
+            return {
+                pass: CSS.supports('padding-top: env(safe-area-inset-top)'),
+                message: CSS.supports('padding-top: env(safe-area-inset-top)') ? '支持安全区域' : '不支持安全区域'
+            };
+        }
+        
+        function testResponsive() {
+            return {
+                pass: window.matchMedia('(max-width: 768px)').matches,
+                message: window.matchMedia('(max-width: 768px)').matches ? '移动端模式' : '桌面端模式'
+            };
+        }
+        
+        function testScroll() {
+            const iframe = document.getElementById('previewFrame');
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const body = doc.body;
+                const canScroll = body.scrollHeight > body.clientHeight;
+                return {
+                    pass: canScroll,
+                    message: canScroll ? '内容可滚动' : '内容不可滚动'
+                };
+            } catch (e) {
+                return { pass: false, message: '无法访问文档' };
+            }
+        }
+        
+        // 应用修复
+        function applyFix(fixType) {
+            const iframe = document.getElementById('previewFrame');
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const style = doc.createElement('style');
+                
+                let css = '';
+                
+                switch(fixType) {
+                    case 'sidebar-visible':
+                        css = `
+                            .sidebar {
+                                display: block !important;
+                                visibility: visible !important;
+                                opacity: 1 !important;
+                                z-index: 1000 !important;
+                                position: relative !important;
+                            }
+                        `;
+                        console.log('👁️ 应用侧
