@@ -1149,22 +1149,51 @@ body {
   }
 }
 
-/* 防止iPhone上的弹性滚动问题 */
+/* iPhone滚动优化 */
 html, body {
-  overscroll-behavior: none;
   height: 100%;
-  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior-y: contain; /* 允许滚动但控制过度滚动 */
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-container {
   height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 容器本身不滚动 */
 }
 
 .module-content {
-  height: calc(100% - 70px);
+  flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  padding-bottom: env(safe-area-inset-bottom); /* 为底部安全区域留空间 */
+}
+
+/* iPhone Safari滚动条隐藏但功能保留 */
+.module-content::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+/* 确保内容区域可以滚动 */
+@media (max-width: 768px) {
+  .module-content {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll !important; /* 强制启用滚动 */
+    height: auto !important;
+    max-height: none !important;
+  }
+  
+  /* 修复iPhone上的滚动问题 */
+  body.is-iphone .module-content {
+    position: relative;
+    z-index: 1;
+    -webkit-transform: translateZ(0); /* 启用硬件加速 */
+  }
 }
 
 .word-list-summary {

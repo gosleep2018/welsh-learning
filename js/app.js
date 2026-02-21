@@ -74,6 +74,13 @@ class WelshLearningApp {
       this.showModule(this.config.currentModule);
       
       console.log('✅ 应用初始化完成');
+      
+      // 修复iPhone滚动问题
+      if (this.isiPhone) {
+        setTimeout(() => {
+          this.fixiPhoneScrolling();
+        }, 1000);
+      }
     } catch (error) {
       console.error('❌ 应用初始化失败:', error);
       console.error('❌ 错误详情:', error.stack);
@@ -998,6 +1005,45 @@ class WelshLearningApp {
     if (this.isiPhone) {
       document.body.classList.add('is-iphone');
     }
+  }
+  
+  // 修复iPhone滚动问题
+  fixiPhoneScrolling() {
+    if (!this.isiPhone) return;
+    
+    console.log('🔄 修复iPhone滚动问题...');
+    
+    // 确保内容区域可以滚动
+    const moduleContent = document.getElementById('moduleContent');
+    if (moduleContent) {
+      // 移除可能阻止滚动的事件监听器
+      moduleContent.style.webkitOverflowScrolling = 'touch';
+      moduleContent.style.overflowY = 'scroll';
+      
+      // 添加触摸滚动优化
+      moduleContent.addEventListener('touchstart', () => {
+        moduleContent.style.overflowY = 'scroll';
+      }, { passive: true });
+      
+      // 确保内容高度足够滚动
+      setTimeout(() => {
+        const contentHeight = moduleContent.scrollHeight;
+        const containerHeight = moduleContent.clientHeight;
+        
+        if (contentHeight > containerHeight) {
+          console.log(`📏 滚动内容: ${contentHeight}px > ${containerHeight}px (可滚动)`);
+        } else {
+          console.log(`⚠️ 内容高度不足，增加最小高度`);
+          moduleContent.style.minHeight = 'calc(100vh - 150px)';
+        }
+      }, 500);
+    }
+    
+    // 修复body滚动
+    document.body.style.overflow = 'auto';
+    document.body.style.webkitOverflowScrolling = 'touch';
+    
+    console.log('✅ iPhone滚动修复完成');
   }
   
   // 绑定导航链接（支持触摸）
@@ -3896,12 +3942,14 @@ document.addEventListener('DOMContentLoaded', function() {
     lastTouchEnd = now;
   }, { passive: false });
   
-  // 修复iOS上的滚动问题
+  // 修复iOS上的缩放问题（不阻止正常滚动）
   document.addEventListener('touchmove', function(event) {
-    if (event.scale !== 1) {
+    // 只在多点触摸缩放时阻止默认行为
+    if (event.touches.length > 1 && event.scale !== 1) {
       event.preventDefault();
     }
-  }, { passive: false });
+    // 单点触摸允许正常滚动
+  }, { passive: true });
   
   // 修复iOS上的输入框问题
   document.addEventListener('focus', function(event) {
