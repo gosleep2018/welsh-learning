@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>iPhone适配测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .header h1 {
+            color: #d62828;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .device-info {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .test-section h2 {
+            color: #d62828;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        .test-button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: #d62828;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 44px;
+        }
+        
+        .test-button:hover {
+            background: #b71c1c;
+        }
+        
+        .test-button:active {
+            transform: scale(0.98);
+        }
+        
+        .test-result {
+            padding: 15px;
+            background: #e8f4fc;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .test-result.show {
+            display: block;
+        }
+        
+        .safe-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            border: 3px solid #28a745;
+            border-width: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            z-index: 1000;
+        }
+        
+        .safe-area-label {
+            position: fixed;
+            top: env(safe-area-inset-top);
+            left: 10px;
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1001;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .test-button {
+                padding: 14px;
+                font-size: 1rem;
+            }
+        }
+        
+        @supports (-webkit-touch-callout: none) {
+            body {
+                -webkit-touch-callout: none;
+            }
+            
+            .test-button {
+                -webkit-touch-callout: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="safe-area"></div>
+    <div class="safe-area-label">安全区域</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📱 iPhone适配测试</h1>
+            <p>测试威尔士语学习平台的iPhone优化效果</p>
+        </div>
+        
+        <div class="device-info">
+            <h2>设备信息</h2>
+            <div class="info-item">
+                <span>用户代理:</span>
+                <span id="userAgent">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span>屏幕尺寸:</span>
+                <span id="screenSize">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span>设备像素比:</span>
+                <span id="pixelRatio">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span>安全区域:</span>
+                <span id="safeArea">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span>iOS版本:</span>
+                <span id="iosVersion">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span>iPhone型号:</span>
+                <span id="iphoneModel">检测中...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>触摸测试</h2>
+            <button class="test-button" id="touchTest">
+                👆 点击测试触摸响应
+            </button>
+            <button class="test-button" id="longPressTest">
+                ⏱️ 长按测试（按住2秒）
+            </button>
+            <div class="test-result" id="touchResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>滚动测试</h2>
+            <div style="height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                <p>这是一个滚动测试区域。在iPhone上滚动应该流畅自然。</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Scroll to bottom to test inertial scrolling.</p>
+            </div>
+            <div class="test-result" id="scrollResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>音频测试</h2>
+            <button class="test-button" id="audioTest">
+                🔊 测试音频播放
+            </button>
+            <div class="test-result" id="audioResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>返回主应用</h2>
+            <button class="test-button" onclick="window.location.href='index.html'" style="background: #28a745;">
+                🏴󠁧󠁢󠁷󠁬󠁳󠁿 返回威尔士学习平台
+            </button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>威尔士语学习平台 v1.1 | iPhone优化版本</p>
+        <p>测试时间: <span id="timestamp"></span></p>
+    </div>
+    
+    <script>
+        // 显示时间戳
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('zh-CN');
+        
+        // 检测设备信息
+        function detectDeviceInfo() {
+            const ua = navigator.userAgent;
+            document.getElementById('userAgent').textContent = ua.substring(0, 80) + '...';
+            document.getElementById('screenSize').textContent = `${window.innerWidth} × ${window.innerHeight}`;
+            document.getElementById('pixelRatio').textContent = window.devicePixelRatio;
+            
+            // 检测安全区域
+            const safeTop = getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top') || '0px';
+            const safeBottom = getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom') || '0px';
+            document.getElementById('safeArea').textContent = `上:${safeTop} 下:${safeBottom}`;
+            
+            // 检测iOS版本
+            if (/iPhone|iPad|iPod/.test(ua)) {
+                const match = ua.match(/OS (\d+)_(\d+)_?(\d+)?/);
+                if (match) {
+                    document.getElementById('iosVersion').textContent = `iOS ${match[1]}.${match[2]}`;
+                }
+                
+                // 简单iPhone型号检测
+                if (/iPhone 1[2-5]/.test(ua)) {
+                    document.getElementById('iphoneModel').textContent = 'iPhone 12-15系列';
+                } else if (/iPhone 1[0-1]/.test(ua)) {
+                    document.getElementById('iphoneModel').textContent = 'iPhone X/11系列';
+                } else if (/iPhone [6-9]/.test(ua)) {
+                    document.getElementById('iphoneModel').textContent = 'iPhone 6-9系列';
+                } else {
+                    document.getElementById('iphoneModel').textContent = 'iPhone';
+                }
+            } else {
+                document.getElementById('iosVersion').textContent = '非iOS设备';
+                document.getElementById('iphoneModel').textContent = '非iPhone';
+            }
+        }
+        
+        // 触摸测试
+        document.getElementById('touchTest').addEventListener('click', function() {
+            const result = document.getElementById('touchResult');
+            result.innerHTML = '<p style="color: #28a745;">✅ 触摸响应正常！点击事件已触发。</p>';
+            result.classList.add('show');
+            
+            // 视觉反馈
+            this.style.background = '#28a745';
+            setTimeout(() => {
+                this.style.background = '#d62828';
+            }, 300);
+        });
+        
+        // 长按测试
+        let longPressTimer;
+        const longPressButton = document.getElementById('longPressTest');
+        
+        longPressButton.addEventListener('touchstart', function() {
+            longPressTimer = setTimeout(() => {
+                const result = document.getElementById('touchResult');
+                result.innerHTML = '<p style="color: #28a745;">✅ 长按检测正常！已识别2秒长按。</p>';
+                result.classList.add('show');
+                this.style.background = '#28a745';
+            }, 2000);
+        });
+        
+        longPressButton.addEventListener('touchend', function() {
+            clearTimeout(longPressTimer);
+            setTimeout(() => {
+                this.style.background = '#d62828';
+            }, 300);
+        });
+        
+        // 音频测试
+        document.getElementById('audioTest').addEventListener('click', function() {
+            const result = document.getElementById('audioResult');
+            
+            // 创建测试音频
+            const audio = new Audio('https://web-x0ya.onrender.com/tts?text=Helo&voice=en-US-JennyNeural');
+            
+            audio.play().then(() => {
+                result.innerHTML = '<p style="color: #28a745;">✅ 音频播放正常！已听到威尔士语"Helo"。</p>';
+                result.classList.add('show');
+                this.style.background = '#28a745';
+            }).catch(err => {
+                result.innerHTML = `<p style="color: #dc3545;">❌ 音频播放失败: ${err.message}</p>`;
+                result.classList.add('show');
+                this.style.background = '#dc3545';
+            });
+            
+            setTimeout(() => {
+                this.style.background = '#d62828';
+            }, 1000);
+        });
+        
+        // 页面加载时检测
+        window.addEventListener('load', function() {
+            detectDeviceInfo();
+            
+            // 添加加载完成提示
+            setTimeout(() => {
+                if (/iPhone/.test(navigator.userAgent)) {
+                    alert('📱 iPhone检测完成！\n\n所有优化功能已启用。\n\n点击"返回威尔士学习平台"测试完整应用。');
+                }
+            }, 500);
+        });
+        
+        // 防止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>

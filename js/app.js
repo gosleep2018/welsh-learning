@@ -951,23 +951,126 @@ class WelshLearningApp {
   bindEvents() {
     console.log('🔗 开始绑定事件...');
     
+    // 检测设备类型
+    this.detectDeviceType();
+    
     // 导航链接 - 这些元素在初始HTML中就存在
     const navLinks = document.querySelectorAll('.nav-link');
     console.log('🔗 找到导航链接:', navLinks.length);
     
     navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const module = e.target.dataset.module || e.target.closest('.nav-link').dataset.module;
-        console.log('🔗 导航点击:', module);
-        this.showModule(module);
-      });
+      // 使用更响应式的事件处理
+      this.bindNavLinkWithTouchSupport(link);
     });
     
     // 设置切换 - 延迟绑定，等元素存在后再绑定
     this.bindSettingEvents();
     
+    // 绑定单词导航事件
+    this.bindWordNavEvents();
+    
     console.log('✅ 基础事件绑定完成');
+  }
+  
+  // 检测设备类型
+  detectDeviceType() {
+    const ua = navigator.userAgent;
+    this.isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+    this.isIOS = /iPhone|iPad|iPod/i.test(ua);
+    this.isAndroid = /Android/i.test(ua);
+    this.isiPhone = /iPhone/i.test(ua);
+    
+    console.log(`📱 设备检测:`, {
+      mobile: this.isMobile,
+      ios: this.isIOS,
+      android: this.isAndroid,
+      iphone: this.isiPhone,
+      userAgent: ua.substring(0, 100)
+    });
+    
+    // 添加设备类到body
+    if (this.isMobile) {
+      document.body.classList.add('is-mobile');
+    }
+    if (this.isIOS) {
+      document.body.classList.add('is-ios');
+    }
+    if (this.isiPhone) {
+      document.body.classList.add('is-iphone');
+    }
+  }
+  
+  // 绑定导航链接（支持触摸）
+  bindNavLinkWithTouchSupport(link) {
+    let touchStartTime = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    
+    // 触摸开始
+    link.addEventListener('touchstart', (e) => {
+      touchStartTime = Date.now();
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      
+      // 触摸反馈
+      if (this.isIOS) {
+        link.style.transform = 'scale(0.98)';
+        link.style.opacity = '0.9';
+      }
+    }, { passive: true });
+    
+    // 触摸结束
+    link.addEventListener('touchend', (e) => {
+      const touchEndTime = Date.now();
+      const touchDuration = touchEndTime - touchStartTime;
+      
+      // 恢复触摸反馈
+      if (this.isIOS) {
+        link.style.transform = 'scale(1)';
+        link.style.opacity = '1';
+      }
+      
+      // 防止误触（触摸时间太短或移动距离太大）
+      if (touchDuration < 1000) { // 1秒内
+        const module = link.dataset.module;
+        console.log(`📱 触摸导航: ${module} (${touchDuration}ms)`);
+        
+        // 防止快速连续点击
+        if (this.lastNavClick && (Date.now() - this.lastNavClick < 500)) {
+          console.log('⚠️ 防止快速连续点击');
+          return;
+        }
+        
+        this.lastNavClick = Date.now();
+        this.showModule(module);
+        
+        // 在iPhone上，切换后滚动到顶部
+        if (this.isiPhone) {
+          setTimeout(() => {
+            const content = document.getElementById('moduleContent');
+            if (content) {
+              content.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }, 300);
+        }
+      }
+    }, { passive: true });
+    
+    // 触摸取消
+    link.addEventListener('touchcancel', () => {
+      if (this.isIOS) {
+        link.style.transform = 'scale(1)';
+        link.style.opacity = '1';
+      }
+    }, { passive: true });
+    
+    // 保留click事件作为备用
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const module = link.dataset.module;
+      console.log(`📱 点击导航: ${module}`);
+      this.showModule(module);
+    });
   }
   
   // 绑定设置相关事件（在元素存在后调用）
@@ -3772,3 +3875,74 @@ document.addEventListener('DOMContentLoaded', function() {
     window.app = new WelshLearningApp();
   }
 });
+
+// iPhone专用功能
+(function() {
+  console.log('📱 初始化iPhone专用功能...');
+  
+  // 检测是否为iPhone
+  const isiPhone = /iPhone/i.test(navigator.userAgent);
+  if (!isiPhone) return;
+  
+  console.log('✅ 检测到iPhone设备，启用专用优化');
+  
+  // 防止双击缩放
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(event) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+  
+  // 修复iOS上的滚动问题
+  document.addEventListener('touchmove', function(event) {
+    if (event.scale !== 1) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+  
+  // 修复iOS上的输入框问题
+  document.addEventListener('focus', function(event) {
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+      // 延迟滚动到输入框
+      setTimeout(() => {
+        event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
+  }, true);
+  
+  // 修复iOS上的音频播放问题
+  const originalPlay = HTMLAudioElement.prototype.play;
+  HTMLAudioElement.prototype.play = function() {
+    return new Promise((resolve, reject) => {
+      // iOS需要用户交互才能播放音频
+      this.addEventListener('canplaythrough', () => {
+        originalPlay.call(this).then(resolve).catch(reject);
+      }, { once: true });
+      
+      this.load();
+    });
+  };
+  
+  // 添加iOS状态栏颜色
+  const metaThemeColor = document.createElement('meta');
+  metaThemeColor.name = 'theme-color';
+  metaThemeColor.content = '#d62828'; // 威尔士红
+  document.head.appendChild(metaThemeColor);
+  
+  // 添加iOS主屏幕图标
+  const appleTouchIcon = document.createElement('link');
+  appleTouchIcon.rel = 'apple-touch-icon';
+  appleTouchIcon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏴󠁧󠁢󠁷󠁬󠁳󠁿</text></svg>';
+  document.head.appendChild(appleTouchIcon);
+  
+  // 添加iOS启动画面
+  const appleTouchStartupImage = document.createElement('link');
+  appleTouchStartupImage.rel = 'apple-touch-startup-image';
+  appleTouchStartupImage.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="375" height="812" viewBox="0 0 375 812"><rect width="375" height="812" fill="#d62828"/><text x="187.5" y="406" font-size="60" text-anchor="middle" fill="white" font-family="Arial">🏴󠁧󠁢󠁷󠁬󠁳󠁿</text></svg>';
+  document.head.appendChild(appleTouchStartupImage);
+  
+  console.log('✅ iPhone专用功能初始化完成');
+})();
