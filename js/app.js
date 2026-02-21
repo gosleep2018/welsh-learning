@@ -224,7 +224,8 @@ class WelshLearningApp {
             synonyms: ["hi", "greetings"],
             antonyms: ["goodbye"],
             collocations: ["say hello", "hello there"],
-            sentence: "Helo, sut wyt ti? (Hello, how are you?)"
+            sentence: "Helo, sut wyt ti? (Hello, how are you?)",
+            sentenceTts: "Helo, sut wyt ti?"  // 例句的TTS文本
           },
           ttsText: "helo",
           category: "greetings"
@@ -241,7 +242,8 @@ class WelshLearningApp {
             synonyms: ["thanks", "gratitude"],
             antonyms: ["ingratitude"],
             collocations: ["diolch yn fawr (非常感谢)"],
-            sentence: "Diolch am eich help. (谢谢你的帮助。)"
+            sentence: "Diolch am eich help. (谢谢你的帮助。)",
+            sentenceTts: "Diolch am eich help."
           },
           ttsText: "diolch",
           category: "courtesy"
@@ -258,7 +260,8 @@ class WelshLearningApp {
             synonyms: ["liquid", "aqua"],
             antonyms: ["fire"],
             collocations: ["tap water", "mineral water"],
-            sentence: "Mae'r dŵr yn oer. (水是冷的。)"
+            sentence: "Mae'r dŵr yn oer. (水是冷的。)",
+            sentenceTts: "Mae'r dŵr yn oer."
           },
           ttsText: "dŵr",
           category: "basics"
@@ -275,7 +278,8 @@ class WelshLearningApp {
             synonyms: ["fine", "excellent"],
             antonyms: ["bad"],
             collocations: ["very good", "good morning"],
-            sentence: "Mae'n dda iawn. (非常好。)"
+            sentence: "Mae'n dda iawn. (非常好。)",
+            sentenceTts: "Mae'n dda iawn."
           },
           ttsText: "da",
           category: "basics"
@@ -292,7 +296,8 @@ class WelshLearningApp {
             synonyms: ["home", "dwelling"],
             antonyms: ["outside"],
             collocations: ["big house", "house number"],
-            sentence: "Mae'r tŷ yn fawr. (房子很大。)"
+            sentence: "Mae'r tŷ yn fawr. (房子很大。)",
+            sentenceTts: "Mae'r tŷ yn fawr."
           },
           ttsText: "tŷ",
           category: "basics"
@@ -651,9 +656,30 @@ class WelshLearningApp {
       html += `</div>`;
       
       if (word.extensions.sentence) {
+        const hasSentenceTts = word.extensions.sentenceTts && word.extensions.sentenceTts.trim() !== '';
+        
         html += `
           <div class="example-sentence">
-            <strong>例句:</strong> ${word.extensions.sentence}
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <strong>例句:</strong>
+              ${hasSentenceTts ? `
+                <button class="btn-sentence-audio" data-word-id="${word.id}" style="
+                  padding: 4px 10px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  font-size: 0.85rem;
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                ">
+                  <i class="fas fa-volume-up"></i> 听例句
+                </button>
+              ` : ''}
+            </div>
+            <div>${word.extensions.sentence}</div>
           </div>
         `;
       }
@@ -679,6 +705,15 @@ class WelshLearningApp {
       const word = this.data.dailyWords[this.config.currentWordIndex];
       this.markWordAsMastered(word.id);
     });
+    
+    // 绑定例句发音按钮
+    const sentenceAudioBtn = document.querySelector('.btn-sentence-audio');
+    if (sentenceAudioBtn) {
+      sentenceAudioBtn.addEventListener('click', () => {
+        const word = this.data.dailyWords[this.config.currentWordIndex];
+        this.playSentenceAudio(word);
+      });
+    }
     
     // 显示当前单词状态
     const wordStatus = this.getWordStatus(word.id);
@@ -1233,6 +1268,49 @@ class WelshLearningApp {
       console.error('❌ 音频播放失败:', err);
       this.showToast('发音播放失败，请检查网络连接', 'error');
     });
+  }
+  
+  // 播放例句音频
+  playSentenceAudio(word) {
+    if (!word || !word.extensions || !word.extensions.sentenceTts) {
+      console.warn('❌ 例句没有TTS文本:', word);
+      this.showToast('此例句暂无发音', 'warning');
+      return;
+    }
+    
+    const ttsUrl = `${this.config.api.tts}?text=${encodeURIComponent(word.extensions.sentenceTts)}&voice=${this.config.tts.voice}`;
+    const audio = new Audio(ttsUrl);
+    
+    // 视觉反馈
+    const btn = document.querySelector('.btn-sentence-audio');
+    if (btn) {
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 播放中';
+      btn.disabled = true;
+      
+      audio.play().then(() => {
+        audio.onended = () => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        };
+      }).catch(err => {
+        console.error('❌ 例句音频播放失败:', err);
+        btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> 失败';
+        btn.disabled = false;
+        
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        }, 2000);
+        
+        this.showToast('例句发音播放失败', 'error');
+      });
+    } else {
+      audio.play().catch(err => {
+        console.error('❌ 例句音频播放失败:', err);
+        this.showToast('例句发音播放失败', 'error');
+      });
+    }
   }
   
   showComingSoon(moduleName) {

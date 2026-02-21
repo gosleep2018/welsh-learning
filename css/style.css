@@ -526,6 +526,46 @@ body {
   transform: none !important;
 }
 
+/* 例句发音按钮 */
+.btn-sentence-audio {
+  padding: 4px 10px;
+  background: var(--welsh-green);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s;
+}
+
+.btn-sentence-audio:hover {
+  background: var(--welsh-red);
+  transform: translateY(-2px);
+}
+
+.btn-sentence-audio:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* 例句容器优化 */
+.example-sentence {
+  background: #e8f4fc;
+  padding: 15px;
+  border-radius: 8px;
+  font-style: italic;
+  margin-top: 15px;
+  border-left: 4px solid var(--welsh-blue);
+}
+
+.example-sentence strong {
+  color: var(--welsh-dark);
+}
+
 .word-list-summary {
   background: #f8f9fa;
   padding: 20px;
