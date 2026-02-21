@@ -35,9 +35,16 @@ class WelshLearningApp {
       
       // 初始化进度数据
       this.progressData = this.loadProgress();
+      console.log('📊 进度数据加载完成');
       
       // 加载词汇数据（带超时）
-      await this.loadDataWithTimeout();
+      console.log('📦 开始加载词汇数据...');
+      const dataLoaded = await this.loadDataWithTimeout();
+      console.log('📦 词汇数据加载结果:', dataLoaded ? '成功' : '失败');
+      
+      // 验证数据完整性
+      this.validateData();
+      console.log('📦 单词数量:', this.data.dailyWords.length);
       
       // 从API加载服务器进度（如果可用，不阻塞主流程）
       this.loadServerProgress().catch(err => {
@@ -46,20 +53,25 @@ class WelshLearningApp {
       
       // 初始化UI
       this.initUI();
+      console.log('🎨 UI初始化完成');
       
       // 绑定事件
       this.bindEvents();
+      console.log('🔗 事件绑定完成');
       
       // 显示初始内容
+      console.log('🚀 开始显示学习内容...');
       this.showModule(this.config.currentModule);
       
       console.log('✅ 应用初始化完成');
     } catch (error) {
       console.error('❌ 应用初始化失败:', error);
-      this.showError('应用初始化失败，请刷新页面重试');
+      console.error('❌ 错误详情:', error.stack);
+      this.showError('应用初始化失败: ' + error.message);
     } finally {
       // 隐藏加载状态
       this.showLoading(false);
+      console.log('👋 加载状态隐藏完成');
     }
   }
   
@@ -101,6 +113,37 @@ class WelshLearningApp {
         }, 500);
       }
     }
+  }
+  
+  // 验证数据完整性
+  validateData() {
+    console.log('🔍 开始验证数据完整性...');
+    
+    const issues = [];
+    
+    // 检查数据对象
+    if (!this.data) {
+      issues.push('this.data 未定义');
+      this.data = { dailyWords: [] };
+    }
+    
+    if (!this.data.dailyWords) {
+      issues.push('this.data.dailyWords 未定义');
+      this.data.dailyWords = [];
+    }
+    
+    if (!Array.isArray(this.data.dailyWords)) {
+      issues.push('this.data.dailyWords 不是数组');
+      this.data.dailyWords = [];
+    }
+    
+    if (issues.length > 0) {
+      console.warn('⚠️ 数据验证发现问题:', issues);
+      return false;
+    }
+    
+    console.log('✅ 数据验证通过');
+    return true;
   }
   
   // 显示错误信息
@@ -154,9 +197,9 @@ class WelshLearningApp {
   }
   
   async loadData() {
+    console.log('📦 loadData() 开始执行...');
+    
     try {
-      console.log('📦 开始加载词汇数据...');
-      
       // 硬编码的示例数据 - 确保总有数据
       const sampleWords = [
         {
@@ -248,14 +291,17 @@ class WelshLearningApp {
       
       // 确保数据不为空
       this.data.dailyWords = sampleWords;
+      console.log('📦 数据已赋值到 this.data.dailyWords');
       
       // 计算学习进度
       this.calculateProgress();
       
       console.log(`✅ 数据加载完成: ${this.data.dailyWords.length} 个单词`);
+      console.log('📦 第一个单词:', this.data.dailyWords[0]?.english);
       return true;
     } catch (error) {
       console.error('❌ 数据加载失败，使用备用数据:', error);
+      console.error('❌ 错误堆栈:', error.stack);
       
       // 使用最小化的备用数据
       this.data.dailyWords = [
@@ -268,6 +314,7 @@ class WelshLearningApp {
           category: "greetings"
         }
       ];
+      console.log('📦 使用备用数据，数量:', this.data.dailyWords.length);
       
       this.calculateProgress();
       return false;
@@ -361,17 +408,23 @@ class WelshLearningApp {
   }
   
   showDailyWords() {
-    console.log('📖 显示每日单词，数据量:', this.data.dailyWords.length);
+    console.log('📖 showDailyWords() 被调用');
+    console.log('📖 this.data:', this.data);
+    console.log('📖 this.data.dailyWords:', this.data.dailyWords);
+    console.log('📖 单词数据量:', this.data.dailyWords?.length || 0);
     
     const container = document.getElementById('moduleContent');
     if (!container) {
       console.error('❌ 找不到容器: moduleContent');
+      console.error('❌ 检查HTML中是否有id="moduleContent"的元素');
       this.showError('页面元素加载失败，请刷新页面');
       return;
     }
+    console.log('✅ 找到容器: moduleContent');
     
-    if (this.data.dailyWords.length === 0) {
-      console.warn('⚠️ 单词数据为空，显示加载状态');
+    // 如果数据为空，强制加载数据
+    if (!this.data.dailyWords || this.data.dailyWords.length === 0) {
+      console.warn('⚠️ 单词数据为空，立即重新加载数据');
       container.innerHTML = `
         <div class="loading">
           <div class="spinner"></div>
@@ -379,16 +432,23 @@ class WelshLearningApp {
         </div>
       `;
       
-      // 3秒后重试
-      setTimeout(() => {
-        if (this.data.dailyWords.length === 0) {
-          this.loadData().then(() => {
-            this.showDailyWords();
-          });
+      // 立即重新加载数据
+      this.loadData().then((success) => {
+        console.log('📦 重新加载数据结果:', success ? '成功' : '失败');
+        console.log('📦 重新加载后数据量:', this.data.dailyWords.length);
+        if (this.data.dailyWords.length > 0) {
+          this.showDailyWords(); // 重新调用自己
+        } else {
+          this.showError('无法加载单词数据，请刷新页面');
         }
-      }, 3000);
+      }).catch(error => {
+        console.error('❌ 重新加载数据失败:', error);
+        this.showError('数据加载失败: ' + error.message);
+      });
       return;
     }
+    
+    console.log('✅ 数据验证通过，开始显示单词');
     
     // 显示单词学习界面
     container.innerHTML = `
