@@ -87,11 +87,15 @@ class WelshLearningApp {
   
   // 带超时的数据加载
   async loadDataWithTimeout() {
-    const timeout = 5000; // 5秒超时
+    const timeout = 3000; // 缩短到3秒超时
     
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
-        reject(new Error('数据加载超时'));
+        console.warn('⚠️ 数据加载超时，使用备用数据');
+        // 超时时不reject，而是使用备用数据
+        this.useFallbackData();
+        clearTimeout(timer);
+        resolve(); // 仍然resolve，让应用继续
       }, timeout);
       
       this.loadData()
@@ -100,10 +104,62 @@ class WelshLearningApp {
           resolve();
         })
         .catch(err => {
+          console.warn('⚠️ 数据加载失败，使用备用数据:', err.message);
           clearTimeout(timer);
-          reject(err);
+          this.useFallbackData();
+          resolve(); // 即使失败也resolve，避免卡住
         });
     });
+  }
+  
+  // 使用备用数据
+  useFallbackData() {
+    console.log('🔄 使用备用数据...');
+    
+    // 最小化的备用数据
+    const fallbackWords = [
+      {
+        id: 1,
+        english: "hello",
+        chinese: "你好",
+        welsh: "helo",
+        pronunciation: "HEH-lo",
+        prefix: "",
+        suffix: "-o (常见结尾)",
+        memoryHint: "和英语 hello 几乎一样，只是发音更短促",
+        extensions: {
+          synonyms: ["hi", "greetings"],
+          antonyms: ["goodbye"],
+          collocations: ["say hello", "hello there"],
+          sentence: "Helo, sut wyt ti? (Hello, how are you?)",
+          sentenceTts: "Helo, sut wyt ti?"
+        },
+        ttsText: "helo",
+        category: "greetings"
+      },
+      {
+        id: 2,
+        english: "thank you",
+        chinese: "谢谢",
+        welsh: "diolch",
+        pronunciation: "DEE-olch",
+        prefix: "di- (强调前缀)",
+        suffix: "-olch (感谢后缀)",
+        memoryHint: "联想：DEEp OLCH → 深深的感谢",
+        extensions: {
+          synonyms: ["thanks", "gratitude"],
+          antonyms: ["ingratitude"],
+          collocations: ["diolch yn fawr (非常感谢)"],
+          sentence: "Diolch am eich help. (谢谢你的帮助。)",
+          sentenceTts: "Diolch am eich help."
+        },
+        ttsText: "diolch",
+        category: "courtesy"
+      }
+    ];
+    
+    this.data.dailyWords = fallbackWords;
+    console.log('✅ 备用数据已加载:', this.data.dailyWords.length, '个单词');
   }
   
   // 显示/隐藏加载状态
