@@ -168,27 +168,55 @@ window.welshAPI = new WelshLearningAPI();
 async function testAPIConnection() {
   console.log('🔌 测试API连接...');
   
-  const health = await window.welshAPI.healthCheck();
+  // 在Render部署环境中，API服务可能不可用
+  // 直接使用本地存储模式，避免连接错误
+  if (window.location.hostname.includes('render.com') || 
+      window.location.hostname.includes('onrender.com') ||
+      window.location.hostname.includes('localhost')) {
+    console.log('🌐 检测到本地或Render环境，使用本地存储模式');
+    window.welshAPI.apiAvailable = false;
+    return false;
+  }
   
-  if (health.apiAvailable) {
-    console.log('✅ API服务可用:', health.data);
-    return true;
-  } else {
-    console.warn('⚠️ API服务不可用，使用本地存储模式');
+  try {
+    const health = await window.welshAPI.healthCheck();
+    
+    if (health.apiAvailable) {
+      console.log('✅ API服务可用:', health.data);
+      return true;
+    } else {
+      console.warn('⚠️ API服务不可用，使用本地存储模式');
+      window.welshAPI.apiAvailable = false;
+      return false;
+    }
+  } catch (error) {
+    console.warn('⚠️ API连接失败，使用本地存储模式:', error.message);
+    window.welshAPI.apiAvailable = false;
     return false;
   }
 }
 
-// 页面加载时测试连接
+// 页面加载时初始化
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 初始化威尔士学习API客户端...');
+  
+  // 默认使用本地存储模式
+  window.welshAPI.apiAvailable = false;
+  
+  // 延迟测试API连接（非阻塞）
   setTimeout(() => {
     testAPIConnection().then(apiAvailable => {
       if (apiAvailable) {
+        console.log('✅ API服务可用');
         // 如果有本地进度，同步到服务器
         if (localStorage.getItem('welshLearningProgress')) {
           window.welshAPI.syncLocalProgress();
         }
+      } else {
+        console.log('✅ 使用本地存储模式');
       }
+    }).catch(error => {
+      console.log('✅ 使用本地存储模式（错误捕获）');
     });
-  }, 1000);
+  }, 500);
 });
