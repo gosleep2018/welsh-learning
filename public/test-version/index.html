@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>🏴󠁧󠁢󠁷󠁬󠁳󠁿 威尔士语学习 | 测试环境</title>
+  <meta name="description" content="威尔士语学习平台测试环境 - 正式版1.0的独立副本">
+  <meta name="keywords" content="威尔士语, 测试环境, 语言学习">
+  
+  <!-- 样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 图标 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴󠁧󠁢󠁷󠁬󠁳󠁿</text></svg>">
+  
+  <!-- 预加载关键资源 -->
+  <link rel="preconnect" href="https://web-x0ya.onrender.com">
+  
+  <style>
+    /* 测试环境标识 */
+    .test-badge {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #ff6b6b;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 10000;
+      box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+    }
+    
+    /* 测试环境头部 */
+    .test-header {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+      padding: 15px 20px;
+      text-align: center;
+      border-radius: 0 0 15px 15px;
+      margin-bottom: 20px;
+    }
+    
+    .test-header h1 {
+      color: white;
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+    
+    .test-header .subtitle {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.9rem;
+    }
+    
+    /* 初始加载样式 */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #008751 0%, #1a1a2e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+    
+    .loading-logo {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    
+    .loading-text {
+      color: white;
+      font-size: 1.5rem;
+      margin-top: 20px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 测试环境标识 -->
+  <div class="test-badge">
+    🧪 测试环境
+  </div>
+  
+  <!-- 测试环境头部 -->
+  <div class="test-header">
+    <h1>🧪 威尔士语学习 - 测试环境</h1>
+    <div class="subtitle">正式版1.0的独立副本 • 数据隔离 • 安全测试</div>
+  </div>
+  
+  <!-- 加载屏幕 -->
+  <div id="loadingScreen">
+    <div class="loading-logo">🧪</div>
+    <div class="loading-text">测试环境加载中...</div>
+  </div>
+  
+  <!-- 主容器 -->
+  <div id="appContainer" style="display: none;">
+    <!-- 头部 -->
+    <header class="header">
+      <h1>
+        <span>🏴󠁧󠁢󠁷󠁬󠁳󠁿</span>
+        威尔士语学习平台
+      </h1>
+      <div class="subtitle">专为英语使用者设计的快速入门平台</div>
+      <div class="tagline">4周掌握100高频表达 • 能进行3分钟基础对话</div>
+      <div style="margin-top: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+        <i class="fas fa-calendar-alt"></i> <span id="currentDate"></span>
+      </div>
+    </header>
+    
+    <!-- 主内容 -->
+    <div class="main-content">
+      <!-- 侧边栏 -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h3><i class="fas fa-compass"></i> 学习导航</h3>
+        </div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#" class="nav-link active" data-module="dailyWords">
+              <i class="fas fa-book-open"></i>
+              <span>每日词汇</span>
+              <span class="nav-badge">5</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-module="commonPhrases">
+              <i class="fas fa-comments"></i>
+              <span>常用短语</span>
+              <span class="nav-badge new">新</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-module="pronunciation">
+              <i class="fas fa-volume-up"></i>
+              <span>发音练习</span>
+              <span class="nav-badge basic">基础版</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-module="welshCulture">
+              <i class="fas fa-landmark"></i>
+              <span>威尔士文化</span>
+              <span class="nav-badge" style="background: #ffd166; color: #333;">新</span>
+            </a>
+          </li>
+        </ul>
+        
+        <!-- 环境信息 -->
+        <div class="environment-info" style="margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+          <h4 style="color: #ff6b6b; margin-bottom: 10px; font-size: 0.9rem;">
+            <i class="fas fa-info-circle"></i> 测试环境说明
+          </h4>
+          <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7); line-height: 1.5;">
+            <div>• 这是正式版1.0的独立副本</div>
+            <div>• 所有功能与生产环境相同</div>
+            <div>• 数据完全隔离，安全测试</div>
+            <div>• 右上角显示测试标识</div>
+          </div>
+        </div>
+      </aside>
+      
+      <!-- 内容区域 -->
+      <main class="content-area">
+        <div id="dailyWordsModule">
+          <div class="module-header">
+            <h2><i class="fas fa-book-open"></i> 今日词汇</h2>
+            <div class="module-subtitle">第 <span style="color: #d21034; font-weight: bold;">6</span> 天</div>
+          </div>
+          
+          <!-- 单词卡片 -->
+          <div class="word-card">
+            <div class="word-header">
+              <div class="word-text">
+                <div class="word-english">Please.</div>
+                <div class="word-welsh">Os gwelwch yn dda</div>
+                <div class="word-pronunciation">os GWELL-ooch un THAH</div>
+              </div>
+              <div class="word-tag">礼貌用语</div>
+            </div>
+            
+            <div class="word-details">
+              <div class="detail-row">
+                <div class="detail-label">中文翻译</div>
+                <div class="detail-value">请。</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">词性</div>
+                <div class="detail-value">礼貌用语</div>
+              </div>
+              
+              <div class="example-section">
+                <div class="example-label">使用示例</div>
+                <div class="example-content">
+                  <div class="example-item">
+                    <span class="example-bullet">•</span>
+                    Os gwelwch yn dda, rhowch y llyfr i mi. (请把书给我。)
+                  </div>
+                  <div class="example-item">
+                    <span class="example-bullet">•</span>
+                    A gaf i ddŵr, os gwelwch yn dda? (请给我一杯水，好吗？)
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 功能按钮 -->
+            <div class="button-group">
+              <button class="btn btn-primary" id="pronounceBtn">
+                <i class="fas fa-volume-up"></i>
+                发音
+              </button>
+              <button class="btn btn-success" id="addFlashcardBtn">
+                <i class="fas fa-plus"></i>
+                加入闪卡
+              </button>
+              <button class="btn btn-outline" id="markLearnedBtn">
+                <i class="fas fa-check"></i>
+                标记已学
+              </button>
+            </div>
+          </div>
+          
+          <!-- 学习提示 -->
+          <div class="study-tip">
+            <h4><i class="fas fa-lightbulb"></i> 学习技巧</h4>
+            <p>威尔士语的"请"字面意思是"如果你愿意的话"。这是一个非常礼貌的表达，在正式场合和日常对话中都常用。</p>
+          </div>
+          
+          <!-- 导航按钮 -->
+          <div class="nav-buttons">
+            <button class="btn btn-outline" id="prevBtn">
+              <i class="fas fa-arrow-left"></i>
+              上一个
+            </button>
+            <div class="progress-dots">
+              <div class="progress-dot active"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+            </div>
+            <button class="btn btn-primary" id="nextBtn">
+              下一个
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <!-- 主JavaScript -->
+  <script src="js/app.js"></script>
+  
+  <!-- 测试环境脚本 -->
+  <script>
+    // 测试环境专用脚本
+    console.log('🧪 测试环境加载 - 正式版1.0副本');
+    
+    // 设置当前日期
+    window.addEventListener('load', function() {
+      const now = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+      const dateElement = document.getElementById('currentDate');
+      if (dateElement) {
+        dateElement.textContent = now.toLocaleDateString('zh-CN', options);
+      }
+      
+      // 隐藏加载屏幕
+      setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            
+            console.log('✅ 测试环境界面显示完成');
+            console.log('📱 设备信息:', {
+              iOS: /iPad|iPhone|iPod/.test(navigator.userAgent),
+              iPhone: /iPhone/.test(navigator.userAgent),
+              touch: 'ontouchstart' in window,
+              screen: `${window.innerWidth}×${window.innerHeight}`
+            });
+          }, 500);
+        }
+      }, 1000);
+      
+      // 确保所有按钮可点击
+      document.querySelectorAll('button, .nav-link').forEach(el => {
+        el.style.cursor = 'pointer';
+      });
+    });
+    
+    // 全局错误处理
+    window.addEventListener('error', function(e) {
+      console.error('❌ 测试环境错误:', e.error);
+    });
+  </script>
+</body>
+</html>
