@@ -5,6 +5,11 @@ class WelshLearningApp {
       api: {
         tts: 'https://web-x0ya.onrender.com/tts'
       },
+      tts: {
+        voice: 'cy-GB-NiaNeural', // 威尔士语女性语音（Azure支持）
+        language: 'cy-GB', // 威尔士语（英国）
+        region: 'eastus' // Azure区域
+      },
       settings: {
         showPrefixSuffix: true,
         showMemoryHints: true,
@@ -695,7 +700,7 @@ class WelshLearningApp {
     const word = this.data.dailyWords[this.config.currentWordIndex];
     if (!word) return;
     
-    const ttsUrl = `${this.config.api.tts}?text=${encodeURIComponent(word.ttsText)}&voice=en-US-JennyNeural`;
+    const ttsUrl = `${this.config.api.tts}?text=${encodeURIComponent(word.ttsText)}&voice=${this.config.tts.voice}`;
     const audio = new Audio(ttsUrl);
     
     // 视觉反馈
