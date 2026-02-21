@@ -215,6 +215,7 @@ class WelshLearningApp {
         {
           id: 1,
           english: "hello",
+          chinese: "你好",
           welsh: "helo",
           pronunciation: "HEH-lo",
           prefix: "",
@@ -233,6 +234,7 @@ class WelshLearningApp {
         {
           id: 2,
           english: "thank you",
+          chinese: "谢谢",
           welsh: "diolch",
           pronunciation: "DEE-olch",
           prefix: "di- (强调前缀)",
@@ -251,6 +253,7 @@ class WelshLearningApp {
         {
           id: 3,
           english: "water",
+          chinese: "水",
           welsh: "dŵr",
           pronunciation: "door",
           prefix: "",
@@ -269,6 +272,7 @@ class WelshLearningApp {
         {
           id: 4,
           english: "good",
+          chinese: "好",
           welsh: "da",
           pronunciation: "dah",
           prefix: "",
@@ -287,6 +291,7 @@ class WelshLearningApp {
         {
           id: 5,
           english: "house",
+          chinese: "房子",
           welsh: "tŷ",
           pronunciation: "tee",
           prefix: "",
@@ -301,6 +306,102 @@ class WelshLearningApp {
           },
           ttsText: "tŷ",
           category: "basics"
+        },
+        // 添加更多词汇用于搜索
+        {
+          id: 6,
+          english: "morning",
+          chinese: "早晨",
+          welsh: "bore",
+          pronunciation: "BOR-eh",
+          prefix: "",
+          suffix: "-e (名词后缀)",
+          memoryHint: "发音像 'bore'（无聊），但早晨不无聊",
+          extensions: {
+            synonyms: ["dawn", "sunrise"],
+            antonyms: ["evening"],
+            collocations: ["good morning", "morning coffee"],
+            sentence: "Bore da! (早上好！)",
+            sentenceTts: "Bore da!"
+          },
+          ttsText: "bore",
+          category: "time"
+        },
+        {
+          id: 7,
+          english: "night",
+          chinese: "夜晚",
+          welsh: "nos",
+          pronunciation: "nohs",
+          prefix: "",
+          suffix: "-os (名词后缀)",
+          memoryHint: "发音像 'nose'（鼻子），晚上睡觉鼻子要呼吸",
+          extensions: {
+            synonyms: ["evening", "darkness"],
+            antonyms: ["day"],
+            collocations: ["good night", "night time"],
+            sentence: "Nos da! (晚安！)",
+            sentenceTts: "Nos da!"
+          },
+          ttsText: "nos",
+          category: "time"
+        },
+        {
+          id: 8,
+          english: "bread",
+          chinese: "面包",
+          welsh: "bara",
+          pronunciation: "BAH-rah",
+          prefix: "",
+          suffix: "-a (名词后缀)",
+          memoryHint: "发音像 'bar'（酒吧）+ 'ah'，想象在酒吧吃面包",
+          extensions: {
+            synonyms: ["loaf"],
+            antonyms: [""],
+            collocations: ["bara brith (威尔士水果面包)", "fresh bread"],
+            sentence: "Dw i eisiau bara. (我想要面包。)",
+            sentenceTts: "Dw i eisiau bara."
+          },
+          ttsText: "bara",
+          category: "food"
+        },
+        {
+          id: 9,
+          english: "coffee",
+          chinese: "咖啡",
+          welsh: "coffi",
+          pronunciation: "KOF-ee",
+          prefix: "",
+          suffix: "-i (名词后缀)",
+          memoryHint: "和英语 coffee 几乎一样，只是发音更短",
+          extensions: {
+            synonyms: ["java", "brew"],
+            antonyms: ["tea"],
+            collocations: ["morning coffee", "coffee shop"],
+            sentence: "Coffi, os gwelwch yn dda. (请给我咖啡。)",
+            sentenceTts: "Coffi, os gwelwch yn dda."
+          },
+          ttsText: "coffi",
+          category: "food"
+        },
+        {
+          id: 10,
+          english: "please",
+          chinese: "请",
+          welsh: "os gwelwch yn dda",
+          pronunciation: "os GWELL-ooch un THAH",
+          prefix: "os (如果)",
+          suffix: "da (好)",
+          memoryHint: "字面意思：'如果你觉得好'，比较正式的说法",
+          extensions: {
+            synonyms: ["if you please"],
+            antonyms: ["demand"],
+            collocations: ["please sit down", "please wait"],
+            sentence: "Coffi, os gwelwch yn dda. (请给我咖啡。)",
+            sentenceTts: "Coffi, os gwelwch yn dda."
+          },
+          ttsText: "os gwelwch yn dda",
+          category: "courtesy"
         }
       ];
       
@@ -456,6 +557,7 @@ class WelshLearningApp {
     const moduleTitles = {
       dailyWords: '每日威尔士语词汇',
       wordList: '威尔士语单词列表',
+      search: '搜索翻译',
       commonPhrases: '常用短语',
       pronunciation: '发音练习',
       culture: '威尔士文化'
@@ -469,6 +571,8 @@ class WelshLearningApp {
       this.showDailyWords();
     } else if (moduleName === 'wordList') {
       this.showWordList();
+    } else if (moduleName === 'search') {
+      this.showSearch();
     } else {
       this.showComingSoon(moduleName);
     }
@@ -1311,6 +1415,652 @@ class WelshLearningApp {
         this.showToast('例句发音播放失败', 'error');
       });
     }
+  }
+  
+  // 显示搜索翻译界面
+  showSearch() {
+    console.log('🔍 显示搜索翻译界面');
+    
+    const container = document.getElementById('moduleContent');
+    if (!container) return;
+    
+    container.innerHTML = `
+      <div class="search-container">
+        <div class="search-header" style="text-align: center; margin-bottom: 30px;">
+          <h3 style="color: var(--welsh-red); margin-bottom: 15px;">
+            <i class="fas fa-search"></i> 威尔士语搜索翻译
+          </h3>
+          <p style="color: #666; margin-bottom: 25px;">
+            输入中文或英文，搜索威尔士语翻译、发音和例句
+          </p>
+        </div>
+        
+        <div class="search-box" style="
+          max-width: 600px;
+          margin: 0 auto 30px;
+          background: white;
+          padding: 25px;
+          border-radius: 15px;
+          box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        ">
+          <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <input type="text" 
+                   id="searchInput" 
+                   placeholder="输入中文或英文，如：hello、你好、咖啡..."
+                   style="
+                     flex: 1;
+                     padding: 12px 15px;
+                     border: 2px solid #dee2e6;
+                     border-radius: 8px;
+                     font-size: 1rem;
+                     outline: none;
+                     transition: border-color 0.3s;
+                   "
+                   onfocus="this.style.borderColor='var(--welsh-green)'"
+                   onblur="this.style.borderColor='#dee2e6'">
+            <button id="searchButton" style="
+              padding: 12px 25px;
+              background: var(--welsh-green);
+              color: white;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: bold;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              transition: all 0.3s;
+            ">
+              <i class="fas fa-search"></i> 搜索
+            </button>
+          </div>
+          
+          <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+            <button class="quick-search" data-search="hello" style="
+              padding: 8px 15px;
+              background: #e8f4fc;
+              border: 1px solid #3498db;
+              color: #3498db;
+              border-radius: 20px;
+              cursor: pointer;
+              font-size: 0.9rem;
+              transition: all 0.3s;
+            ">
+              你好
+            </button>
+            <button class="quick-search" data-search="thank you" style="
+              padding: 8px 15px;
+              background: #e8f4fc;
+              border: 1px solid #3498db;
+              color: #3498db;
+              border-radius: 20px;
+              cursor: pointer;
+              font-size: 0.9rem;
+              transition: all 0.3s;
+            ">
+              谢谢
+            </button>
+            <button class="quick-search" data-search="water" style="
+              padding: 8px 15px;
+              background: #e8f4fc;
+              border: 1px solid #3498db;
+              color: #3498db;
+              border-radius: 20px;
+              cursor: pointer;
+              font-size: 0.9rem;
+              transition: all 0.3s;
+            ">
+              水
+            </button>
+            <button class="quick-search" data-search="good morning" style="
+              padding: 8px 15px;
+              background: #e8f4fc;
+              border: 1px solid #3498db;
+              color: #3498db;
+              border-radius: 20px;
+              cursor: pointer;
+              font-size: 0.9rem;
+              transition: all 0.3s;
+            ">
+              早上好
+            </button>
+            <button class="quick-search" data-search="coffee" style="
+              padding: 8px 15px;
+              background: #e8f4fc;
+              border: 1px solid #3498db;
+              color: #3498db;
+              border-radius: 20px;
+              cursor: pointer;
+              font-size: 0.9rem;
+              transition: all 0.3s;
+            ">
+              咖啡
+            </button>
+          </div>
+        </div>
+        
+        <div id="searchResults" style="
+          max-width: 800px;
+          margin: 0 auto;
+        ">
+          <div style="text-align: center; padding: 40px; color: #999;">
+            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px;"></i>
+            <p>输入中文或英文开始搜索</p>
+          </div>
+        </div>
+        
+        <div class="search-help" style="
+          max-width: 600px;
+          margin: 40px auto 0;
+          padding: 20px;
+          background: #f8f9fa;
+          border-radius: 10px;
+          border-left: 4px solid var(--welsh-gold);
+        ">
+          <h4 style="color: var(--welsh-red); margin-bottom: 10px;">
+            <i class="fas fa-info-circle"></i> 使用提示
+          </h4>
+          <ul style="color: #666; line-height: 1.6; padding-left: 20px;">
+            <li>支持中文、英文搜索</li>
+            <li>点击搜索结果可播放威尔士语发音</li>
+            <li>点击"听例句"按钮播放完整句子</li>
+            <li>点击快速搜索按钮快速查找常用词</li>
+            <li>当前词库包含 ${this.data.dailyWords.length} 个单词</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    
+    // 绑定搜索事件
+    this.bindSearchEvents();
+  }
+  
+  // 绑定搜索事件
+  bindSearchEvents() {
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const quickSearchButtons = document.querySelectorAll('.quick-search');
+    
+    // 搜索按钮点击
+    searchButton.addEventListener('click', () => {
+      this.performSearch(searchInput.value.trim());
+    });
+    
+    // 回车键搜索
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.performSearch(searchInput.value.trim());
+      }
+    });
+    
+    // 快速搜索按钮
+    quickSearchButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const searchText = e.target.dataset.search;
+        searchInput.value = searchText;
+        this.performSearch(searchText);
+      });
+    });
+  }
+  
+  // 执行搜索
+  performSearch(query) {
+    if (!query) {
+      this.showToast('请输入搜索内容', 'warning');
+      return;
+    }
+    
+    console.log('🔍 搜索:', query);
+    
+    // 清空输入框焦点
+    document.getElementById('searchInput').blur();
+    
+    // 显示搜索中状态
+    const resultsContainer = document.getElementById('searchResults');
+    resultsContainer.innerHTML = `
+      <div style="text-align: center; padding: 30px;">
+        <div class="spinner" style="margin: 0 auto 20px;"></div>
+        <p>搜索中: "${query}"</p>
+      </div>
+    `;
+    
+    // 模拟搜索延迟
+    setTimeout(() => {
+      const results = this.searchWords(query);
+      this.displaySearchResults(results, query);
+    }, 300);
+  }
+  
+  // 搜索单词
+  searchWords(query) {
+    const lowerQuery = query.toLowerCase().trim();
+    
+    // 如果查询为空，返回空数组
+    if (!lowerQuery) return [];
+    
+    // 搜索逻辑：按优先级匹配
+    const results = [];
+    
+    this.data.dailyWords.forEach(word => {
+      let score = 0;
+      
+      // 完全匹配（最高优先级）
+      if (word.english.toLowerCase() === lowerQuery) score += 100;
+      if (word.chinese === lowerQuery) score += 100;
+      if (word.welsh.toLowerCase() === lowerQuery) score += 100;
+      
+      // 包含匹配
+      if (word.english.toLowerCase().includes(lowerQuery)) score += 50;
+      if (word.chinese.includes(lowerQuery)) score += 50;
+      if (word.welsh.toLowerCase().includes(lowerQuery)) score += 50;
+      
+      // 发音匹配
+      if (word.pronunciation.toLowerCase().includes(lowerQuery)) score += 30;
+      
+      // 同义词匹配
+      if (word.extensions?.synonyms) {
+        const synonymMatch = word.extensions.synonyms.some(syn => 
+          syn.toLowerCase().includes(lowerQuery)
+        );
+        if (synonymMatch) score += 20;
+      }
+      
+      // 类别匹配
+      if (word.category.toLowerCase().includes(lowerQuery)) score += 10;
+      
+      // 如果分数大于0，添加到结果
+      if (score > 0) {
+        results.push({
+          word: word,
+          score: score,
+          matchType: this.getMatchType(word, lowerQuery)
+        });
+      }
+    });
+    
+    // 按分数排序
+    results.sort((a, b) => b.score - a.score);
+    
+    return results;
+  }
+  
+  // 获取匹配类型
+  getMatchType(word, query) {
+    if (word.english.toLowerCase() === query) return '英文完全匹配';
+    if (word.chinese === query) return '中文完全匹配';
+    if (word.welsh.toLowerCase() === query) return '威尔士语完全匹配';
+    if (word.english.toLowerCase().includes(query)) return '英文包含匹配';
+    if (word.chinese.includes(query)) return '中文包含匹配';
+    if (word.welsh.toLowerCase().includes(query)) return '威尔士语包含匹配';
+    return '相关匹配';
+  }
+  
+  // 显示搜索结果
+  displaySearchResults(results, query) {
+    const resultsContainer = document.getElementById('searchResults');
+    
+    if (results.length === 0) {
+      resultsContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;">
+            <i class="fas fa-search-minus"></i>
+          </div>
+          <h4 style="color: #e74c3c; margin-bottom: 15px;">未找到结果</h4>
+          <p style="margin-bottom: 20px; color: #666;">
+            未找到与 "<strong>${query}</strong>" 相关的威尔士语单词
+          </p>
+          <div style="color: #999; font-size: 0.9rem;">
+            <p>尝试：</p>
+            <ul style="text-align: left; display: inline-block; margin-top: 10px;">
+              <li>使用更简单的词汇</li>
+              <li>检查拼写是否正确</li>
+              <li>尝试英文或中文搜索</li>
+              <li>使用上面的快速搜索按钮</li>
+            </ul>
+          </div>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = `
+      <div class="search-results-header" style="margin-bottom: 25px;">
+        <h4 style="color: var(--welsh-green); margin-bottom: 10px;">
+          <i class="fas fa-check-circle"></i> 找到 ${results.length} 个结果
+        </h4>
+        <p style="color: #666;">
+          搜索 "<strong>${query}</strong>" 的结果
+        </p>
+      </div>
+    `;
+    
+    // 显示所有结果
+    results.forEach((result, index) => {
+      const word = result.word;
+      const wordStatus = this.getWordStatus(word.id);
+      const statusColor = wordStatus === 'mastered' ? '#27ae60' : 
+                        wordStatus === 'reviewed' ? '#f39c12' : '#95a5a6';
+      const statusText = wordStatus === 'mastered' ? '已掌握' : 
+                       wordStatus === 'reviewed' ? '需复习' : '未学习';
+      
+      html += `
+        <div class="search-result-card" style="
+          background: white;
+          border-radius: 10px;
+          padding: 25px;
+          margin-bottom: 20px;
+          box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+          border-left: 4px solid var(--welsh-red);
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="
+                  display: inline-block;
+                  width: 30px;
+                  height: 30px;
+                  background: var(--welsh-red);
+                  color: white;
+                  border-radius: 50%;
+                  text-align: center;
+                  line-height: 30px;
+                  font-weight: bold;
+                ">${index + 1}</span>
+                <span style="color: #999; font-size: 0.9rem;">${result.matchType}</span>
+              </div>
+              
+              <div style="display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap;">
+                <div>
+                  <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">英文</div>
+                  <div style="font-size: 1.3rem; font-weight: bold;">${word.english}</div>
+                </div>
+                
+                <div style="font-size: 1.5rem; color: var(--welsh-gold);">→</div>
+                
+                <div>
+                  <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">威尔士语</div>
+                  <div style="font-size: 1.8rem; font-weight: bold; color: var(--welsh-red);">${word.welsh}</div>
+                </div>
+                
+                <div style="font-size: 1.5rem; color: var(--welsh-gold);">→</div>
+                
+                <div>
+                  <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">中文</div>
+                  <div style="font-size: 1.3rem; font-weight: bold;">${word.chinese}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="text-align: right;">
+              <span style="
+                display: inline-block;
+                padding: 4px 12px;
+                background: ${statusColor};
+                color: white;
+                border-radius: 15px;
+                font-size: 0.85rem;
+                margin-bottom: 10px;
+              ">${statusText}</span>
+              <div style="color: #999; font-size: 0.85rem;">匹配度: ${result.score}分</div>
+            </div>
+          </div>
+          
+          <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+          ">
+            <div class="result-detail" style="
+              background: #f8f9fa;
+              padding: 15px;
+              border-radius: 8px;
+            ">
+              <div style="font-weight: bold; color: var(--welsh-green); margin-bottom: 8px;">
+                <i class="fas fa-volume-up"></i> 发音
+              </div>
+              <div style="color: #666; margin-bottom: 10px;">${word.pronunciation}</div>
+              <button class="btn-play-search-audio" data-word-id="${word.id}" style="
+                padding: 8px 15px;
+                background: var(--welsh-green);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+              ">
+                <i class="fas fa-play"></i> 播放威尔士语发音
+              </button>
+            </div>
+            
+            <div class="result-detail" style="
+              background: #f8f9fa;
+              padding: 15px;
+              border-radius: 8px;
+            ">
+              <div style="font-weight: bold; color: var(--welsh-green); margin-bottom: 8px;">
+                <i class="fas fa-book"></i> 词根词缀
+              </div>
+              <div style="color: #666;">
+                ${word.prefix ? `<div>前缀: ${word.prefix}</div>` : ''}
+                ${word.suffix ? `<div>后缀: ${word.suffix}</div>` : ''}
+                ${!word.prefix && !word.suffix ? '<div>无特殊词根词缀</div>' : ''}
+              </div>
+            </div>
+            
+            <div class="result-detail" style="
+              background: #f8f9fa;
+              padding: 15px;
+              border-radius: 8px;
+            ">
+              <div style="font-weight: bold; color: var(--welsh-green); margin-bottom: 8px;">
+                <i class="fas fa-lightbulb"></i> 记忆技巧
+              </div>
+              <div style="color: #666;">${word.memoryHint}</div>
+            </div>
+          </div>
+          
+          ${word.extensions?.sentence ? `
+            <div class="result-example" style="
+              background: #e8f4fc;
+              padding: 20px;
+              border-radius: 8px;
+              margin-top: 20px;
+              border-left: 4px solid var(--welsh-blue);
+            ">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div style="font-weight: bold; color: var(--welsh-blue);">
+                  <i class="fas fa-comment"></i> 例句
+                </div>
+                ${word.extensions.sentenceTts ? `
+                  <button class="btn-play-search-sentence" data-word-id="${word.id}" style="
+                    padding: 6px 12px;
+                    background: var(--welsh-blue);
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    font-size: 0.9rem;
+                  ">
+                    <i class="fas fa-volume-up"></i> 听例句
+                  </button>
+                ` : ''}
+              </div>
+              <div style="color: #333; font-style: italic;">${word.extensions.sentence}</div>
+            </div>
+          ` : ''}
+          
+          ${word.extensions?.synonyms || word.extensions?.antonyms ? `
+            <div class="result-relations" style="
+              display: flex;
+              gap: 20px;
+              margin-top: 15px;
+              flex-wrap: wrap;
+            ">
+              ${word.extensions?.synonyms ? `
+                <div>
+                  <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">同义词</div>
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    ${word.extensions.synonyms.map(syn => `
+                      <span style="
+                        padding: 4px 10px;
+                        background: #d4edda;
+                        color: #155724;
+                        border-radius: 15px;
+                        font-size: 0.85rem;
+                      ">${syn}</span>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+              
+              ${word.extensions?.antonyms ? `
+                <div>
+                  <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">反义词</div>
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    ${word.extensions.antonyms.map(ant => `
+                      <span style="
+                        padding: 4px 10px;
+                        background: #f8d7da;
+                        color: #721c24;
+                        border-radius: 15px;
+                        font-size: 0.85rem;
+                      ">${ant}</span>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+          
+          <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+          ">
+            <div style="color: #999; font-size: 0.85rem;">
+              <i class="fas fa-tag"></i> 类别: ${this.getCategoryName(word.category)}
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-mark-review-search" data-word-id="${word.id}" style="
+                padding: 6px 12px;
+                background: #f39c12;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+              ">
+                <i class="fas fa-redo"></i> 标记为需复习
+              </button>
+              
+              <button class="btn-mark-mastered-search" data-word-id="${word.id}" style="
+                padding: 6px 12px;
+                background: #27ae60;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+              ">
+                <i class="fas fa-check-circle"></i> 标记为已掌握
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    
+    resultsContainer.innerHTML = html;
+    
+    // 绑定搜索结果中的事件
+    this.bindSearchResultEvents();
+  }
+  
+  // 绑定搜索结果事件
+  bindSearchResultEvents() {
+    // 绑定发音按钮
+    document.querySelectorAll('.btn-play-search-audio').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const wordId = parseInt(e.target.closest('.btn-play-search-audio').dataset.wordId);
+        const word = this.data.dailyWords.find(w => w.id === wordId);
+        
+        if (word) {
+          this.playWordAudio(word);
+          
+          // 视觉反馈
+          const originalHTML = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 播放中';
+          button.disabled = true;
+          
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+          }, 2000);
+        }
+      });
+    });
+    
+    // 绑定例句发音按钮
+    document.querySelectorAll('.btn-play-search-sentence').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const wordId = parseInt(e.target.closest('.btn-play-search-sentence').dataset.wordId);
+        const word = this.data.dailyWords.find(w => w.id === wordId);
+        
+        if (word) {
+          this.playSentenceAudio(word);
+        }
+      });
+    });
+    
+    // 绑定标记复习按钮
+    document.querySelectorAll('.btn-mark-review-search').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const wordId = parseInt(e.target.closest('.btn-mark-review-search').dataset.wordId);
+        this.markWordForReview(wordId);
+        this.showToast('已标记为需复习', 'success');
+        
+        // 更新UI
+        setTimeout(() => {
+          const searchInput = document.getElementById('searchInput');
+          if (searchInput.value.trim()) {
+            this.performSearch(searchInput.value.trim());
+          }
+        }, 500);
+      });
+    });
+    
+    // 绑定标记掌握按钮
+    document.querySelectorAll('.btn-mark-mastered-search').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const wordId = parseInt(e.target.closest('.btn-mark-mastered-search').dataset.wordId);
+        this.markWordAsMastered(wordId);
+        this.showToast('已标记为已掌握', 'success');
+        
+        // 更新UI
+        setTimeout(() => {
+          const searchInput = document.getElementById('searchInput');
+          if (searchInput.value.trim()) {
+            this.performSearch(searchInput.value.trim());
+          }
+        }, 500);
+      });
+    });
   }
   
   showComingSoon(moduleName) {

@@ -566,6 +566,139 @@ body {
   color: var(--welsh-dark);
 }
 
+/* 搜索功能样式 */
+.search-result-card {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  border-left: 4px solid var(--welsh-red);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.search-result-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+.btn-play-search-audio {
+  padding: 8px 15px;
+  background: var(--welsh-green);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btn-play-search-audio:hover {
+  background: var(--welsh-red);
+  transform: translateY(-2px);
+}
+
+.btn-play-search-sentence {
+  padding: 6px 12px;
+  background: var(--welsh-blue);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.btn-play-search-sentence:hover {
+  background: var(--welsh-red);
+  transform: translateY(-2px);
+}
+
+.btn-mark-review-search {
+  padding: 6px 12px;
+  background: #f39c12;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s;
+}
+
+.btn-mark-review-search:hover {
+  background: #e67e22;
+  transform: translateY(-2px);
+}
+
+.btn-mark-mastered-search {
+  padding: 6px 12px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s;
+}
+
+.btn-mark-mastered-search:hover {
+  background: #229954;
+  transform: translateY(-2px);
+}
+
+.quick-search {
+  padding: 8px 15px;
+  background: #e8f4fc;
+  border: 1px solid #3498db;
+  color: #3498db;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.quick-search:hover {
+  background: #3498db;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.result-detail {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.result-example {
+  background: #e8f4fc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border-left: 4px solid var(--welsh-blue);
+}
+
+/* 搜索加载动画 */
+@keyframes searchPulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.search-loading {
+  animation: searchPulse 1.5s infinite;
+}
+
 .word-list-summary {
   background: #f8f9fa;
   padding: 20px;
