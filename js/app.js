@@ -450,6 +450,7 @@ class WelshLearningApp {
     // 更新模块标题
     const moduleTitles = {
       dailyWords: '每日威尔士语词汇',
+      wordList: '威尔士语单词列表',
       commonPhrases: '常用短语',
       pronunciation: '发音练习',
       culture: '威尔士文化'
@@ -461,6 +462,8 @@ class WelshLearningApp {
     // 显示对应内容
     if (moduleName === 'dailyWords') {
       this.showDailyWords();
+    } else if (moduleName === 'wordList') {
+      this.showWordList();
     } else {
       this.showComingSoon(moduleName);
     }
@@ -1028,6 +1031,208 @@ class WelshLearningApp {
         setTimeout(() => toast.remove(), 300);
       }
     }, 3000);
+  }
+  
+  // 显示单词列表
+  showWordList() {
+    console.log('📋 显示单词列表');
+    
+    const container = document.getElementById('moduleContent');
+    if (!container) return;
+    
+    if (this.data.dailyWords.length === 0) {
+      container.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>加载单词数据中...</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // 按类别分组
+    const wordsByCategory = {};
+    this.data.dailyWords.forEach(word => {
+      if (!wordsByCategory[word.category]) {
+        wordsByCategory[word.category] = [];
+      }
+      wordsByCategory[word.category].push(word);
+    });
+    
+    let html = `
+      <div class="word-list-container">
+        <div class="word-list-header">
+          <h3 style="color: var(--welsh-red); margin-bottom: 20px;">
+            <i class="fas fa-book"></i> 威尔士语单词库
+          </h3>
+          <p style="margin-bottom: 25px; color: #666;">
+            共 ${this.data.dailyWords.length} 个单词，按类别分组。点击发音按钮听威尔士语发音。
+          </p>
+        </div>
+    `;
+    
+    // 为每个类别创建表格
+    Object.keys(wordsByCategory).forEach(category => {
+      const words = wordsByCategory[category];
+      const categoryName = this.getCategoryName(category);
+      
+      html += `
+        <div class="category-section" style="margin-bottom: 30px;">
+          <h4 style="color: var(--welsh-green); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--welsh-gold);">
+            <i class="fas fa-folder"></i> ${categoryName} (${words.length}个)
+          </h4>
+          
+          <div class="word-table-container" style="overflow-x: auto;">
+            <table class="word-table" style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #f8f9fa;">
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">英语</th>
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">威尔士语</th>
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">发音</th>
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">类别</th>
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+      
+      words.forEach((word, index) => {
+        const wordStatus = this.getWordStatus(word.id);
+        const statusColor = wordStatus === 'mastered' ? '#27ae60' : 
+                          wordStatus === 'reviewed' ? '#f39c12' : '#95a5a6';
+        const statusText = wordStatus === 'mastered' ? '已掌握' : 
+                         wordStatus === 'reviewed' ? '需复习' : '未学习';
+        
+        html += `
+          <tr style="border-bottom: 1px solid #eee; ${index % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+            <td style="padding: 12px; font-weight: bold;">${word.english}</td>
+            <td style="padding: 12px; color: var(--welsh-red); font-weight: bold; font-size: 1.1rem;">${word.welsh}</td>
+            <td style="padding: 12px; color: #666; font-style: italic;">${word.pronunciation}</td>
+            <td style="padding: 12px;">
+              <span style="display: inline-block; padding: 4px 10px; background: #e8f4fc; border-radius: 15px; font-size: 0.85rem;">
+                ${categoryName}
+              </span>
+            </td>
+            <td style="padding: 12px;">
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn-play-audio" data-word-id="${word.id}" style="
+                  padding: 6px 12px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                ">
+                  <i class="fas fa-volume-up"></i> 发音
+                </button>
+                <span style="padding: 4px 10px; background: ${statusColor}; color: white; border-radius: 15px; font-size: 0.85rem;">
+                  ${statusText}
+                </span>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `
+        <div class="word-list-summary" style="
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 10px;
+          margin-top: 30px;
+          border-left: 4px solid var(--welsh-red);
+        ">
+          <h4 style="color: var(--welsh-red); margin-bottom: 10px;">
+            <i class="fas fa-chart-bar"></i> 学习统计
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+            <div style="text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: var(--welsh-red);">${this.data.dailyWords.length}</div>
+              <div style="color: #666; font-size: 0.9rem;">总单词数</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #27ae60;">${this.progress?.mastered || 0}</div>
+              <div style="color: #666; font-size: 0.9rem;">已掌握</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #f39c12;">${this.progress?.reviewed || 0}</div>
+              <div style="color: #666; font-size: 0.9rem;">需复习</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #3498db;">${this.progress?.streak || 0}</div>
+              <div style="color: #666; font-size: 0.9rem;">连续天数</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    // 绑定发音按钮事件
+    this.bindWordListAudioButtons();
+  }
+  
+  // 获取类别名称
+  getCategoryName(categoryKey) {
+    const categoryNames = {
+      'greetings': '问候语',
+      'courtesy': '礼貌用语',
+      'basics': '基础词汇',
+      'food': '餐饮食物',
+      'numbers': '数字',
+      'default': '其他'
+    };
+    
+    return categoryNames[categoryKey] || categoryKey;
+  }
+  
+  // 绑定单词列表发音按钮
+  bindWordListAudioButtons() {
+    document.querySelectorAll('.btn-play-audio').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const wordId = parseInt(e.target.closest('.btn-play-audio').dataset.wordId);
+        const word = this.data.dailyWords.find(w => w.id === wordId);
+        
+        if (word) {
+          this.playWordAudio(word);
+          
+          // 视觉反馈
+          const originalHTML = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 播放中';
+          button.disabled = true;
+          
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+          }, 2000);
+        }
+      });
+    });
+  }
+  
+  // 播放单词音频
+  playWordAudio(word) {
+    if (!word || !word.ttsText) return;
+    
+    const ttsUrl = `${this.config.api.tts}?text=${encodeURIComponent(word.ttsText)}&voice=${this.config.tts.voice}`;
+    const audio = new Audio(ttsUrl);
+    
+    audio.play().catch(err => {
+      console.error('❌ 音频播放失败:', err);
+      this.showToast('发音播放失败，请检查网络连接', 'error');
+    });
   }
   
   showComingSoon(moduleName) {

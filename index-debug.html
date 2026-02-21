@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>威尔士学习网站诊断</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    .pass { background: #d4edda; }
+    .fail { background: #f8d7da; }
+    .loading { color: #856404; background: #fff3cd; }
+  </style>
+</head>
+<body>
+  <h1>威尔士学习网站诊断工具</h1>
+  
+  <div class="test" id="test1">
+    <h3>1. 页面加载测试</h3>
+    <div id="test1-result">测试中...</div>
+  </div>
+  
+  <div class="test" id="test2">
+    <h3>2. JavaScript文件测试</h3>
+    <div id="test2-result">测试中...</div>
+  </div>
+  
+  <div class="test" id="test3">
+    <h3>3. 数据初始化测试</h3>
+    <div id="test3-result">测试中...</div>
+  </div>
+  
+  <div class="test" id="test4">
+    <h3>4. TTS服务测试</h3>
+    <div id="test4-result">测试中...</div>
+  </div>
+  
+  <div class="test" id="test5">
+    <h3>5. 控制台错误检查</h3>
+    <div id="test5-result">请查看浏览器控制台 (F12)</div>
+  </div>
+  
+  <script>
+    // 测试1: 页面加载
+    setTimeout(() => {
+      document.getElementById('test1-result').innerHTML = 
+        '✅ 页面加载完成<br>标题: ' + document.title;
+      document.getElementById('test1').classList.add('pass');
+    }, 100);
+    
+    // 测试2: JavaScript文件
+    const jsFiles = ['js/app.js', 'js/api-client.js'];
+    let jsLoaded = 0;
+    
+    jsFiles.forEach(file => {
+      const script = document.createElement('script');
+      script.src = file;
+      script.onload = () => {
+        jsLoaded++;
+        if (jsLoaded === jsFiles.length) {
+          document.getElementById('test2-result').innerHTML = 
+            '✅ 所有JS文件加载完成';
+          document.getElementById('test2').classList.add('pass');
+        }
+      };
+      script.onerror = () => {
+        document.getElementById('test2-result').innerHTML = 
+            '❌ 文件加载失败: ' + file;
+        document.getElementById('test2').classList.add('fail');
+      };
+      document.head.appendChild(script);
+    });
+    
+    // 测试3: 数据初始化
+    setTimeout(() => {
+      if (window.WelshLearningApp) {
+        document.getElementById('test3-result').innerHTML = 
+          '✅ WelshLearningApp类已定义';
+        document.getElementById('test3').classList.add('pass');
+      } else {
+        document.getElementById('test3-result').innerHTML = 
+          '❌ WelshLearningApp类未定义';
+        document.getElementById('test3').classList.add('fail');
+      }
+    }, 2000);
+    
+    // 测试4: TTS服务
+    fetch('https://web-x0ya.onrender.com/health')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('test4-result').innerHTML = 
+          '✅ TTS服务正常: ' + JSON.stringify(data);
+        document.getElementById('test4').classList.add('pass');
+      })
+      .catch(error => {
+        document.getElementById('test4-result').innerHTML = 
+          '❌ TTS服务连接失败: ' + error.message;
+        document.getElementById('test4').classList.add('fail');
+      });
+  </script>
+</body>
+</html>

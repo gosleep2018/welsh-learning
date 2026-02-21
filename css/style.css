@@ -458,6 +458,82 @@ body {
   box-shadow: none !important;
 }
 
+/* 单词列表表格 */
+.word-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.word-table th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  color: var(--welsh-dark);
+}
+
+.word-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.word-table tr:hover {
+  background: #f0f7ff;
+}
+
+.word-table tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.category-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.category-section h4 {
+  color: var(--welsh-green);
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--welsh-gold);
+}
+
+.btn-play-audio {
+  padding: 6px 12px;
+  background: var(--welsh-green);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s;
+}
+
+.btn-play-audio:hover {
+  background: var(--welsh-red);
+  transform: translateY(-2px);
+}
+
+.btn-play-audio:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.word-list-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 30px;
+  border-left: 4px solid var(--welsh-red);
+}
+
 /* 动画 */
 @keyframes slideIn {
   from {
