@@ -1,0 +1,40 @@
+{
+  "name": "welsh-learning",
+  "version": "1.0.0",
+  "description": "独立威尔士语学习网站 - 面向英语使用者的快速入门平台",
+  "author": "Boss",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gosleep2018/welsh-learning"
+  },
+  "features": [
+    "每日10词学习流",
+    "词根词缀分析",
+    "记忆技巧（联想/图像/口诀）",
+    "扩展学习（同义词/反义词/搭配）",
+    "Azure TTS发音集成",
+    "学习强度调节",
+    "进度跟踪与复习",
+    "威尔士文化艺术内容"
+  ],
+  "targetAudience": "英语熟练者，想快速入门威尔士语",
+  "learningGoals": [
+    "4周掌握100高频表达",
+    "能进行3分钟基础对话",
+    "掌握核心发音规则",
+    "了解威尔士文化/艺术"
+  ],
+  "techStack": {
+    "frontend": "HTML5, CSS3, JavaScript (ES6+)",
+    "tts": "Azure Speech Services",
+    "deployment": "GitHub Pages",
+    "contentManagement": "JSON + 自动更新脚本"
+  },
+  "paths": {
+    "public": "./public",
+    "data": "./data",
+    "scripts": "./scripts",
+    "deploy": "./deploy"
+  }
+}
