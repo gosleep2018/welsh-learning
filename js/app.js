@@ -836,7 +836,12 @@ class WelshLearningApp {
             antonyms: ["tomorrow"],
             collocations: ["yesterday I", "yesterday we"],
             sentence: "Roedd hi'n braf ddoe. (昨天天气很好。)",
-            sentenceT
+            sentenceTts: "Roedd hi'n braf ddoe."
+          },
+          ttsText: "ddoe",
+          category: "time"
+        }
+      ];
       
       // 确保数据不为空
       this.data.dailyWords = sampleWords;
