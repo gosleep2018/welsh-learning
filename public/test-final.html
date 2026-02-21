@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ 最终测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        .success-badge {
+            background: #4ecdc4;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(78,205,196,0.3);
+        }
+        h1 {
+            color: #ffd166;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid rgba(78,205,196,0.3);
+        }
+        .test-button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 15px;
+            min-width: 250px;
+            min-height: 70px;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .test-button:active {
+            background: #e55a5a;
+            transform: scale(0.98);
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            text-align: left;
+        }
+        .device-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-badge">
+            ✅ 最终测试页面 - 应该能访问
+        </div>
+        
+        <h1>最终测试</h1>
+        <p style="margin-bottom: 30px; font-size: 1.1rem;">
+            这个页面应该能正常访问。如果能看到这个文字，说明部署配置已修复。
+        </p>
+        
+        <div class="test-section">
+            <h2>📱 功能测试</h2>
+            
+            <button class="test-button" id="testBtn1">
+                点击测试按钮 1
+            </button>
+            
+            <button class="test-button" id="testBtn2">
+                点击测试按钮 2
+            </button>
+            
+            <div class="result" id="result">
+                <div style="color: #4ecdc4; margin-bottom: 10px;">测试结果:</div>
+                <div>页面加载完成 ✅</div>
+            </div>
+        </div>
+        
+        <div class="device-info" id="deviceInfo">
+            <div style="color: #ffd166; margin-bottom: 10px;">📊 设备信息:</div>
+            <div>检测中...</div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+            <h3>🔧 技术信息</h3>
+            <div style="margin-top: 15px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                <div>• 页面: /test-final.html</div>
+                <div>• 部署: Render.com 静态网站</div>
+                <div>• 时间: 2026-02-21 22:45</div>
+                <div>• 状态: 最终测试版本</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 最终测试脚本
+        console.log('✅ 最终测试页面加载');
+        
+        // 更新结果
+        function updateResult(message) {
+            const result = document.getElementById('result');
+            const div = document.createElement('div');
+            div.textContent = `• ${message}`;
+            result.appendChild(div);
+        }
+        
+        // 更新设备信息
+        function updateDeviceInfo() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isiPhone = /iPhone/.test(navigator.userAgent);
+            const hasTouch = 'ontouchstart' in window;
+            
+            document.getElementById('deviceInfo').innerHTML = `
+                <div style="color: #ffd166; margin-bottom: 10px;">📊 设备信息:</div>
+                <div>系统: ${isIOS ? 'iOS' : '非iOS'}</div>
+                <div>设备: ${isiPhone ? 'iPhone' : '其他'}</div>
+                <div>触摸支持: ${hasTouch ? '✅ 是' : '❌ 否'}</div>
+                <div>屏幕: ${window.innerWidth}×${window.innerHeight}</div>
+                <div>URL: ${window.location.href}</div>
+            `;
+            
+            updateResult(`设备: ${isIOS ? 'iOS' : '非iOS'} ${isiPhone ? '(iPhone)' : ''}`);
+            updateResult(`触摸: ${hasTouch ? '支持' : '不支持'}`);
+        }
+        
+        // 测试按钮1
+        document.getElementById('testBtn1').onclick = function() {
+            console.log('✅ 测试按钮1点击');
+            updateResult('测试按钮1点击成功');
+            
+            this.textContent = '✅ 成功';
+            setTimeout(() => {
+                this.textContent = '点击测试按钮 1';
+            }, 1000);
+        };
+        
+        // 测试按钮2
+        document.getElementById('testBtn2').onclick = function() {
+            console.log('✅ 测试按钮2点击');
+            updateResult('测试按钮2点击成功');
+            
+            this.textContent = '✅ 成功';
+            setTimeout(() => {
+                this.textContent = '点击测试按钮 2';
+            }, 1000);
+        };
+        
+        // 页面加载
+        window.onload = function() {
+            console.log('✅ 最终测试页面加载完成');
+            updateResult('页面完全加载完成');
+            
+            // 更新设备信息
+            updateDeviceInfo();
+            
+            // 确保按钮可点击
+            document.querySelectorAll('.test-button').forEach(btn => {
+                btn.style.cursor = 'pointer';
+            });
+            
+            // 添加触摸反馈
+            if ('ontouchstart' in window) {
+                document.querySelectorAll('.test-button').forEach(btn => {
+                    btn.addEventListener('touchstart', function() {
+                        this.style.opacity = '0.8';
+                    });
+                    btn.addEventListener('touchend', function() {
+                        this.style.opacity = '';
+                    });
+                });
+            }
+        };
+        
+        // 错误处理
+        window.onerror = function(message) {
+            console.error('❌ 错误:', message);
+            updateResult(`错误: ${message}`);
+        };
+        
+        console.log('✅ 最终测试脚本初始化完成');
+    </script>
+</body>
+</html>
