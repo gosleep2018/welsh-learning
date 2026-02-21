@@ -1053,7 +1053,7 @@ class WelshLearningApp {
       wordList: '威尔士语单词列表',
       search: '搜索翻译',
       commonPhrases: '日常实用短语',
-      pronunciation: '发音练习',
+      pronunciation: '威尔士语发音练习',
       culture: '威尔士文化（政府交流背景）'
     };
     
@@ -1071,6 +1071,8 @@ class WelshLearningApp {
       this.showCulture();
     } else if (moduleName === 'commonPhrases') {
       this.showCommonPhrases();
+    } else if (moduleName === 'pronunciation') {
+      this.showPronunciation();
     } else {
       this.showComingSoon(moduleName);
     }
@@ -3365,6 +3367,373 @@ class WelshLearningApp {
     audio.play().catch(err => {
       console.error('❌ 短语音频播放失败:', err);
       this.showToast('音频播放失败', 'error');
+    });
+  }
+  
+  // 显示发音练习模块
+  showPronunciation() {
+    console.log('🔊 显示发音练习模块');
+    
+    const container = document.getElementById('moduleContent');
+    if (!container) return;
+    
+    container.innerHTML = `
+      <div class="pronunciation-container">
+        <div class="pronunciation-header" style="text-align: center; margin-bottom: 40px;">
+          <h3 style="color: var(--welsh-red); margin-bottom: 15px;">
+            <i class="fas fa-volume-up"></i> 威尔士语发音练习
+          </h3>
+          <p style="color: #666; margin-bottom: 25px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            学习威尔士语基础发音规则，练习常见音素和单词发音。
+          </p>
+          <div style="
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+          ">
+            <span style="padding: 6px 12px; background: var(--welsh-red); color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-microphone"></i> 音素练习
+            </span>
+            <span style="padding: 6px 12px; background: var(--welsh-green); color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-headphones"></i> 听力训练
+            </span>
+            <span style="padding: 6px 12px; background: var(--welsh-blue); color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-repeat"></i> 跟读练习
+            </span>
+          </div>
+        </div>
+        
+        <div class="pronunciation-warning" style="
+          background: #fff8e1;
+          padding: 20px;
+          border-radius: 10px;
+          margin-bottom: 30px;
+          border-left: 4px solid #ffc107;
+        ">
+          <h4 style="color: #e67e22; margin-bottom: 10px;">
+            <i class="fas fa-info-circle"></i> 功能说明
+          </h4>
+          <p style="color: #666; margin-bottom: 15px;">
+            发音练习模块正在积极开发中。当前版本提供基础发音指导，完整功能（录音、评分、个性化反馈）将在后续版本推出。
+          </p>
+          <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <span style="padding: 6px 12px; background: #e67e22; color: white; border-radius: 20px; font-size: 0.85rem;">
+              🚧 开发中
+            </span>
+            <span style="padding: 6px 12px; background: #3498db; color: white; border-radius: 20px; font-size: 0.85rem;">
+              🔊 基础发音可用
+            </span>
+            <span style="padding: 6px 12px; background: #2ecc71; color: white; border-radius: 20px; font-size: 0.85rem;">
+              📱 移动端优化
+            </span>
+          </div>
+        </div>
+        
+        <div class="pronunciation-content" style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+          margin-bottom: 40px;
+        ">
+          <div class="pronunciation-card" style="
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--welsh-red);
+          ">
+            <h4 style="color: var(--welsh-red); margin-bottom: 20px;">
+              <i class="fas fa-language"></i> 威尔士语特殊发音
+            </h4>
+            <div style="margin-bottom: 20px;">
+              <h5 style="color: var(--welsh-green); margin-bottom: 10px;">"ll" 发音</h5>
+              <p style="color: #666; margin-bottom: 15px;">
+                威尔士语特有的清边擦音，类似英语"hl"组合。舌尖抵上齿龈，气流从舌两侧流出。
+              </p>
+              <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                <span style="font-size: 1.5rem; font-weight: bold; color: var(--welsh-red);">Llanelli</span>
+                <button class="btn-pronunciation-example" data-text="Llanelli" style="
+                  padding: 8px 15px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                ">
+                  <i class="fas fa-volume-up"></i> 听发音
+                </button>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <h5 style="color: var(--welsh-green); margin-bottom: 10px;">"dd" 发音</h5>
+              <p style="color: #666; margin-bottom: 15px;">
+                发英语"th"的清音，如"this"中的"th"。舌尖轻触上齿，声带振动。
+              </p>
+              <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                <span style="font-size: 1.5rem; font-weight: bold; color: var(--welsh-red);">Dydd</span>
+                <button class="btn-pronunciation-example" data-text="Dydd" style="
+                  padding: 8px 15px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                ">
+                  <i class="fas fa-volume-up"></i> 听发音
+                </button>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <h5 style="color: var(--welsh-green); margin-bottom: 10px;">"ch" 发音</h5>
+              <p style="color: #666; margin-bottom: 15px;">
+                发苏格兰语"loch"或德语"Bach"中的"ch"音。舌后部抬起，气流从舌后部摩擦而出。
+              </p>
+              <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                <span style="font-size: 1.5rem; font-weight: bold; color: var(--welsh-red);">Bach</span>
+                <button class="btn-pronunciation-example" data-text="Bach" style="
+                  padding: 8px 15px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                ">
+                  <i class="fas fa-volume-up"></i> 听发音
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pronunciation-card" style="
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--welsh-green);
+          ">
+            <h4 style="color: var(--welsh-green); margin-bottom: 20px;">
+              <i class="fas fa-headphones"></i> 常见单词发音练习
+            </h4>
+            
+            <div class="pronunciation-exercise" style="margin-bottom: 25px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                  <div style="font-size: 1.3rem; font-weight: bold; color: #333;">Croeso</div>
+                  <div style="color: #666; font-size: 0.9rem;">欢迎 (发音: KROY-so)</div>
+                </div>
+                <button class="btn-pronunciation-example" data-text="Croeso" style="
+                  padding: 8px 15px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                ">
+                  <i class="fas fa-volume-up"></i> 听发音
+                </button>
+              </div>
+              <div style="color: #666; font-size: 0.9rem;">
+                <i class="fas fa-lightbulb"></i> 提示："oe"发"oy"音，类似英语"boy"。
+              </div>
+            </div>
+            
+            <div class="pronunciation-exercise" style="margin-bottom: 25px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                  <div style="font-size: 1.3rem; font-weight: bold; color: #333;">Diolch</div>
+                  <div style="color: #666; font-size: 0.9rem;">谢谢 (发音: DEE-olch)</div>
+                </div>
+                <button class="btn-pronunciation-example" data-text="Diolch" style="
+                  padding: 8px 15px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                ">
+                  <i class="fas fa-volume-up"></i> 听发音
+                </button>
+              </div>
+              <div style="color: #666; font-size: 0.9rem;">
+                <i class="fas fa-lightbulb"></i> 提示："ch"发"ch"音，类似德语"Bach"。
+              </div>
+            </div>
+            
+            <div class="pronunciation-exercise" style="margin-bottom: 25px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                  <div style="font-size: 1.3rem; font-weight: bold; color: #333;">Cymru</div>
+                  <div style="color: #666; font-size: 0.9rem;">威尔士 (发音: KUM-ree)</div>
+                </div>
+                <button class="btn-pronunciation-example" data-text="Cymru" style="
+                  padding: 8px 15px;
+                  background: var(--welsh-green);
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                ">
+                  <i class="fas fa-volume-up"></i> 听发音
+                </button>
+              </div>
+              <div style="color: #666; font-size: 0.9rem;">
+                <i class="fas fa-lightbulb"></i> 提示："y"在威尔士语中通常发"uh"或"ee"音。
+              </div>
+            </div>
+          </div>
+          
+          <div class="pronunciation-card" style="
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--welsh-blue);
+          ">
+            <h4 style="color: var(--welsh-blue); margin-bottom: 20px;">
+              <i class="fas fa-graduation-cap"></i> 发音学习建议
+            </h4>
+            
+            <div style="margin-bottom: 20px;">
+              <h5 style="color: var(--welsh-blue); margin-bottom: 10px;">1. 跟读练习</h5>
+              <p style="color: #666; margin-bottom: 15px;">
+                点击"听发音"按钮，仔细听音频，然后大声跟读。重复3-5次直到发音准确。
+              </p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <h5 style="color: var(--welsh-blue); margin-bottom: 10px;">2. 录音对比</h5>
+              <p style="color: #666; margin-bottom: 15px;">
+                （功能开发中）使用手机录音功能录制自己的发音，与原声对比。
+              </p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <h5 style="color: var(--welsh-blue); margin-bottom: 10px;">3. 日常练习</h5>
+              <p style="color: #666; margin-bottom: 15px;">
+                每天练习10分钟，专注于1-2个音素。坚持比强度更重要。
+              </p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <h5 style="color: var(--welsh-blue); margin-bottom: 10px;">4. 常见错误</h5>
+              <ul style="color: #666; padding-left: 20px; margin-bottom: 15px;">
+                <li>不要将"ll"发成英语的"l"</li>
+                <li>"dd"不是英语的"d"，而是"th"</li>
+                <li>"ch"不是英语的"ch"，而是德语"ch"</li>
+                <li>"y"的发音多变，需根据单词记忆</li>
+              </ul>
+            </div>
+            
+            <div style="background: #e8f4fc; padding: 15px; border-radius: 8px; margin-top: 20px;">
+              <h5 style="color: var(--welsh-blue); margin-bottom: 10px;">
+                <i class="fas fa-rocket"></i> 即将推出的功能
+              </h5>
+              <ul style="color: #666; padding-left: 20px;">
+                <li>录音和AI发音评分</li>
+                <li>个性化发音纠正建议</li>
+                <li>发音挑战和成就系统</li>
+                <li>威尔士语母语者发音示例</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="pronunciation-footer" style="
+          margin-top: 40px;
+          padding: 30px;
+          background: #f8f9fa;
+          border-radius: 15px;
+          text-align: center;
+        ">
+          <h4 style="color: var(--welsh-red); margin-bottom: 15px;">
+            <i class="fas fa-bullseye"></i> 学习目标
+          </h4>
+          <p style="color: #666; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            掌握威尔士语基础发音规则，能够准确读出常见单词和短语，为流利交流打下基础。
+          </p>
+          <div style="
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+          ">
+            <div style="text-align: center;">
+              <div style="font-size: 2rem; font-weight: bold; color: var(--welsh-red);">7</div>
+              <div style="color: #666;">特殊音素</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 2rem; font-weight: bold; color: var(--welsh-green);">15</div>
+              <div style="color: #666;">练习单词</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 2rem; font-weight: bold; color: var(--welsh-blue);">4</div>
+              <div style="color: #666;">学习建议</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // 绑定发音按钮事件
+    this.bindPronunciationButtons();
+  }
+  
+  // 绑定发音练习按钮
+  bindPronunciationButtons() {
+    document.querySelectorAll('.btn-pronunciation-example').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const text = e.target.closest('.btn-pronunciation-example').dataset.text;
+        
+        if (text) {
+          this.playPronunciationAudio(text);
+          
+          // 视觉反馈
+          const originalHTML = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 播放中';
+          button.disabled = true;
+          
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+          }, 1500);
+        }
+      });
+    });
+  }
+  
+  // 播放发音练习音频
+  playPronunciationAudio(text) {
+    if (!text) return;
+    
+    const ttsUrl = `${this.config.api.tts}?text=${encodeURIComponent(text)}&voice=${this.config.tts.voice}`;
+    const audio = new Audio(ttsUrl);
+    
+    audio.play().catch(err => {
+      console.error('❌ 发音音频播放失败:', err);
+      this.showToast('发音播放失败', 'error');
     });
   }
   
