@@ -9,13 +9,7 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-    routes:
-      - type: rewrite
-        source: /
-        destination: /index.html
-      - type: rewrite
-        source: /index.html
-        destination: /index.html
+    # 无重写规则 - 允许直接访问所有HTML文件
     headers:
       - path: /*
         name: Cache-Control

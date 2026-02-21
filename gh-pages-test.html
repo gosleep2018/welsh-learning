@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 GitHub Pages 测试</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        .github-badge {
+            background: #24292e;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(36,41,46,0.3);
+        }
+        h1 {
+            color: #58a6ff;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        .test-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid rgba(88,166,255,0.3);
+        }
+        .test-button {
+            background: #58a6ff;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 15px;
+            min-width: 250px;
+            min-height: 70px;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .test-button:active {
+            background: #1f6feb;
+            transform: scale(0.98);
+        }
+        .status {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            text-align: left;
+        }
+        .success { color: #58a6ff; }
+        .info-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(36,41,46,0.5);
+            border-radius: 10px;
+            border-left: 4px solid #58a6ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="github-badge">
+            🚀 GitHub Pages 测试
+        </div>
+        
+        <h1>独立测试环境</h1>
+        <p style="margin-bottom: 30px; font-size: 1.1rem;">
+            这是一个完全独立的测试页面，不依赖Render的复杂配置。
+        </p>
+        
+        <div class="test-box">
+            <h2>📱 功能测试</h2>
+            
+            <button class="test-button" id="testBtn">
+                点击测试
+            </button>
+            
+            <div class="status" id="status">
+                <div class="success">✅ 页面加载完成</div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>🔧 技术信息</h3>
+            <div style="margin-top: 15px; font-size: 0.9rem;">
+                <div>• 平台: GitHub Pages</div>
+                <div>• 部署: 直接HTML文件</div>
+                <div>• 无重写规则</div>
+                <div>• 无复杂配置</div>
+                <div>• 时间: <span id="currentTime"></span></div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+            <h3>📊 设备检测</h3>
+            <div id="deviceInfo" style="margin-top: 15px; text-align: left;">
+                检测中...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // GitHub Pages测试脚本
+        console.log('🚀 GitHub Pages测试页面加载');
+        
+        // 设置当前时间
+        document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        
+        // 更新设备信息
+        function updateDeviceInfo() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isiPhone = /iPhone/.test(navigator.userAgent);
+            const hasTouch = 'ontouchstart' in window;
+            
+            document.getElementById('deviceInfo').innerHTML = `
+                <div>系统: <strong>${isIOS ? 'iOS' : '非iOS'}</strong></div>
+                <div>设备: <strong>${isiPhone ? 'iPhone' : '其他'}</strong></div>
+                <div>触摸: <strong>${hasTouch ? '✅ 支持' : '❌ 不支持'}</strong></div>
+                <div>屏幕: <strong>${window.innerWidth}×${window.innerHeight}</strong></div>
+                <div>URL: <code>${window.location.href}</code></div>
+            `;
+        }
+        
+        // 测试按钮
+        document.getElementById('testBtn').onclick = function() {
+            console.log('✅ 测试按钮点击');
+            
+            const status = document.getElementById('status');
+            const div = document.createElement('div');
+            div.className = 'success';
+            div.textContent = `✅ 按钮点击成功 (${new Date().toLocaleTimeString()})`;
+            status.appendChild(div);
+            
+            this.textContent = '✅ 成功';
+            setTimeout(() => {
+                this.textContent = '点击测试';
+            }, 1000);
+        };
+        
+        // 页面加载
+        window.onload = function() {
+            console.log('✅ GitHub Pages测试页面加载完成');
+            
+            // 更新设备信息
+            updateDeviceInfo();
+            
+            // 确保按钮可点击
+            document.querySelectorAll('.test-button').forEach(btn => {
+                btn.style.cursor = 'pointer';
+            });
+            
+            // 添加触摸反馈
+            if ('ontouchstart' in window) {
+                document.querySelectorAll('.test-button').forEach(btn => {
+                    btn.addEventListener('touchstart', function() {
+                        this.style.opacity = '0.8';
+                    });
+                    btn.addEventListener('touchend', function() {
+                        this.style.opacity = '';
+                    });
+                });
+            }
+        };
+        
+        // 错误处理
+        window.onerror = function(message) {
+            console.error('❌ 错误:', message);
+            const status = document.getElementById('status');
+            const div = document.createElement('div');
+            div.style.color = '#f85149';
+            div.textContent = `❌ 错误: ${message}`;
+            status.appendChild(div);
+        };
+        
+        console.log('✅ GitHub Pages测试脚本初始化完成');
+    </script>
+</body>
+</html>

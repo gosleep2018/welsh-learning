@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 iPhone测试</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: black;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #007AFF;
+            margin: 40px 0;
+        }
+        .test-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 25px 50px;
+            font-size: 20px;
+            border-radius: 14px;
+            margin: 20px;
+            width: 90%;
+            max-width: 400px;
+            cursor: pointer;
+        }
+        .test-btn:active {
+            background: #0056CC;
+            transform: scale(0.98);
+        }
+        .result {
+            margin: 30px;
+            padding: 20px;
+            background: #1C1C1E;
+            border-radius: 10px;
+            font-family: monospace;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>📱 iPhone兼容性测试</h1>
+    
+    <button class="test-btn" id="btn1">
+        测试按钮 1
+    </button>
+    
+    <button class="test-btn" id="btn2">
+        测试按钮 2
+    </button>
+    
+    <div class="result" id="result">
+        等待测试...
+    </div>
+    
+    <div style="margin-top: 40px; font-size: 14px; color: #8E8E93;">
+        <div>设备: <span id="device"></span></div>
+        <div>屏幕: <span id="screen"></span></div>
+        <div>时间: <span id="time"></span></div>
+    </div>
+    
+    <script>
+        // 极简测试脚本
+        console.log('📱 iPhone测试页面');
+        
+        // 更新信息
+        document.getElementById('device').textContent = 
+            /iPhone/.test(navigator.userAgent) ? 'iPhone' : '其他设备';
+        document.getElementById('screen').textContent = 
+            window.innerWidth + '×' + window.innerHeight;
+        document.getElementById('time').textContent = 
+            new Date().toLocaleTimeString();
+        
+        // 更新结果
+        function addResult(msg) {
+            const result = document.getElementById('result');
+            const div = document.createElement('div');
+            div.textContent = '• ' + msg;
+            result.appendChild(div);
+        }
+        
+        // 按钮1
+        document.getElementById('btn1').onclick = function() {
+            console.log('✅ 按钮1点击');
+            addResult('按钮1点击成功 - ' + new Date().toLocaleTimeString());
+            this.textContent = '✅ 成功';
+            setTimeout(() => this.textContent = '测试按钮 1', 1000);
+        };
+        
+        // 按钮2
+        document.getElementById('btn2').onclick = function() {
+            console.log('✅ 按钮2点击');
+            addResult('按钮2点击成功 - ' + new Date().toLocaleTimeString());
+            this.textContent = '✅ 成功';
+            setTimeout(() => this.textContent = '测试按钮 2', 1000);
+        };
+        
+        // 页面加载
+        window.onload = function() {
+            console.log('✅ 页面加载完成');
+            addResult('页面加载完成');
+            
+            // 确保按钮可点击
+            document.querySelectorAll('.test-btn').forEach(btn => {
+                btn.style.cursor = 'pointer';
+            });
+        };
+        
+        // 错误处理
+        window.onerror = function(msg) {
+            console.error('❌ 错误:', msg);
+            addResult('错误: ' + msg);
+        };
+    </script>
+</body>
+</html>
