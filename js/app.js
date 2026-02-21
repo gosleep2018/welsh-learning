@@ -55,9 +55,14 @@ class WelshLearningApp {
       this.initUI();
       console.log('🎨 UI初始化完成');
       
-      // 绑定事件
+      // 绑定基础事件
       this.bindEvents();
-      console.log('🔗 事件绑定完成');
+      console.log('🔗 基础事件绑定完成');
+      
+      // 绑定设置事件（等UI初始化完成）
+      setTimeout(() => {
+        this.bindSettingEvents();
+      }, 100);
       
       // 显示初始内容
       console.log('🚀 开始显示学习内容...');
@@ -339,45 +344,94 @@ class WelshLearningApp {
   }
   
   bindEvents() {
-    // 导航链接
-    document.querySelectorAll('.nav-link').forEach(link => {
+    console.log('🔗 开始绑定事件...');
+    
+    // 导航链接 - 这些元素在初始HTML中就存在
+    const navLinks = document.querySelectorAll('.nav-link');
+    console.log('🔗 找到导航链接:', navLinks.length);
+    
+    navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const module = e.target.dataset.module || e.target.closest('.nav-link').dataset.module;
+        console.log('🔗 导航点击:', module);
         this.showModule(module);
       });
     });
     
-    // 设置切换
-    document.getElementById('togglePrefix').addEventListener('change', (e) => {
-      this.config.settings.showPrefixSuffix = e.target.checked;
-      this.renderCurrentWord();
-    });
+    // 设置切换 - 延迟绑定，等元素存在后再绑定
+    this.bindSettingEvents();
     
-    document.getElementById('toggleMemory').addEventListener('change', (e) => {
-      this.config.settings.showMemoryHints = e.target.checked;
-      this.renderCurrentWord();
-    });
+    console.log('✅ 基础事件绑定完成');
+  }
+  
+  // 绑定设置相关事件（在元素存在后调用）
+  bindSettingEvents() {
+    console.log('🔗 绑定设置事件...');
     
-    document.getElementById('toggleExtensions').addEventListener('change', (e) => {
-      this.config.settings.showExtensions = e.target.checked;
-      this.renderCurrentWord();
-    });
+    const togglePrefix = document.getElementById('togglePrefix');
+    const toggleMemory = document.getElementById('toggleMemory');
+    const toggleExtensions = document.getElementById('toggleExtensions');
+    const toggleAutoPlay = document.getElementById('toggleAutoPlay');
+    const learningMode = document.getElementById('learningMode');
     
-    document.getElementById('toggleAutoPlay').addEventListener('change', (e) => {
-      this.config.settings.autoPlayAudio = e.target.checked;
-    });
+    if (togglePrefix) {
+      togglePrefix.addEventListener('change', (e) => {
+        this.config.settings.showPrefixSuffix = e.target.checked;
+        this.renderCurrentWord();
+      });
+      console.log('✅ togglePrefix 事件绑定');
+    }
     
-    document.getElementById('learningMode').addEventListener('change', (e) => {
-      this.config.settings.learningMode = e.target.value;
-      this.applyLearningMode();
-    });
+    if (toggleMemory) {
+      toggleMemory.addEventListener('change', (e) => {
+        this.config.settings.showMemoryHints = e.target.checked;
+        this.renderCurrentWord();
+      });
+      console.log('✅ toggleMemory 事件绑定');
+    }
     
-    // 导航按钮
-    document.getElementById('prevBtn').addEventListener('click', () => this.prevWord());
-    document.getElementById('nextBtn').addEventListener('click', () => this.nextWord());
+    if (toggleExtensions) {
+      toggleExtensions.addEventListener('change', (e) => {
+        this.config.settings.showExtensions = e.target.checked;
+        this.renderCurrentWord();
+      });
+      console.log('✅ toggleExtensions 事件绑定');
+    }
     
-    // 播放按钮（动态绑定在 renderCurrentWord 中）
+    if (toggleAutoPlay) {
+      toggleAutoPlay.addEventListener('change', (e) => {
+        this.config.settings.autoPlayAudio = e.target.checked;
+      });
+      console.log('✅ toggleAutoPlay 事件绑定');
+    }
+    
+    if (learningMode) {
+      learningMode.addEventListener('change', (e) => {
+        this.config.settings.learningMode = e.target.value;
+        this.applyLearningMode();
+      });
+      console.log('✅ learningMode 事件绑定');
+    }
+    
+    // 导航按钮会在 showDailyWords() 中动态绑定
+    console.log('✅ 设置事件绑定完成');
+  }
+  
+  // 绑定单词导航按钮（在动态生成后调用）
+  bindWordNavEvents() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => this.prevWord());
+      console.log('✅ prevBtn 事件绑定');
+    }
+    
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => this.nextWord());
+      console.log('✅ nextBtn 事件绑定');
+    }
   }
   
   showModule(moduleName) {
@@ -469,8 +523,7 @@ class WelshLearningApp {
     `;
     
     // 重新绑定导航按钮
-    document.getElementById('prevBtn').addEventListener('click', () => this.prevWord());
-    document.getElementById('nextBtn').addEventListener('click', () => this.nextWord());
+    this.bindWordNavEvents();
     
     // 显示当前单词
     this.config.currentWordIndex = 0;
