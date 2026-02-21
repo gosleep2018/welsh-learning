@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iPhone宽度测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        .test-container {
+            max-width: 100%;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .header h1 {
+            color: #d62828;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .device-frame {
+            width: 375px;
+            height: 812px;
+            border: 20px solid #333;
+            border-radius: 40px;
+            margin: 0 auto 30px;
+            overflow: hidden;
+            position: relative;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .device-frame:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 20px;
+            background: #333;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 1000;
+        }
+        
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .width-test {
+            padding: 20px;
+        }
+        
+        .test-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+        }
+        
+        .test-title {
+            font-weight: bold;
+            color: #d62828;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .test-content {
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .width-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1001;
+        }
+        
+        .diagnosis {
+            background: #fff8e1;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .diagnosis h3 {
+            color: #e67e22;
+            margin-bottom: 15px;
+        }
+        
+        .problem-list {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .problem-list li {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .fix-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .fix-button {
+            padding: 12px 20px;
+            background: #d62828;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .fix-button:hover {
+            background: #b71c1c;
+        }
+        
+        .fix-button.success {
+            background: #28a745;
+        }
+        
+        @media (max-width: 768px) {
+            .device-frame {
+                width: 100%;
+                height: 70vh;
+                border-width: 10px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="header">
+            <h1>📱 iPhone宽度问题诊断</h1>
+            <p>测试导航栏目内容显示宽度问题</p>
+        </div>
+        
+        <div class="device-frame">
+            <div class="width-indicator" id="widthIndicator">宽度: 375px</div>
+            <div class="device-screen" id="deviceScreen">
+                <!-- 这里将动态加载实际网站内容 -->
+                <div class="width-test" id="widthTest">
+                    <div class="test-item">
+                        <div class="test-title">测试1: 导航菜单宽度</div>
+                        <div class="test-content" id="navWidthTest">正在检测...</div>
+                    </div>
+                    
+                    <div class="test-item">
+                        <div class="test-title">测试2: 侧边栏宽度</div>
+                        <div class="test-content" id="sidebarWidthTest">正在检测...</div>
+                    </div>
+                    
+                    <div class="test-item">
+                        <div class="test-title">测试3: 主内容区宽度</div>
+                        <div class="test-content" id="contentWidthTest">正在检测...</div>
+                    </div>
+                    
+                    <div class="test-item">
+                        <div class="test-title">测试4: 文本溢出检查</div>
+                        <div class="test-content" id="overflowTest">正在检测...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diagnosis">
+            <h3>🔍 宽度问题诊断</h3>
+            <p><strong>问题描述：</strong>显示宽度有问题，不能完整显示一个导航栏目下的内容</p>
+            
+            <p><strong>可能原因：</strong></p>
+            <ul class="problem-list">
+                <li><strong>CSS宽度限制</strong> - max-width, width: 100% 计算错误</li>
+                <li><strong>盒模型问题</strong> - padding, margin, border 导致溢出</li>
+                <li><strong>flex布局问题</strong> - flex-shrink, flex-basis 设置不当</li>
+                <li><strong>响应式断点错误</strong> - @media 查询不匹配iPhone宽度</li>
+                <li><strong>安全区域冲突</strong> - env(safe-area-inset) 影响布局</li>
+                <li><strong>文本溢出</strong> - white-space, text-overflow 设置</li>
+            </ul>
+            
+            <div class="fix-buttons">
+                <button class="fix-button" onclick="runWidthTests()">
+                    🔍 运行宽度测试
+                </button>
+                <button class="fix-button success" onclick="applyWidthFixes()">
+                    🛠️ 应用宽度修复
+                </button>
+                <button class="fix-button" onclick="loadActualSite()">
+                    🌐 加载实际网站
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 更新宽度指示器
+        function updateWidthIndicator() {
+            const screen = document.getElementById('deviceScreen');
+            const width = screen.clientWidth;
+            document.getElementById('widthIndicator').textContent = `宽度: ${width}px`;
+        }
+        
+        // 运行宽度测试
+        function runWidthTests() {
+            console.log('🔍 运行宽度测试...');
+            
+            const screen = document.getElementById('deviceScreen');
+            const screenWidth = screen.clientWidth;
+            
+            // 测试1: 导航菜单宽度
+            const navTest = document.getElementById('navWidthTest');
+            const navItems = document.querySelectorAll('.nav-item');
+            let navWidthStatus = '';
+            
+            if (navItems.length > 0) {
+                const firstNav = navItems[0];
+                const navWidth = firstNav.clientWidth;
+                const parentWidth = firstNav.parentElement.clientWidth;
+                const isFullWidth = Math.abs(navWidth - parentWidth) < 10;
+                
+                navWidthStatus = isFullWidth ? 
+                    `✅ 导航项宽度正常 (${navWidth}px / ${parentWidth}px)` :
+                    `❌ 导航项宽度不足 (${navWidth}px / ${parentWidth}px)`;
+            } else {
+                navWidthStatus = '❌ 未找到导航项';
+            }
+            navTest.textContent = navWidthStatus;
+            
+            // 测试2: 侧边栏宽度
+            const sidebarTest = document.getElementById('sidebarWidthTest');
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                const sidebarWidth = sidebar.clientWidth;
+                const isFullWidth = Math.abs(sidebarWidth - screenWidth) < 10;
+                sidebarTest.textContent = isFullWidth ?
+                    `✅ 侧边栏宽度正常 (${sidebarWidth}px / ${screenWidth}px)` :
+                    `❌ 侧边栏宽度不足 (${sidebarWidth}px / ${screenWidth}px)`;
+            } else {
+                sidebarTest.textContent = '❌ 未找到侧边栏';
+            }
+            
+            // 测试3: 主内容区宽度
+            const contentTest = document.getElementById('contentWidthTest');
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                const contentWidth = mainContent.clientWidth;
+                const isFullWidth = Math.abs(contentWidth - screenWidth) < 10;
+                contentTest.textContent = isFullWidth ?
+                    `✅ 主内容区宽度正常 (${contentWidth}px / ${screenWidth}px)` :
+                    `❌ 主内容区宽度不足 (${contentWidth}px / ${screenWidth}px)`;
+            } else {
+                contentTest.textContent = '❌ 未找到主内容区';
+            }
+            
+            // 测试4: 文本溢出检查
+            const overflowTest = document.getElementById('overflowTest');
+            const allTextElements = document.querySelectorAll('*');
+            let overflowCount = 0;
+            
+            allTextElements.forEach(el => {
+                if (el.scrollWidth > el.clientWidth && el.clientWidth > 0) {
+                    overflowCount++;
+                }
+            });
+            
+            overflowTest.textContent = overflowCount > 0 ?
+                `⚠️ 发现 ${overflowCount} 个文本溢出元素` :
+                '✅ 未发现文本溢出';
+            
+            console.log('✅ 宽度测试完成');
+        }
+        
+        // 应用宽度修复
+        function applyWidthFixes() {
+            console.log('🛠️ 应用宽度修复...');
+            
+            // 创建修复样式
+            const style = document.createElement('style');
+            style.textContent = `
+                /* 宽度修复CSS */
+                * {
+                    box-sizing: border-box !important;
+                }
+                
+                .app-container {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    overflow-x: hidden !important;
+                }
+                
+                .sidebar {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    min-width: 0 !important;
+                    flex-shrink: 0 !important;
+                }
+                
+                .main-content {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    min-width: 0 !important;
+                    overflow-x: hidden !important;
+                }
+                
+                .nav-list {
+                    width: 100% !important;
+                }
+                
+                .nav-item {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+                
+                .nav-link {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    white-space: normal !important;
+                    word-wrap: break-word !important;
+                }
+                
+                /* 防止文本溢出 */
+                * {
+                    overflow-wrap: break-word !important;
+                    word-wrap: break-word !important;
+                    hyphens: auto !important;
+                }
+                
+                /* 调试边框 */
+                .sidebar { border: 2px solid #00ff00 !important; }
+                .main-content { border: 2px solid #0000ff !important; }
+                .nav-item { border: 1px solid #ff0000 !important; }
+            `;
+            
+            document.head.appendChild(style);
+            console.log('✅ 宽度修复已应用');
+            
+            // 重新运行测试
+            setTimeout(runWidthTests, 500);
+        }
+        
+        // 加载实际网站
+        function loadActualSite() {
+            const screen = document.getElementById('deviceScreen');
+            screen.innerHTML = `
+                <iframe src="https://welsh-learning.onrender.com" 
+                        style="width:100%; height:100%; border:none;"></iframe>
+            `;
+            console.log('🌐 加载实际网站...');
+        }
+        
+        // 初始化
+        window.addEventListener('load', function() {
+            updateWidthIndicator();
+            setTimeout(runWidthTests, 1000);
+            
+            // 监听窗口大小变化
+            window.addEventListener('resize', updateWidthIndicator);
+        });
+        
+        // 监听iframe加载
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'widthTest') {
+                console.log('📱 收到iframe宽度测试结果:', event.data);
+            }
+        });
+    </script>
+</body>
+</html>

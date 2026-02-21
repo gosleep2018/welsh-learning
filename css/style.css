@@ -80,24 +80,23 @@ body {
 
 /* 主内容区 */
 .main-content {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 30px;
-  margin-bottom: 30px;
-}
-
-@media (max-width: 900px) {
-  .main-content {
-    grid-template-columns: 1fr;
-  }
+  width: 100%;
+  max-width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 /* 侧边栏 - 学习导航 */
 .sidebar {
+  width: 100%;
+  max-width: 100%;
   background: var(--welsh-white);
   border-radius: 15px;
   padding: 25px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  flex-shrink: 0;
 }
 
 .sidebar-section {
@@ -116,24 +115,32 @@ body {
 }
 
 .nav-list {
+  width: 100%;
+  max-width: 100%;
   list-style: none;
 }
 
 .nav-item {
+  width: 100%;
+  max-width: 100%;
   margin-bottom: 10px;
 }
 
 .nav-link {
-  display: block;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 12px 15px;
   background: var(--light);
   border-radius: 10px;
   color: var(--dark);
   text-decoration: none;
   transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-link:hover, .nav-link.active {
@@ -1204,20 +1211,39 @@ body {
   }
 }
 
-/* 确保导航始终可见 */
+/* 确保导航始终可见且宽度正确 */
 @media (max-width: 768px) {
   .sidebar {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 15px !important;
   }
   
   .nav-list {
     display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
   
   .nav-item {
     display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 8px 0 !important;
+  }
+  
+  .nav-link {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px 18px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
   }
   
   /* 防止导航被隐藏 */
@@ -1226,19 +1252,54 @@ body {
   }
 }
 
-/* 强制移动端布局 */
+/* 强制移动端布局和宽度修复 */
 body.is-iphone .app-container {
   flex-direction: column !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }
 
 body.is-iphone .sidebar {
   width: 100% !important;
   max-width: 100% !important;
+  min-width: 0 !important;
+  flex-shrink: 0 !important;
+  padding: 15px !important;
 }
 
 body.is-iphone .main-content {
   width: 100% !important;
   max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+  padding: 15px !important;
+}
+
+body.is-iphone .nav-list {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+body.is-iphone .nav-item {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+body.is-iphone .nav-link {
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+/* 防止文本溢出 */
+body.is-iphone * {
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
 }
 
 /* iPhone滚动优化 */
@@ -1251,10 +1312,13 @@ html, body {
 }
 
 .app-container {
-  height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  height: auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* 容器本身不滚动 */
+  overflow-x: hidden; /* 防止水平滚动 */
 }
 
 .module-content {

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=375, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>宽度修复测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            width: 375px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-header h1 {
+            color: #d62828;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .test-section h2 {
+            color: #d62828;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .width-test {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+        }
+        
+        .test-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .test-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .test-value {
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .test-value.pass {
+            color: #28a745;
+        }
+        
+        .test-value.fail {
+            color: #dc3545;
+        }
+        
+        .visual-test {
+            background: #e8f4fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .nav-simulation {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        
+        .nav-item-sim {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #d62828;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            text-align: center;
+            color: #d62828;
+        }
+        
+        .nav-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .nav-badge {
+            background: #d62828;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        
+        .result-summary {
+            background: #fff8e1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .result-title {
+            color: #e67e22;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .fix-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #d62828;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .fix-button:hover {
+            background: #b71c1c;
+        }
+        
+        .fix-button.success {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1>📱 iPhone宽度修复测试</h1>
+        <p>模拟iPhone 12/13/14 (375px宽度) 测试导航宽度问题</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>宽度测试结果</h2>
+        
+        <div class="width-test">
+            <div class="test-item">
+                <div class="test-label">屏幕宽度</div>
+                <div class="test-value" id="screenWidth">正在检测...</div>
+            </div>
+            
+            <div class="test-item">
+                <div class="test-label">body宽度</div>
+                <div class="test-value" id="bodyWidth">正在检测...</div>
+            </div>
+            
+            <div class="test-item">
+                <div class="test-label">内容区域宽度</div>
+                <div class="test-value" id="contentWidth">正在检测...</div>
+            </div>
+            
+            <div class="test-item">
+                <div class="test-label">文本溢出检查</div>
+                <div class="test-value" id="overflowCheck">正在检测...</div>
+            </div>
+        </div>
+        
+        <div class="visual-test">
+            <h3>导航宽度模拟测试</h3>
+            
+            <div class="nav-simulation">
+                <div class="nav-item-sim">
+                    <div class="nav-icon">📚</div>
+                    <div class="nav-text">每日词汇</div>
+                    <div class="nav-badge">5</div>
+                </div>
+                
+                <div class="nav-item-sim">
+                    <div class="nav-icon">💬</div>
+                    <div class="nav-text">常用短语</div>
+                    <div class="nav-badge">新</div>
+                </div>
+                
+                <div class="nav-item-sim">
+                    <div class="nav-icon">🔊</div>
+                    <div class="nav-text">发音练习</div>
+                    <div class="nav-badge">基础版</div>
+                </div>
+                
+                <div class="nav-item-sim">
+                    <div class="nav-icon">📋</div>
+                    <div class="nav-text">单词列表</div>
+                    <div class="nav-badge">新</div>
+                </div>
+                
+                <div class="nav-item-sim">
+                    <div class="nav-icon">🔍</div>
+                    <div class="nav-text">搜索翻译</div>
+                    <div class="nav-badge">新</div>
+                </div>
+                
+                <div class="nav-item-sim">
+                    <div class="nav-icon">🏛️</div>
+                    <div class="nav-text">威尔士文化（政府交流背景）</div>
+                    <div class="nav-badge">新</div>
+                </div>
+            </div>
+            
+            <div class="test-item">
+                <div class="test-label">最长导航项测试</div>
+                <div class="test-value" id="longNavTest">正在检测...</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>修复验证</h2>
+        
+        <div class="result-summary">
+            <div class="result-title">测试标准：</div>
+            <ul style="margin-left: 20px; margin-bottom: 15px; color: #666;">
+                <li>所有导航项必须在375px宽度内完全显示</li>
+                <li>文本不能溢出或截断</li>
+                <li>布局不能出现水平滚动条</li>
+                <li>图标、文字、徽章必须对齐</li>
+            </ul>
+            
+            <div class="result-title" id="overallResult">总体结果：测试中...</div>
+            <div id="resultDetails" style="color: #666; margin-top: 10px;"></div>
+        </div>
+        
+        <button class="fix-button" onclick="runAllTests()">
+            🔄 重新运行测试
+        </button>
+        
+        <button class="fix-button success" onclick="window.location.href='https://welsh-learning.onrender.com'">
+            🌐 测试实际网站
+        </button>
+    </div>
+    
+    <script>
+        // 运行所有测试
+        function runAllTests() {
+            console.log('🔍 运行宽度测试...');
+            
+            // 测试1: 屏幕宽度
+            const screenWidth = window.innerWidth;
+            document.getElementById('screenWidth').textContent = `${screenWidth}px`;
+            document.getElementById('screenWidth').className = `test-value ${screenWidth === 375 ? 'pass' : 'fail'}`;
+            
+            // 测试2: body宽度
+            const bodyWidth = document.body.clientWidth;
+            document.getElementById('bodyWidth').textContent = `${bodyWidth}px`;
+            document.getElementById('bodyWidth').className = `test-value ${bodyWidth <= 375 ? 'pass' : 'fail'}`;
+            
+            // 测试3: 内容区域宽度
+            const contentWidth = document.querySelector('.test-section').clientWidth;
+            document.getElementById('contentWidth').textContent = `${contentWidth}px`;
+            document.getElementById('contentWidth').className = `test-value ${contentWidth <= 375 ? 'pass' : 'fail'}`;
+            
+            // 测试4: 文本溢出检查
+            const navItems = document.querySelectorAll('.nav-item-sim');
+            let overflowCount = 0;
+            
+            navItems.forEach(item => {
+                if (item.scrollWidth > item.clientWidth) {
+                    overflowCount++;
+                }
+            });
+            
+            const overflowResult = overflowCount === 0 ? '✅ 无文本溢出' : `❌ ${overflowCount} 个项目文本溢出`;
+            document.getElementById('overflowCheck').textContent = overflowResult;
+            document.getElementById('overflowCheck').className = `test-value ${overflowCount === 0 ? 'pass' : 'fail'}`;
+            
+            // 测试5: 最长导航项测试
+            const longestNav = document.querySelector('.nav-item-sim:last-child');
+            const longestNavWidth = longestNav ? longestNav.clientWidth : 0;
+            const longestNavText = longestNav ? longestNav.querySelector('.nav-text').textContent : '';
+            const isLongNavOk = longestNavWidth <= 375 && longestNav.scrollWidth <= longestNav.clientWidth;
+            
+            document.getElementById('longNavTest').textContent = 
+                isLongNavOk ? `✅ "${longestNavText}" 显示正常` : `❌ "${longestNavText}" 显示异常`;
+            document.getElementById('longNavTest').className = `test-value ${isLongNavOk ? 'pass' : 'fail'}`;
+            
+            // 总体结果
+            const allTestsPass = screenWidth === 375 && bodyWidth <= 375 && contentWidth <= 375 && overflowCount === 0 && isLongNavOk;
+            
+            document.getElementById('overallResult').textContent = 
+                allTestsPass ? '总体结果：✅ 所有测试通过' : '总体结果：❌ 部分测试失败';
+            
+            document.getElementById('resultDetails').innerHTML = `
+                <div>屏幕宽度: ${screenWidth === 375 ? '✅' : '❌'} (${screenWidth}px)</div>
+                <div>body宽度: ${bodyWidth <= 375 ? '✅' : '❌'} (${bodyWidth}px)</div>
+                <div>内容宽度: ${contentWidth <= 375 ? '✅' : '❌'} (${contentWidth}px)</div>
+                <div>文本溢出: ${overflowCount === 0 ? '✅' : '❌'} (${overflowCount}个)</div>
+                <div>最长导航: ${isLongNavOk ? '✅' : '❌'} ("${longestNavText}")</div>
+            `;
+            
+            console.log('✅ 宽度测试完成');
+            
+            // 如果测试失败，显示修复建议
+            if (!allTestsPass) {
+                showFixSuggestions();
+            }
+        }
+        
+        // 显示修复建议
+        function showFixSuggestions() {
+            const suggestions = document.createElement('div');
+            suggestions.style.cssText = `
+                background: #f8d7da;
+                color: #721c24;
+                padding: 15px;
+                border-radius: 8px;
+                margin-top: 20px;
+                border-left: 4px solid #dc3545;
+            `;
+            suggestions.innerHTML = `
+                <h4 style="margin-bottom: 10px;">🛠️ 修复建议：</h4>
+                <ul style="margin-left: 20px;">
+                    <li>检查CSS中的 <code>width: 100%</code> 和 <code>max-width: 100%</code></li>
+                    <li>确保 <code>box-sizing: border-box</code> 已应用</li>
+                    <li>使用 <code>white-space: normal</code> 和 <code>word-wrap: break-word</code></li>
+                    <li>移除不必要的 <code>padding</code> 和 <code>margin</code></li>
+                    <li>测试横屏模式下的布局</li>
+                </ul>
+            `;
+            
+            document.querySelector('.test-section:last-child').appendChild(suggestions);
+        }
+        
+        // 页面加载时运行测试
+        window.addEventListener('load', function() {
+            setTimeout(runAllTests, 500);
+        });
+        
+        // 监听窗口大小变化
+        window.addEventListener('resize', function() {
+            setTimeout(runAllTests, 100);
+        });
+    </script>
+</body>
+</html>
