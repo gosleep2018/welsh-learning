@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>🏴󠁧󠁢󠁷󠁬󠁳󠁿 威尔士语学习 | 正式版1.0 (测试环境)</title>
+  <meta name="description" content="威尔士语学习平台正式版1.0 - 测试环境，与生产环境完全隔离">
+  <meta name="keywords" content="威尔士语, 正式版1.0, 测试环境, 语言学习">
+  
+  <!-- 样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 图标 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴󠁧󠁢󠁷󠁬󠁳󠁿</text></svg>">
+  
+  <!-- 预加载关键资源 -->
+  <link rel="preconnect" href="https://web-x0ya.onrender.com">
+  
+  <style>
+    /* 测试环境标识 - 最小化干扰 */
+    .test-environment-badge {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #ff6b6b;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: bold;
+      z-index: 10000;
+      opacity: 0.9;
+      box-shadow: 0 2px 8px rgba(255,107,107,0.3);
+    }
+    
+    /* 测试环境头部提示 */
+    .test-environment-notice {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+      color: white;
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      border-radius: 0 0 10px 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(255,107,107,0.2);
+    }
+    
+    .test-environment-notice strong {
+      font-weight: 600;
+    }
+    
+    /* 初始加载样式 */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #008751 0%, #1a1a2e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+    
+    .loading-logo {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    
+    .loading-text {
+      color: white;
+      font-size: 1.5rem;
+      margin-top: 20px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    /* 简单的调试控制台 */
+    .simple-debug {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 200px;
+      height: 100px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 11px;
+      overflow-y: auto;
+      z-index: 9998;
+      display: none;
+    }
+    
+    .simple-debug.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- 测试环境标识 -->
+  <div class="test-environment-badge">
+    🧪 测试环境 v1.0
+  </div>
+  
+  <!-- 测试环境提示 -->
+  <div class="test-environment-notice">
+    <strong>测试环境提示：</strong> 这是正式版1.0的测试副本，所有功能与生产环境相同，但数据独立。
+  </div>
+  
+  <!-- 简单调试控制台 -->
+  <div class="simple-debug" id="simpleDebug">
+    <div style="color: #4ecdc4; margin-bottom: 5px; font-size: 10px;">
+      <i class="fas fa-terminal"></i> 调试信息
+    </div>
+    <div id="debugOutput"></div>
+  </div>
+  
+  <!-- 加载屏幕 -->
+  <div id="loadingScreen">
+    <div class="loading-logo">🏴󠁧󠁢󠁷󠁬󠁳󠁿</div>
+    <div class="loading-text">测试环境加载中...</div>
+  </div>
+  
+  <!-- 主容器 -->
+  <div id="appContainer" style="display: none;">
+    <!-- 头部 -->
+    <header class="header">
+      <h1>
+        <span>🏴󠁧󠁢󠁷󠁬󠁳󠁿</span>
+        威尔士语学习平台
+      </h1>
+      <div class="subtitle">专为英语使用者设计的快速入门平台 • 正式版1.0 (测试环境)</div>
+      <div class="tagline">4周掌握100高频表达 • 能进行3分钟基础对话</div>
+      <div style="margin-top: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+        <i class="fas fa-code-branch"></i> 测试环境 • 
+        <i class="fas fa-shield-alt"></i> 数据隔离 • 
+        <i class="fas fa-bug"></i> 调试模式
+      </div>
+    </header>
+    
+    <!-- 主内容 -->
+    <div class="main-content">
+      <!-- 侧边栏 -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h3><i class="fas fa-compass"></i> 学习导航</h3>
+        </div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#" class="nav-link active" data-module="dailyWords">
+              <i class="fas fa-book-open"></i>
+              <span>每日词汇</span>
+              <span class="nav-badge">5</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-module="commonPhrases">
+              <i class="fas fa-comments"></i>
+              <span>常用短语</span>
+              <span class="nav-badge new">新</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-module="pronunciation">
+              <i class="fas fa-volume-up"></i>
+              <span>发音练习</span>
+              <span class="nav-badge basic">基础版</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-module="welshCulture">
+              <i class="fas fa-landmark"></i>
+              <span>威尔士文化</span>
+              <span class="nav-badge" style="background: #ffd166; color: #333;">新</span>
+            </a>
+          </li>
+        </ul>
+        
+        <!-- 环境信息 -->
+        <div class="environment-info" style="margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+          <h4 style="color: #ff6b6b; margin-bottom: 10px; font-size: 0.9rem;">
+            <i class="fas fa-info-circle"></i> 环境信息
+          </h4>
+          <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7); line-height: 1.5;">
+            <div><i class="fas fa-code"></i> 版本: 正式版1.0</div>
+            <div><i class="fas fa-server"></i> 环境: 测试副本</div>
+            <div><i class="fas fa-database"></i> 数据: 独立存储</div>
+            <div><i class="fas fa-shield-alt"></i> 状态: 与生产隔离</div>
+          </div>
+        </div>
+      </aside>
+      
+      <!-- 内容区域 -->
+      <main class="content-area">
+        <div id="dailyWordsModule">
+          <div class="module-header">
+            <h2><i class="fas fa-book-open"></i> 今日词汇</h2>
+            <div class="module-subtitle">第 <span style="color: #d21034; font-weight: bold;">6</span> 天</div>
+          </div>
+          
+          <!-- 单词卡片 -->
+          <div class="word-card">
+            <div class="word-header">
+              <div class="word-text">
+                <div class="word-english">Please.</div>
+                <div class="word-welsh">Os gwelwch yn dda</div>
+                <div class="word-pronunciation">os GWELL-ooch un THAH</div>
+              </div>
+              <div class="word-tag">礼貌用语</div>
+            </div>
+            
+            <div class="word-details">
+              <div class="detail-row">
+                <div class="detail-label">中文翻译</div>
+                <div class="detail-value">请。</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">词性</div>
+                <div class="detail-value">礼貌用语</div>
+              </div>
+              
+              <div class="example-section">
+                <div class="example-label">使用示例</div>
+                <div class="example-content">
+                  <div class="example-item">
+                    <span class="example-bullet">•</span>
+                    Os gwelwch yn dda, rhowch y llyfr i mi. (请把书给我。)
+                  </div>
+                  <div class="example-item">
+                    <span class="example-bullet">•</span>
+                    A gaf i ddŵr, os gwelwch yn dda? (请给我一杯水，好吗？)
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 功能按钮 -->
+            <div class="button-group">
+              <button class="btn btn-primary" id="pronounceBtn">
+                <i class="fas fa-volume-up"></i>
+                发音
+              </button>
+              <button class="btn btn-success" id="addFlashcardBtn">
+                <i class="fas fa-plus"></i>
+                加入闪卡
+              </button>
+              <button class="btn btn-outline" id="markLearnedBtn">
+                <i class="fas fa-check"></i>
+                标记已学
+              </button>
+            </div>
+          </div>
+          
+          <!-- 学习提示 -->
+          <div class="study-tip">
+            <h4><i class="fas fa-lightbulb"></i> 学习技巧</h4>
+            <p>威尔士语的"请"字面意思是"如果你愿意的话"。这是一个非常礼貌的表达，在正式场合和日常对话中都常用。</p>
+          </div>
+          
+          <!-- 导航按钮 -->
+          <div class="nav-buttons">
+            <button class="btn btn-outline" id="prevBtn">
+              <i class="fas fa-arrow-left"></i>
+              上一个
+            </button>
+            <div class="progress-dots">
+              <div class="progress-dot active"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+            </div>
+            <button class="btn btn-primary" id="nextBtn">
+              下一个
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <!-- 主JavaScript -->
+  <script src="js/app.js"></script>
+  
+  <!-- 测试环境专用脚本 -->
+  <script>
+    // ==================== 测试环境专用脚本 ====================
+    // 保持正式版1.0的所有功能，只添加最小化的测试标识
+    
+    console.log('🧪 测试环境 - 正式版1.0副本加载');
+    
+    // 简单的调试信息收集
+    const debugOutput = document.getElementById('debugOutput');
+    
+    // 重写console.error以捕获错误
+    const originalError = console.error;
+    console.error = function(...args) {
+      originalError.apply(console, args);
+      
+      const message = args.map(arg => String(arg)).join(' ');
+      const timestamp = new Date().toLocaleTimeString();
+      
+      if (debugOutput) {
+        const logEntry = document.createElement('div');
+        logEntry.style.cssText = 'margin-bottom: 3px; font-size: 9px; color: #ff6b6b;';
+        logEntry.textContent = `[${timestamp}] ${message.substring(0, 50)}...`;
+        debugOutput.appendChild(logEntry);
+        debugOutput.scrollTop = debugOutput.scrollHeight;
+      }
+    };
+    
+    // 设备信息记录
+    function logDeviceInfo() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isiPhone = /iPhone/.test(navigator.userAgent);
+      const hasTouch = 'ontouchstart' in window;
+      
+      console.log('📱 设备信息:', {
+        iOS: isIOS,
+        iPhone: isiPhone,
+        touch: hasTouch,
+        screen: `${window.innerWidth}×${window.innerHeight}`,
+        userAgent: navigator.userAgent.substring(0, 60) + '...'
+      });
+      
+      // 添加到调试面板
+      if (debugOutput) {
+        const infoDiv = document.createElement('div');
+        infoDiv.style.cssText = 'margin-bottom: 5px; font-size: 9px; color: #4ecdc4;';
+        infoDiv.innerHTML = `
+          <div>设备: ${isIOS ? 'iOS' : '非iOS'} ${isiPhone ? '(iPhone)' : ''}</div>
+          <div>触摸: ${hasTouch ? '支持' : '不支持'}</div>
+          <div>屏幕: ${window.innerWidth}×${window.innerHeight}</div>
+        `;
+        debugOutput.appendChild(infoDiv);
+      }
+    }
+    
+    // 页面加载完成
+    window.addEventListener('load', function() {
+      console.log('✅ 测试环境页面加载完成');
+      
+      // 记录设备信息
+      logDeviceInfo();
+      
+      // 隐藏加载屏幕
+      setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            
+            console.log('🎉 测试环境界面显示完成');
+            
+            // 显示简单的欢迎提示
+            setTimeout(() => {
+              if (debugOutput) {
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.style.cssText = 'margin-bottom: 5px; font-size: 9px; color: #ffd166;';
+                welcomeMsg.textContent = '✅ 测试环境准备就绪';
+                debugOutput.appendChild(welcomeMsg);
+              }
+            }, 500);
+          }, 500);
+        }
+      }, 800);
+      
+      // 双击显示/隐藏调试面板
+      let lastTapTime = 0;
+      document.addEventListener('click', function(e) {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTapTime;
+        
+        if (tapLength < 300 && tapLength > 0) {
+          // 双击事件
+          const debugPanel = document.getElementById('simpleDebug');
+          if (debugPanel) {
+            debugPanel.classList.toggle('active');
+            console.log('🔧 调试面板切换');
+          }
+        }
+        
+        lastTapTime = currentTime;
+      });
+      
+      // 确保所有按钮可点击
+      document.querySelectorAll('button, .nav-link').forEach(el => {
+        el.style.cursor = 'pointer';
+      });
+    });
+    
+    // 全局错误处理
+    window.addEventListener('error', function(e) {
+      console.error('❌ 全局错误:', e.error);
+      
+      // 在调试面板显示错误
+      if (debugOutput) {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'margin-bottom: 3px; font-size: 9px; color: #ff6b6b;';
+        errorDiv.textContent = `错误: ${e.message.substring(0, 40)}...`;
+        debugOutput.appendChild(errorDiv);
+      }
+    });
+    
+    console.log('✅ 测试环境脚本初始化完成');
+    
+    // 添加简单的功能测试
+    function testBasicFunctionality() {
+      console.log('🧪 运行基础功能测试...');
+      
+      // 测试1: 检查DOM元素
+      const elements = ['pronounceBtn', 'nextBtn', 'prevBtn'];
+      let missingElements = [];
+      
+      elements.forEach(id => {
+        if (!document.getElementById(id)) {
+          missingElements.push(id);
+        }
+      });
+      
+      if (missingElements.length > 0) {
+        console.warn('⚠️ 缺失元素:', missingElements);
+      } else {
+        console.log('✅ 所有关键元素存在');
+      }
+      
+      // 测试2: 检查音频支持
+      const audio = new Audio();
+      const canPlayMP3 = audio.canPlayType('audio/mpeg');
+      console.log(`🎵 音频支持: MP3 - ${canPlayMP3 || '不支持'}`);
+      
+      // 测试3: 检查触摸支持
+      console.log(`👆 触摸支持: ${'ontouchstart' in window ? '是' : '否'}`);
+      
+      return {
+        elements: missingElements.length === 0,
+        audio: !!canPlayMP3,
+        touch: 'ontouchstart' in window
+      };
+    }
+    
+    // 页面完全加载后运行测试
+    setTimeout(() => {
+      const testResults = testBasicFunctionality();
+      console.log('📊 基础功能测试结果:', testResults);
+      
+      if (debugOutput) {
+        const resultsDiv = document.createElement('div');
+        resultsDiv.style.cssText = 'margin-top: 10px; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 9px; color: #4ecdc4;';
+        resultsDiv.innerHTML = `
+          <div>🧪 基础测试结果:</div>
+          <div>元素: ${testResults.elements ? '✅' : '❌'}</div>
+          <div>音频: ${testResults.audio ? '✅' : '❌'}</div>
+          <div>触摸: ${testResults.touch ? '✅' : '❌'}</div>
+        `;
+        debugOutput.appendChild(resultsDiv);
+      }
+    }, 2000);
+  </script>
+</body>
+</html>

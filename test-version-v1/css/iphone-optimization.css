@@ -1,0 +1,416 @@
+/* iPhone专用优化CSS */
+/* 针对iPhone 12/13/14/15系列优化 */
+
+/* 1. 安全区域适配 */
+@supports (padding: max(0px)) {
+    .iphone-safe-area {
+        /* 顶部安全区域 - 刘海屏 */
+        padding-top: max(20px, env(safe-area-inset-top, 20px)) !important;
+        
+        /* 底部安全区域 - Home指示器 */
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)) !important;
+        
+        /* 左右安全区域 */
+        padding-left: max(15px, env(safe-area-inset-left, 15px)) !important;
+        padding-right: max(15px, env(safe-area-inset-right, 15px)) !important;
+    }
+    
+    .iphone-fixed-top {
+        top: env(safe-area-inset-top, 0px) !important;
+    }
+    
+    .iphone-fixed-bottom {
+        bottom: env(safe-area-inset-bottom, 0px) !important;
+    }
+}
+
+/* 2. 触摸目标优化 - Apple Human Interface Guidelines要求≥44px */
+.iphone-touch-target {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 12px 20px !important;
+}
+
+.iphone-touch-target-small {
+    min-height: 44px !important;
+    min-width: 44px !important;
+}
+
+/* 按钮触摸优化 */
+button, 
+.btn,
+.mobile-nav-link,
+.nav-link,
+.mobile-nav-toggle,
+.mobile-nav-close {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+    user-select: none !important;
+}
+
+/* 3. 点击反馈优化 */
+.iphone-click-feedback:active {
+    transform: scale(0.97) !important;
+    opacity: 0.9 !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 4. 流畅滚动优化 */
+.iphone-scroll {
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    scrollbar-width: none !important; /* Firefox */
+}
+
+.iphone-scroll::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari */
+}
+
+/* 5. 字体大小优化 - 防止iOS字体缩放 */
+.iphone-text {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+    font-synthesis: none !important;
+}
+
+/* 6. 防止文本选择 */
+.iphone-no-select {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
+/* 7. 防止长按菜单 */
+.iphone-no-context-menu {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* 8. 弹性盒子优化 */
+.iphone-flex {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 9. 图片优化 */
+.iphone-img {
+    max-width: 100% !important;
+    height: auto !important;
+    -webkit-user-drag: none !important;
+}
+
+/* 10. 表单元素优化 */
+.iphone-input,
+.iphone-textarea,
+.iphone-select {
+    font-size: 16px !important; /* 防止iOS缩放 */
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    border-radius: 10px !important;
+}
+
+/* 11. 动画优化 - 减少性能消耗 */
+.iphone-animation {
+    animation-duration: 0.3s !important;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation-fill-mode: both !important;
+}
+
+/* 12. 阴影优化 - 减少性能消耗 */
+.iphone-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.iphone-shadow-lg {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 13. 横屏模式优化 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .iphone-landscape {
+        flex-direction: row !important;
+    }
+    
+    .iphone-landscape .sidebar {
+        width: 35% !important;
+        max-height: 100vh !important;
+    }
+    
+    .iphone-landscape .content-area {
+        width: 65% !important;
+        max-height: 100vh !important;
+    }
+    
+    /* 横屏时隐藏不必要的元素 */
+    .iphone-landscape-hide {
+        display: none !important;
+    }
+}
+
+/* 14. 小屏幕iPhone优化 (iPhone SE, iPhone 8等) */
+@media (max-width: 375px) {
+    .iphone-small-screen {
+        font-size: 14px !important;
+    }
+    
+    .iphone-small-screen .header h1 {
+        font-size: 1.6rem !important;
+    }
+    
+    .iphone-small-screen .btn {
+        padding: 10px 16px !important;
+        font-size: 14px !important;
+    }
+    
+    .iphone-small-screen .word-card {
+        padding: 16px !important;
+    }
+}
+
+/* 15. 大屏幕iPhone优化 (iPhone Pro Max) */
+@media (min-width: 428px) and (max-width: 768px) {
+    .iphone-large-screen {
+        max-width: 428px !important;
+        margin: 0 auto !important;
+    }
+}
+
+/* 16. 暗色模式优化 */
+@media (prefers-color-scheme: dark) {
+    .iphone-dark-mode {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+    
+    .iphone-dark-mode .card,
+    .iphone-dark-mode .word-card,
+    .iphone-dark-mode .sidebar,
+    .iphone-dark-mode .content-area {
+        background-color: #1c1c1e !important;
+        border-color: #38383a !important;
+    }
+    
+    .iphone-dark-mode .text-muted {
+        color: #8e8e93 !important;
+    }
+}
+
+/* 17. 减少运动优化 */
+@media (prefers-reduced-motion: reduce) {
+    .iphone-reduced-motion * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 18. 高对比度模式优化 */
+@media (prefers-contrast: high) {
+    .iphone-high-contrast {
+        --primary: #000000 !important;
+        --secondary: #000000 !important;
+        border-width: 2px !important;
+    }
+}
+
+/* 19. 电池优化 */
+.iphone-battery-saver {
+    animation-play-state: paused !important;
+}
+
+/* 20. 具体组件优化 */
+
+/* 导航栏优化 */
+.mobile-nav-header {
+    height: 60px !important;
+    padding-top: env(safe-area-inset-top, 0px) !important;
+}
+
+.mobile-nav-toggle {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 22px !important;
+}
+
+/* 导航面板优化 */
+.mobile-nav-panel {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+}
+
+.mobile-nav-content {
+    padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* 按钮组优化 */
+.button-group {
+    display: flex !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+}
+
+.button-group .btn {
+    flex: 1 !important;
+    min-width: 120px !important;
+}
+
+/* 单词卡片优化 */
+.word-card {
+    margin-bottom: 16px !important;
+    border-radius: 16px !important;
+}
+
+.word-card:last-child {
+    margin-bottom: env(safe-area-inset-bottom, 20px) !important;
+}
+
+/* 学习提示优化 */
+.study-tip {
+    margin-top: 20px !important;
+    margin-bottom: env(safe-area-inset-bottom, 20px) !important;
+}
+
+/* 21. 性能优化类 */
+.iphone-will-change {
+    will-change: transform, opacity !important;
+}
+
+.iphone-transform-layer {
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    perspective: 1000px !important;
+}
+
+/* 22. 错误状态优化 */
+.iphone-error-state {
+    border-color: #ff3b30 !important;
+    background-color: rgba(255, 59, 48, 0.1) !important;
+}
+
+.iphone-success-state {
+    border-color: #34c759 !important;
+    background-color: rgba(52, 199, 89, 0.1) !important;
+}
+
+/* 23. 加载状态优化 */
+.iphone-loading {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.iphone-loading::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+    animation: iphone-loading-shimmer 1.5s infinite !important;
+}
+
+@keyframes iphone-loading-shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* 24. 工具类 */
+.iphone-mt-safe {
+    margin-top: env(safe-area-inset-top, 0px) !important;
+}
+
+.iphone-mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+.iphone-ml-safe {
+    margin-left: env(safe-area-inset-left, 0px) !important;
+}
+
+.iphone-mr-safe {
+    margin-right: env(safe-area-inset-right, 0px) !important;
+}
+
+.iphone-pt-safe {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+}
+
+.iphone-pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+.iphone-pl-safe {
+    padding-left: env(safe-area-inset-left, 0px) !important;
+}
+
+.iphone-pr-safe {
+    padding-right: env(safe-area-inset-right, 0px) !important;
+}
+
+/* 25. 响应式工具类 */
+.iphone-only {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .iphone-only {
+        display: block !important;
+    }
+    
+    .desktop-only {
+        display: none !important;
+    }
+}
+
+/* 26. 调试类 */
+.iphone-debug-outline * {
+    outline: 1px solid rgba(255, 0, 0, 0.3) !important;
+}
+
+.iphone-debug-touch * {
+    background: rgba(0, 255, 0, 0.1) !important;
+}
+
+/* 27. 强制GPU加速 */
+.iphone-gpu-accelerate {
+    transform: translate3d(0, 0, 0) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+}
+
+/* 28. 防止字体闪烁 */
+.iphone-font-smoothing {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* 29. 链接优化 */
+.iphone-link {
+    color: #007aff !important;
+    text-decoration: none !important;
+}
+
+.iphone-link:active {
+    opacity: 0.7 !important;
+}
+
+/* 30. 最终优化 - 应用到body */
+body.iphone-optimized {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+    -webkit-touch-callout: none !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+    font-synthesis: none !important;
+    overscroll-behavior: none !important;
+}
+
+/* 检测iPhone并应用优化 */
+@media (max-width: 768px) {
+    body:has(.mobile-nav-header) {
+        /* 应用所有iPhone优化 */
+        composes: iphone-optimized;
+    }
+}
