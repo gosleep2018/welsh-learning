@@ -361,15 +361,32 @@ class WelshLearningApp {
   }
   
   showDailyWords() {
+    console.log('📖 显示每日单词，数据量:', this.data.dailyWords.length);
+    
     const container = document.getElementById('moduleContent');
+    if (!container) {
+      console.error('❌ 找不到容器: moduleContent');
+      this.showError('页面元素加载失败，请刷新页面');
+      return;
+    }
     
     if (this.data.dailyWords.length === 0) {
+      console.warn('⚠️ 单词数据为空，显示加载状态');
       container.innerHTML = `
         <div class="loading">
           <div class="spinner"></div>
           <p>加载单词数据中...</p>
         </div>
       `;
+      
+      // 3秒后重试
+      setTimeout(() => {
+        if (this.data.dailyWords.length === 0) {
+          this.loadData().then(() => {
+            this.showDailyWords();
+          });
+        }
+      }, 3000);
       return;
     }
     
