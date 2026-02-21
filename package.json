@@ -1,0 +1,19 @@
+{
+  "name": "welsh-learning",
+  "version": "1.0.0",
+  "description": "威尔士语学习网站 - 面向英语使用者的快速入门平台",
+  "main": "public/index.html",
+  "scripts": {
+    "start": "cd public && python3 -m http.server 8080",
+    "build": "./deploy/deploy.sh build",
+    "deploy:render": "render deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["welsh", "learning", "language", "education"],
+  "author": "gosleep2018",
+  "license": "MIT",
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

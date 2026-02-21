@@ -1,0 +1,36 @@
+# Render 部署配置
+services:
+  # 威尔士学习网站 (静态前端)
+  - type: web
+    name: welsh-learning
+    runtime: static
+    buildCommand: ./deploy/deploy.sh build
+    staticPublishPath: ./build
+    envVars:
+      - key: NODE_ENV
+        value: production
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=3600
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+  # 后端API服务 (可选)
+  - type: web
+    name: welsh-learning-api
+    runtime: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+    healthCheckPath: /api/health
+    autoDeploy: true
