@@ -5,204 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>威尔士语学习平台 - 移动端优化</title>
+    <title>威尔士语学习平台 - 现代化精美UI</title>
     
-    <!-- 主CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <!-- 现代化CSS -->
+    <link rel="stylesheet" href="css/modern-ui.css">
     
     <!-- Font Awesome图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- 现代化字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* 移动端优化样式 */
-        @media (max-width: 768px) {
-            /* 隐藏桌面端侧边栏 */
-            .sidebar {
-                display: none !important;
-            }
-            
-            /* 调整主内容区域 */
-            .main-content {
-                margin-top: 70px;
-                flex-direction: column;
-            }
-            
-            .content-area {
-                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-                margin-bottom: 0;
-            }
-            
-            /* 调整头部 */
-            .header {
-                border-radius: 0;
-                margin-bottom: 0;
-                padding-top: 70px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .header h1 span {
-                font-size: 2.2rem;
-            }
-            
-            /* 调整容器 */
-            .app-container {
-                padding: 0;
-            }
+        /* 现代化加载动画 */
+        #modernLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #264653 0%, #457b9d 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
         }
         
-        /* 小屏幕优化 */
-        @media (max-width: 480px) {
-            .header {
-                padding: 30px 20px;
-                padding-top: 60px;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .content-area {
-                padding: 20px;
-                border-radius: var(--radius-md) var(--radius-md) 0 0;
-            }
-            
-            .word-card {
-                padding: 20px;
-            }
-            
-            .btn {
-                padding: 12px 20px;
-                width: 100%;
-            }
+        .modern-logo {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: modernPulse 2s infinite;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
         
-        /* 横屏模式 */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .mobile-nav-content {
-                width: 300px;
-            }
-            
-            .mobile-nav-panel.active ~ .app-container {
-                transform: translateX(300px);
-                transition: transform var(--transition-normal);
-            }
+        .modern-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: modernSpin 1s linear infinite;
+        }
+        
+        .modern-loading-text {
+            color: white;
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+        
+        @keyframes modernPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        @keyframes modernSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 现代化浮动操作按钮 */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(230, 57, 70, 0.4);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(230, 57, 70, 0.5);
+        }
+        
+        .fab:active {
+            transform: scale(0.95);
+        }
+        
+        /* 现代化波浪背景 */
+        .wave-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDBweCIgdmlld0JveD0iMCAwIDEyODAgMTQwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIiBkPSJNMTI4MCAxNDBjLTI4MCAwLTI4MC0xNDAtNTYwLTE0MFMwIDAgMCAxNDBoMTI4MHYwWiIvPjwvc3ZnPg==');
+            background-size: 100% 100px;
+            opacity: 0.5;
+        }
+        
+        /* 现代化玻璃态效果 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* 现代化渐变文字 */
+        .gradient-text {
+            background: linear-gradient(90deg, #e63946, #ffd166, #2a9d8f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
     </style>
 </head>
 <body>
-    <!-- 移动端顶部导航栏 -->
-    <div class="mobile-nav-header">
-        <div class="mobile-nav-title">
-            <span>🏴󠁧󠁢󠁷󠁬󠁳󠁿</span>
-            威尔士学习
-        </div>
-        <button class="mobile-nav-toggle" id="mobileNavToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-    
-    <!-- 移动端导航面板 -->
-    <div class="mobile-nav-panel" id="mobileNavPanel">
-        <div class="mobile-nav-content">
-            <button class="mobile-nav-close" id="mobileNavClose">
-                <i class="fas fa-times"></i>
-            </button>
-            
-            <div class="mobile-nav-panel-title">
-                <span>🧭</span>
-                学习导航
-            </div>
-            
-            <ul class="mobile-nav-list">
-                <li class="mobile-nav-item">
-                    <a href="#" class="mobile-nav-link active" data-module="dailyWords">
-                        <i class="fas fa-book-open"></i>
-                        <span>每日词汇</span>
-                        <span class="mobile-nav-badge">5</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="#" class="mobile-nav-link" data-module="commonPhrases">
-                        <i class="fas fa-comments"></i>
-                        <span>常用短语</span>
-                        <span class="mobile-nav-badge new">新</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="#" class="mobile-nav-link" data-module="pronunciation">
-                        <i class="fas fa-volume-up"></i>
-                        <span>发音练习</span>
-                        <span class="mobile-nav-badge basic">基础版</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="#" class="mobile-nav-link" data-module="wordList">
-                        <i class="fas fa-list"></i>
-                        <span>单词列表</span>
-                        <span class="mobile-nav-badge new">新</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="#" class="mobile-nav-link" data-module="search">
-                        <i class="fas fa-search"></i>
-                        <span>搜索翻译</span>
-                        <span class="mobile-nav-badge new">新</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="#" class="mobile-nav-link" data-module="culture">
-                        <i class="fas fa-landmark"></i>
-                        <span>威尔士文化</span>
-                        <span class="mobile-nav-badge new">新</span>
-                    </a>
-                </li>
-            </ul>
-            
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                <div class="mobile-nav-panel-title" style="font-size: 1.2rem; margin-bottom: 15px;">
-                    <span>⚙️</span>
-                    学习设置
-                </div>
-                
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                    <span style="font-size: 0.95rem;">词根词缀显示</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="rootToggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                    <span style="font-size: 0.95rem;">记忆技巧提示</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="tipToggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span style="font-size: 0.95rem;">扩展学习内容</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="extendToggle">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
+    <!-- 现代化加载屏幕 -->
+    <div id="modernLoading">
+        <div class="modern-logo">🏴󠁧󠁢󠁷󠁬󠁳󠁿</div>
+        <div class="modern-spinner"></div>
+        <div class="modern-loading-text">正在加载现代化威尔士学习平台...</div>
     </div>
     
     <!-- 主容器 -->
-    <div class="app-container">
-        <!-- 头部 -->
+    <div class="app-container" style="display: none;">
+        <!-- 现代化头部 -->
         <header class="header">
+            <div class="wave-bg"></div>
             <h1>
                 <span>🏴󠁧󠁢󠁷󠁬󠁳󠁿</span>
                 威尔士语学习平台
             </h1>
-            <div class="subtitle">移动端优化导航 • 加强active状态 • 汉堡菜单设计</div>
+            <div class="subtitle">现代化精美UI • 移动端优先设计 • 流畅交互体验</div>
             <div class="tagline">4周掌握100高频表达 • 能进行3分钟基础对话</div>
             <div style="margin-top: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                 <i class="fas fa-calendar-alt"></i> 当前日期: <span id="currentDate"></span>
@@ -211,9 +151,9 @@
             </div>
         </header>
         
-        <!-- 主内容 -->
+        <!-- 现代化主内容 -->
         <div class="main-content">
-            <!-- 桌面端侧边栏（移动端隐藏） -->
+            <!-- 现代化侧边栏 -->
             <aside class="sidebar">
                 <div class="sidebar-section">
                     <h3 class="sidebar-title">
@@ -289,9 +229,29 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-cog"></i> 设置
+                    </h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="font-size: 0.9rem;">暗色模式</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 0.9rem;">发音自动播放</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoPlayToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
             </aside>
             
-            <!-- 内容区域 -->
+            <!-- 现代化内容区域 -->
             <main class="content-area">
                 <!-- 每日词汇模块 -->
                 <div id="dailyWordsModule" class="module-content">
@@ -345,7 +305,7 @@
                             </div>
                         </div>
                         
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 1rem;">
                             <button class="btn btn-primary press-effect" onclick="playPronunciation()">
                                 <i class="fas fa-volume-up"></i>
                                 发音
@@ -368,12 +328,12 @@
                     </div>
                     
                     <!-- 导航按钮 -->
-                    <div style="display: flex; justify-content: space-between; margin-top: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
                         <button class="btn btn-outline press-effect">
                             <i class="fas fa-arrow-left"></i>
                             上一个
                         </button>
-                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <div style="display: flex; gap: 0.5rem;">
                             <div style="width: 10px; height: 10px; background: #e63946; border-radius: 50%;"></div>
                             <div style="width: 10px; height: 10px; background: #e9ecef; border-radius: 50%;"></div>
                             <div style="width: 10px; height: 10px; background: #e9ecef; border-radius: 50%;"></div>
@@ -386,10 +346,13 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- 其他模块内容会通过JavaScript动态加载 -->
+                <div id="otherModules" style="display: none;"></div>
             </main>
         </div>
         
-        <!-- 页脚 -->
+        <!-- 现代化页脚 -->
         <footer class="footer">
             <div>威尔士语学习平台 © 2026</div>
             <div class="footer-links">
@@ -401,20 +364,36 @@
         </footer>
     </div>
     
-    <!-- JavaScript -->
+    <!-- 浮动操作按钮 -->
+    <button class="fab" onclick="scrollToTop()" title="回到顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- 现代化JavaScript -->
     <script>
         // 页面加载完成
         window.addEventListener('load', function() {
+            // 隐藏加载屏幕
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('modernLoading');
+                loadingScreen.style.opacity = '0';
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    document.querySelector('.app-container').style.display = 'block';
+                    
+                    // 添加淡入动画
+                    document.querySelector('.app-container').style.opacity = '0';
+                    document.querySelector('.app-container').style.animation = 'fadeIn 0.5s ease forwards';
+                }, 300);
+            }, 1500);
+            
             // 设置当前日期
             const now = new Date();
             const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
             document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', options);
             
-            // 初始化移动端导航
-            initMobileNavigation();
-            
-            // 初始化桌面端导航
-            initDesktopNavigation();
+            // 初始化进度
+            updateProgress();
             
             // 添加CSS动画
             const style = document.createElement('style');
@@ -431,125 +410,12 @@
             document.head.appendChild(style);
         });
         
-        // 初始化移动端导航
-        function initMobileNavigation() {
-            const mobileNavToggle = document.getElementById('mobileNavToggle');
-            const mobileNavPanel = document.getElementById('mobileNavPanel');
-            const mobileNavClose = document.getElementById('mobileNavClose');
-            
-            // 汉堡菜单交互
-            function toggleMobileNav() {
-                mobileNavPanel.classList.toggle('active');
-                document.body.style.overflow = mobileNavPanel.classList.contains('active') ? 'hidden' : '';
-            }
-            
-            mobileNavToggle.addEventListener('click', toggleMobileNav);
-            mobileNavClose.addEventListener('click', toggleMobileNav);
-            
-            // 点击面板外部关闭
-            mobileNavPanel.addEventListener('click', function(e) {
-                if (e.target === mobileNavPanel) {
-                    toggleMobileNav();
-                }
+        // 滚动到顶部
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
-            
-            // 移动端导航项点击
-            document.querySelectorAll('.mobile-nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // 同步active状态
-                    syncActiveState(this);
-                    
-                    // 加载模块内容
-                    const module = this.getAttribute('data-module');
-                    loadModule(module);
-                    
-                    // 关闭导航面板
-                    setTimeout(() => {
-                        toggleMobileNav();
-                    }, 300);
-                });
-            });
-        }
-        
-        // 初始化桌面端导航
-        function initDesktopNavigation() {
-            // 桌面端导航项点击
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // 同步active状态
-                    syncActiveState(this);
-                    
-                    // 加载模块内容
-                    const module = this.getAttribute('data-module');
-                    loadModule(module);
-                });
-            });
-        }
-        
-        // 同步active状态
-        function syncActiveState(activeLink) {
-            const module = activeLink.getAttribute('data-module');
-            
-            // 移除所有active类
-            document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // 添加active类到对应链接
-            document.querySelectorAll(`[data-module="${module}"]`).forEach(link => {
-                link.classList.add('active');
-            });
-            
-            // 显示反馈
-            const moduleName = activeLink.querySelector('span').textContent;
-            showToast(`切换到: ${moduleName}`);
-        }
-        
-        // 加载模块
-        function loadModule(module) {
-            let content = '';
-            
-            switch(module) {
-                case 'dailyWords':
-                    content = document.getElementById('dailyWordsModule').innerHTML;
-                    break;
-                case 'commonPhrases':
-                    content = `
-                        <div style="text-align: center; padding: 3rem;">
-                            <h2 style="font-size: 1.8rem; color: #264653; margin-bottom: 1.5rem;">
-                                <i class="fas fa-comments" style="margin-right: 10px;"></i>
-                                常用短语
-                            </h2>
-                            <p style="color: #666; margin-bottom: 2rem;">正在开发中，即将推出...</p>
-                            <button class="btn btn-primary" onclick="showToast('功能即将上线！')">
-                                通知我
-                            </button>
-                        </div>
-                    `;
-                    break;
-                default:
-                    content = `
-                        <div style="text-align: center; padding: 3rem;">
-                            <h2 style="font-size: 1.8rem; color: #264653; margin-bottom: 1.5rem;">
-                                <i class="fas fa-cogs" style="margin-right: 10px;"></i>
-                                功能开发中
-                            </h2>
-                            <p style="color: #666; margin-bottom: 2rem;">我们正在努力开发这个功能，敬请期待！</p>
-                            <button class="btn btn-primary" onclick="showToast('感谢您的耐心等待！')">
-                                我知道了
-                            </button>
-                        </div>
-                    `;
-            }
-            
-            document.querySelector('.content-area').innerHTML = content;
-            
-            // 添加淡入效果
-            document.querySelector('.content-area').style.animation = 'fadeIn 0.5s ease';
         }
         
         // 播放发音
@@ -579,6 +445,7 @@
                 btn.classList.add('btn-success');
                 btn.disabled = true;
                 
+                // 显示提示
                 showToast('已添加到闪卡列表');
             }
         }
@@ -595,6 +462,7 @@
                 // 更新进度
                 updateProgress();
                 
+                // 显示提示
                 showToast('标记为已学习，进度已更新');
             }
         }
@@ -613,6 +481,7 @@
         
         // 显示提示
         function showToast(message) {
+            // 创建toast元素
             const toast = document.createElement('div');
             toast.style.cssText = `
                 position: fixed;
@@ -630,6 +499,7 @@
             `;
             toast.textContent = message;
             
+            // 添加动画
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes slideIn {
@@ -645,74 +515,116 @@
             
             document.body.appendChild(toast);
             
+            // 3秒后移除
             setTimeout(() => {
                 toast.remove();
                 style.remove();
             }, 3000);
         }
         
-        // 添加toggle-switch样式
-        const toggleStyle = document.createElement('style');
-        toggleStyle.textContent = `
-            .toggle-switch {
-                position: relative;
-                display: inline-block;
-                width: 50px;
-                height: 24px;
-            }
-            
-            .toggle-switch input {
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-            
-            .toggle-slider {
-                position: absolute;
-                cursor: pointer;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: #e9ecef;
-                transition: 0.3s;
-                border-radius: 24px;
-            }
-            
-            .toggle-slider:before {
-                position: absolute;
-                content: '';
-                height: 18px;
-                width: 18px;
-                left: 3px;
-                bottom: 3px;
-                background: white;
-                transition: 0.3s;
-                border-radius: 50%;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            
-            input:checked + .toggle-slider {
-                background: #2a9d8f;
-            }
-            
-            input:checked + .toggle-slider:before {
-                transform: translateX(26px);
-            }
-        `;
-        document.head.appendChild(toggleStyle);
-        
-        // 设置切换开关事件
-        document.getElementById('rootToggle').addEventListener('change', function() {
-            showToast(this.checked ? '词根词缀显示已开启' : '词根词缀显示已关闭');
+        // 导航切换
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 移除所有active类
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // 添加active类到当前链接
+                this.classList.add('active');
+                
+                // 获取模块名称
+                const module = this.getAttribute('data-module');
+                
+                // 显示加载状态
+                const contentArea = document.querySelector('.content-area');
+                contentArea.innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                        <div class="modern-spinner" style="margin: 0 auto 1.5rem;"></div>
+                        <div style="color: #666; font-size: 1.1rem;">正在加载 ${this.querySelector('span').textContent}...</div>
+                    </div>
+                `;
+                
+                // 模拟加载延迟
+                setTimeout(() => {
+                    loadModule(module);
+                }, 800);
+            });
         });
         
-        document.getElementById('tipToggle').addEventListener('change', function() {
-            showToast(this.checked ? '记忆技巧提示已开启' : '记忆技巧提示已关闭');
+        // 加载模块
+        function loadModule(module) {
+            let content = '';
+            
+            switch(module) {
+                case 'dailyWords':
+                    content = document.getElementById('dailyWordsModule').innerHTML;
+                    break;
+                case 'commonPhrases':
+                    content = `
+                        <div style="text-align: center; padding: 3rem;">
+                            <h2 style="font-size: 1.8rem; color: #264653; margin-bottom: 1.5rem;">
+                                <i class="fas fa-comments" style="margin-right: 10px;"></i>
+                                常用短语
+                            </h2>
+                            <p style="color: #666; margin-bottom: 2rem;">正在开发中，即将推出...</p>
+                            <button class="btn btn-primary" onclick="showToast('功能即将上线！')">
+                                通知我
+                            </button>
+                        </div>
+                    `;
+                    break;
+                // 其他模块类似...
+                default:
+                    content = `
+                        <div style="text-align: center; padding: 3rem;">
+                            <h2 style="font-size: 1.8rem; color: #264653; margin-bottom: 1.5rem;">
+                                <i class="fas fa-cogs" style="margin-right: 10px;"></i>
+                                功能开发中
+                            </h2>
+                            <p style="color: #666; margin-bottom: 2rem;">我们正在努力开发这个功能，敬请期待！</p>
+                            <button class="btn btn-primary" onclick="showToast('感谢您的耐心等待！')">
+                                我知道了
+                            </button>
+                        </div>
+                    `;
+            }
+            
+            document.querySelector('.content-area').innerHTML = content;
+            
+            // 添加淡入效果
+            document.querySelector('.content-area').style.animation = 'fadeIn 0.5s ease';
+        }
+        
+        // 暗色模式切换
+        document.getElementById('darkModeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode', this.checked);
+            showToast(this.checked ? '已切换到暗色模式' : '已切换到亮色模式');
         });
         
-        document.getElementById('extendToggle').addEventListener('change', function() {
-            showToast(this.checked ? '扩展学习内容已开启' : '扩展学习内容已关闭');
+        // 自动播放切换
+        document.getElementById('autoPlayToggle').addEventListener('change', function() {
+            showToast(this.checked ? '发音自动播放已开启' : '发音自动播放已关闭');
+        });
+        
+        // 监听滚动显示/隐藏FAB
+        let lastScrollTop = 0;
+        const fab = document.querySelector('.fab');
+        
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // 向下滚动
+                fab.style.transform = 'translateY(100px)';
+                fab.style.opacity = '0';
+            } else {
+                // 向上滚动或顶部
+                fab.style.transform = 'translateY(0)';
+                fab.style.opacity = '1';
+            }
+            
+            lastScrollTop = scrollTop;
         });
     </script>
 </body>
