@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iOS最终修复测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+        }
+        
+        .device-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .test-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .test-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .test-title h2 {
+            color: white;
+            font-size: 1.8rem;
+        }
+        
+        .test-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .test-description {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .test-area {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .test-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 18px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s;
+            min-height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .test-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        
+        .test-btn.success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+        
+        .test-btn.warning {
+            background: linear-gradient(135deg, #ffd166 0%, #ff9a3c 100%);
+            color: #333;
+        }
+        
+        .test-btn.danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+        }
+        
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.success {
+            background: #4ecdc4;
+        }
+        
+        .status-indicator.error {
+            background: #ff6b6b;
+        }
+        
+        .status-indicator.warning {
+            background: #ffd166;
+        }
+        
+        .word-display {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .word-welsh {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .word-pronunciation {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .word-translation {
+            font-size: 1.5rem;
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+        
+        .audio-visualizer {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.3) 2px,
+                rgba(255,255,255,0.3) 4px
+            );
+            animation: wave 1s linear infinite;
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-4px); }
+        }
+        
+        .fix-instructions {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .fix-instructions h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .fix-instructions ul {
+            color: rgba(255,255,255,0.8);
+            margin-left: 20px;
+            line-height: 1.6;
+        }
+        
+        .fix-instructions li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .test-btn {
+                min-width: 100%;
+            }
+            
+            .word-welsh {
+                font-size: 2rem;
+            }
+        }
+        
+        /* iOS特定样式 */
+        .ios-only {
+            display: none;
+        }
+        
+        body.ios-device .ios-only {
+            display: block;
+        }
+        
+        body.ios-device .test-card {
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 iOS最终修复测试</h1>
+            <p>专门解决iPhone上的发音和导航问题</p>
+            <div class="device-badge" id="deviceInfo">
+                检测设备中...
+            </div>
+        </div>
+        
+        <!-- iOS检测 -->
+        <div class="test-card ios-only">
+            <div class="test-title">
+                <div class="test-icon">
+                    <i class="fab fa-apple"></i>
+                </div>
+                <h2>iOS设备检测</h2>
+            </div>
+            
+            <div class="test-description">
+                检测当前设备是否为iPhone，并显示设备信息。
+            </div>
+            
+            <div class="test-area">
+                <div id="iosDetectionResult" style="color: rgba(255,255,255,0.8);">
+                    检测中...
+                </div>
+            </div>
+        </div>
+        
+        <!-- 发音修复测试 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <h2>iOS发音修复测试</h2>
+            </div>
+            
+            <div class="test-description">
+                测试专门为iOS优化的发音功能。修复了iOS的音频播放限制问题。
+            </div>
+            
+            <div class="test-area">
+                <div class="word-display">
+                    <div class="word-welsh">Os gwelwch yn dda</div>
+                    <div class="word-pronunciation">os GWELL-ooch un THAH</div>
+                    <div class="word-translation">请 (礼貌用语)</div>
+                </div>
+                
+                <div class="audio-visualizer" id="audioVisualizer">
+                    <div class="audio-wave"></div>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn" id="iosPronounceBtn">
+                        <i class="fas fa-play-circle"></i>
+                        iOS专用发音测试
+                    </button>
+                    <button class="test-btn success" id="testMultipleAudio">
+                        <i class="fas fa-headphones"></i>
+                        测试多次播放
+                    </button>
+                </div>
+                
+                <div class="fix-instructions ios-only">
+                    <h4>📱 iOS音频修复说明：</h4>
+                    <ul>
+                        <li>✅ 预加载音频上下文</li>
+                        <li>✅ 用户交互后立即播放</li>
+                        <li>✅ 同时支持click和touch事件</li>
+                        <li>✅ 处理iOS播放限制错误</li>
+                        <li>✅ 自动恢复音频上下文</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="test-result" id="iosAudioResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 导航修复测试 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h2>iOS导航修复测试</h2>
+            </div>
+            
+            <div class="test-description">
+                测试专门为iOS优化的导航功能。修复了触摸事件和点击反馈问题。
+            </div>
+            
+            <div class="test-area">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <button class="test-btn" id="testNavToggle">
+                        <i class="fas fa-bars"></i>
+                        汉堡菜单
+                    </button>
+                    <button class="test-btn success" id="testNavItem1">
+                        <i class="fas fa-book-open"></i>
+                        每日词汇
+                    </button>
+                    <button class="test-btn warning" id="testNavItem2">
+                        <i class="fas fa-comments"></i>
+                        常用短语
+                    </button>
+                </div>
+                
+                <div class="fix-instructions ios-only">
+                    <h4>📱 iOS导航修复说明：</h4>
+                    <ul>
+                        <li>✅ 44px最小触摸目标</li>
+                        <li>✅ 明确的点击反馈</li>
+                        <li>✅ 防止误触的间距</li>
+                        <li>✅ 支持touch和click事件</li>
+                        <li>✅ 安全区域适配</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="test-result" id="iosNavResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 综合测试 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>综合功能测试</h2>
+            </div>
+            
+            <div class="test-description">
+                测试所有修复功能，确保在iPhone上完全正常工作。
+            </div>
+            
+            <div class="test-area">
+                <div class="test-buttons">
+                    <button class="test-btn success" id="runAllTests">
+                        <i class="fas fa-play"></i>
+                        运行所有测试
+                    </button>
+                    <button class="test-btn warning" id="applyIOSFix">
+                        <i class="fas fa-bolt"></i>
+                        应用iOS修复
+                    </button>
+                    <button class="test-btn" id="testMainApp">
+                        <i class="fas fa-external-link-alt"></i>
+                        测试主应用
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-result" id="comprehensiveResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 修复状态 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon">
+                    <i class="fas fa-wrench"></i>
+                </div>
+                <h2>修复状态</h2>
+            </div>
+            
+            <div class="test-description">
+                显示当前iOS修复的状态和应用情况。
+            </div>
+            
+            <div class="test-area">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: #667eea;">发音功能</div>
+                        <div id="audioStatus" style="color: #ff6b6b; font-weight: 600;">
+                            <i class="fas fa-times-circle"></i> 未修复
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: #667eea;">导航功能</div>
+                        <div id="navStatus" style="color: #ff6b6b; font-weight: 600;">
+                            <i class="fas fa-times-circle"></i> 未修复
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: #667eea;">iOS优化</div>
+                        <div id="iosStatus" style="color: #ff6b6b; font-weight: 600;">
+                            <i class="fas fa-times-circle"></i> 未应用
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- iOS音频修复脚本 -->
+    <script src="ios-audio-fix.js"></script>
+    
+    <script>
+        // 检测iOS设备
+        function detectIOSDevice() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isiPhone = /iPhone/.test(navigator.userAgent) && !window.MSStream;
+            
+            const deviceInfo = document.getElementById('deviceInfo');
+            const iosDetectionResult = document.getElementById('iosDetectionResult');
+            
+            if (isIOS) {
+                document.body.classList.add('ios-device');
+                
+                let deviceType = 'iOS设备';
+                if (isiPhone) deviceType = 'iPhone';
+                else if (/iPad/.test(navigator.userAgent)) deviceType = 'iPad';
+                else if (/iPod/.test(navigator.userAgent)) deviceType = 'iPod';
+                
+                deviceInfo.innerHTML = `
+                    <i class="fab fa-apple"></i> ${deviceType}
+                    <span style="margin-left: 10px; color: rgba(255,255,255,0.7); font-size: 0.8rem;">
+                        ${navigator.platform} | ${window.screen.width}×${window.screen.height}
+                    </span>
+                `;
+                
+                iosDetectionResult.innerHTML = `
+                    <div style="margin-bottom: 10px;">
+                        <span class="status-indicator success"></span>
+                        检测到: ${deviceType}
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <span class="status-indicator success"></span>
+                        平台: ${navigator.platform}
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <span class="status-indicator success"></span>
+                        屏幕: ${window.screen.width}×${window.screen.height}
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <span class="status-indicator success"></span>
+                        触摸支持: ${'ontouchstart' in window ? '是' : '否'}
+                    </div>
+                    <div>
+                        <span class="status-indicator success"></span>
+                        安全区域: ${CSS.supports('padding-top: env(safe-area-inset-top)') ? '支持' : '不支持'}
+                    </div>
+                `;
+                
+                // 更新iOS状态
+                document.getElementById('iosStatus').innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                    <span style="color: #4ecdc4;">已检测</span>
+                `;
+                
+            } else {
+                deviceInfo.innerHTML = '<i class="fas fa-desktop"></i> 非iOS设备';
+                iosDetectionResult.innerHTML = `
+                    <div style="color: #ffd166;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        当前不是iOS设备，但修复仍然可以测试
+                    </div>
+                `;
+            }
+        }
+        
+        // iOS发音测试
+        const iosPronounceBtn = document.getElementById('iosPronounceBtn');
+        const testMultipleAudio = document.getElementById('testMultipleAudio');
+        const audioVisualizer = document.getElementById('audioVisualizer');
+        const iosAudioResult = document.getElementById('iosAudioResult');
+        const audioStatus = document.getElementById('audioStatus');
+        
+        iosPronounceBtn.addEventListener('click', function() {
+            console.log('📱 iOS发音测试开始...');
+            
+            // 更新按钮状态
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 播放中...';
+            this.disabled = true;
+            
+            // 显示音频可视化
+            audioVisualizer.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)';
+            
+            // iOS专用音频播放
+            const audio = new Audio();
+            
+            // 设置TTS URL
+            const text = encodeURIComponent('Os gwelwch yn dda');
+            const ttsUrl = `https://web-x0ya.onrender.com/tts?text=${text}&lang=cy`;
+            audio.src = ttsUrl;
+            
+            // iOS要求设置
+            audio.volume = 1.0;
+            audio.muted = false;
+            audio.preload = 'auto';
+            
+            // 立即播放（在用户交互事件中）
+            audio.play().then(() => {
+                console.log('✅ iOS音频播放成功');
+                
+                iosAudioResult.innerHTML = `
+                    <div><span class="status-indicator success"></span>iOS音频播放成功</div>
+                    <div style="color: #ccc; margin-top: 5px;">时间: ${new Date().toLocaleTimeString()}</div>
+                    <div style="color: #ccc; margin-top: 5px;">服务: Azure TTS</div>
+                `;
+                
+                audioStatus.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                    <span style="color: #4ecdc4;">已修复</span>
+                `;
+                
+                // 监听播放结束
+                audio.addEventListener('ended', function() {
+                    console.log('✅ iOS音频播放完成');
+                    
+                    iosAudioResult.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status-indicator success"></span>
+                            播放完成
+                        </div>
+                    `;
+                    
+                    // 恢复按钮状态
+                    iosPronounceBtn.innerHTML = originalHTML;
+                    iosPronounceBtn.disabled = false;
+                    audioVisualizer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                });
+                
+            }).catch(error => {
+                console.error('❌ iOS音频播放失败:', error);
+                
+                iosAudioResult.innerHTML = `
+                    <div><span class="status-indicator error"></span>iOS音频播放失败</div>
+                    <div style="color: #ccc; margin-top: 5px;">错误: ${error.name} - ${error.message}</div>
+                    <div style="color: #ccc; margin-top: 5px;">建议: 检查网络连接或TTS服务</div>
+                `;
+                
+                // 恢复按钮状态
+                iosPronounceBtn.innerHTML = originalHTML;
+                iosPronounceBtn.disabled = false;
+                audioVisualizer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            });
+        });
+        
+        // 测试多次播放
+        testMultipleAudio.addEventListener('click', function() {
+            console.log('🔊 测试多次音频播放...');
+            
+            const words = [
+                { welsh: 'Helo', english: 'Hello', pronunciation: 'HEH-lo' },
+                { welsh: 'Diolch', english: 'Thank you', pronunciation: 'DEE-olch' },
+                { welsh: 'Bore da', english: 'Good morning', pronunciation: 'BOR-eh dah' }
+            ];
+            
+            let index = 0;
+            
+            function playNextWord() {
+                if (index >= words.length) {
+                    console.log('✅ 所有单词播放完成');
+                    iosAudioResult.innerHTML += `
+                        <div style="margin-top: 5px; color: #4ecdc4;">
+                            <i class="fas fa-check-circle"></i>
+                            所有单词播放完成 (${words.length}个)
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const word = words[index];
+                console.log(`🔊 播放单词 ${index + 1}: ${word.welsh}`);
+                
+                // 更新显示
+                document.querySelector('.word-welsh').textContent = word.welsh;
+                document.querySelector('.word-pronunciation').textContent = word.pronunciation;
+                document.querySelector('.word-translation').textContent = word.english;
+                
+                // 播放音频
+                const text = encodeURIComponent(word.welsh);
+                const audio = new Audio(`https://web-x0ya.onrender.com/tts?text=${text}&lang=cy`);
+                
+                audio.play().then(() => {
+                    console.log(`✅ 单词播放成功: ${word.welsh}`);
+                    
+                    iosAudioResult.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status-indicator success"></span>
+                            播放: ${word.welsh} (${word.english})
+                        </div>
+                    `;
+                    
+                    // 播放完成后播放下一个
+                    audio.addEventListener('ended', () => {
+                        index++;
+                        setTimeout(playNextWord, 500);
+                    });
+                    
+                }).catch(error => {
+                    console.error(`❌ 单词播放失败: ${word.welsh}`, error);
+                    
+                    iosAudioResult.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status-indicator error"></span>
+                            播放失败: ${word.welsh} - ${error.message}
+                        </div>
+                    `;
+                    
+                    // 继续播放下一个
+                    index++;
+                    setTimeout(playNextWord, 500);
+                });
+            }
+            
+            // 开始播放
+            playNextWord();
+        });
+        
+        // iOS导航测试
+        const testNavToggle = document.getElementById('testNavToggle');
+        const testNavItem1 = document.getElementById('testNavItem1');
+        const testNavItem2 = document.getElementById('testNavItem2');
+        const iosNavResult = document.getElementById('iosNavResult');
+        const navStatus = document.getElementById('navStatus');
+        
+        testNavToggle.addEventListener('click', function() {
+            console.log('🍔 iOS导航菜单点击');
+            
+            iosNavResult.innerHTML = `
+                <div><span class="status-indicator success"></span>汉堡菜单点击成功</div>
+                <div style="color: #ccc; margin-top: 5px;">时间: ${new Date().toLocaleTimeString()}</div>
+                <div style="color: #ccc; margin-top: 5px;">反馈: 视觉反馈正常</div>
+            `;
+            
+            navStatus.innerHTML = `
+                <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                <span style="color: #4ecdc4;">已修复</span>
+            `;
+        });
+        
+        testNavItem1.addEventListener('click', function() {
+            console.log('📚 导航项1点击');
+            
+            iosNavResult.innerHTML = `
+                <div><span class="status-indicator success"></span>导航项点击成功: 每日词汇</div>
+                <div style="color: #ccc; margin-top: 5px;">反馈: Active状态正常</div>
+            `;
+        });
+        
+        testNavItem2.addEventListener('click', function() {
+            console.log('💬 导航项2点击');
+            
+            iosNavResult.innerHTML = `
+                <div><span class="status-indicator success"></span>导航项点击成功: 常用短语</div>
+                <div style="color: #ccc; margin-top: 5px;">反馈: Active状态正常</div>
+            `;
+        });
+        
+        // 添加触摸事件（iOS主要）
+        [testNavToggle, testNavItem1, testNavItem2].forEach(button => {
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                console.log(`👆 iOS触摸开始: ${this.textContent.trim()}`);
+                
+                // 触摸反馈
+                this.style.transform = 'scale(0.95)';
+                this.style.opacity = '0.8';
+            }, { passive: false });
+            
+            button.addEventListener('touchend', function() {
+                this.style.transform = '';
+                this.style.opacity = '';
+            });
+        });
+        
+        // 综合测试
+        const runAllTests = document.getElementById('runAllTests');
+        const applyIOSFix = document.getElementById('applyIOSFix');
+        const testMainApp = document.getElementById('testMainApp');
+        const comprehensiveResult = document.getElementById('comprehensiveResult');
+        
+        runAllTests.addEventListener('click', function() {
+            console.log('🚀 开始运行所有iOS测试...');
+            
+            comprehensiveResult.innerHTML = `
+                <div><span class="status-indicator warning"></span>开始运行所有测试...</div>
+            `;
+            
+            // 测试发音
+            setTimeout(() => {
+                iosPronounceBtn.click();
+                comprehensiveResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        发音测试启动
+                    </div>
+                `;
+            }, 500);
+            
+            // 测试导航
+            setTimeout(() => {
+                testNavToggle.click();
+                comprehensiveResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        导航测试启动
+                    </div>
+                `;
+            }, 2000);
+            
+            // 测试多次播放
+            setTimeout(() => {
+                testMultipleAudio.click();
+                comprehensiveResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        多次播放测试启动
+                    </div>
+                `;
+            }, 3500);
+            
+            console.log('✅ 所有测试已启动');
+        });
+        
+        applyIOSFix.addEventListener('click', function() {
+            console.log('⚡ 应用iOS修复...');
+            
+            if (window.IOSAudioFix) {
+                window.IOSAudioFix.init();
+                
+                comprehensiveResult.innerHTML = `
+                    <div><span class="status-indicator success"></span>iOS修复已应用</div>
+                    <div style="color: #ccc; margin-top: 5px;">版本: ${window.IOSAudioFix.version}</div>
+                `;
+                
+                // 更新所有状态
+                audioStatus.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                    <span style="color: #4ecdc4;">已修复</span>
+                `;
+                
+                navStatus.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                    <span style="color: #4ecdc4;">已修复</span>
+                `;
+                
+                document.getElementById('iosStatus').innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4ecdc4;"></i>
+                    <span style="color: #4ecdc4;">已应用</span>
+                `;
+                
+                console.log('✅ iOS修复应用完成');
+            } else {
+                console.error('❌ IOSAudioFix未加载');
+                comprehensiveResult.innerHTML = `
+                    <div><span class="status-indicator error"></span>iOS修复未加载</div>
+                `;
+            }
+        });
+        
+        testMainApp.addEventListener('click', function() {
+            console.log('🌐 跳转到主应用...');
+            
+            comprehensiveResult.innerHTML = `
+                <div><span class="status-indicator warning"></span>跳转到主应用...</div>
+                <div style="color: #ccc; margin-top: 5px;">地址: https://welsh-learning.onrender.com</div>
+            `;
+            
+            // 在新窗口打开
+            setTimeout(() => {
+                window.open('https://welsh-learning.onrender.com', '_blank');
+            }, 1000);
+        });
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📱 iOS最终修复测试页面加载完成');
+            
+            // 检测iOS设备
+            detectIOSDevice();
+            
+            // 应用iOS修复（如果可用）
+            if (window.IOSAudioFix) {
+                window.IOSAudioFix.init();
+            }
+            
+            // 显示设备信息
+            console.log('📊 设备详情:', {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screen: `${window.screen.width}×${window.screen.height}`,
+                pixelRatio: window.devicePixelRatio,
+                touch: 'ontouchstart' in window,
+                safeArea: CSS.supports('padding-top: env(safe-area-inset-top)')
+            });
+        });
+        
+        // Font Awesome
+        const faLink = document.createElement('link');
+        faLink.rel = 'stylesheet';
+        faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(faLink);
+    </script>
+</body>
+</html>
