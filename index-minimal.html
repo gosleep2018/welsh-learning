@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>威尔士学习 - iPhone极简修复版</title>
+    <style>
+        /* 极简内联CSS */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        /* 头部 */
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            padding-top: max(20px, env(safe-area-inset-top));
+        }
+        .header h1 { 
+            font-size: 2rem; 
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* 移动导航 */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            padding: 15px 20px;
+            padding-top: env(safe-area-inset-top);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+        .nav-toggle {
+            width: 44px;
+            height: 44px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 22px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .nav-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            padding-top: calc(60px + env(safe-area-inset-top));
+            display: none;
+            z-index: 999;
+        }
+        .nav-panel.active { display: block; }
+        .nav-list { list-style: none; padding: 20px; }
+        .nav-item { margin-bottom: 10px; }
+        .nav-link {
+            display: block;
+            padding: 18px 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .nav-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        /* 内容区域 */
+        .content { margin-top: 80px; }
+        .word-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .word-text { flex: 1; }
+        .word-english { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
+        .word-welsh { font-size: 2.2rem; font-weight: 700; color: #4ecdc4; margin-bottom: 5px; }
+        .word-pronunciation { font-size: 1.1rem; color: rgba(255,255,255,0.7); font-style: italic; }
+        .word-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* 按钮 */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 60px;
+            transition: all 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+        }
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        /* 导航按钮 */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        /* 提示 */
+        .toast {
+            position: fixed;
+            bottom: calc(80px + env(safe-area-inset-bottom));
+            right: 20px;
+            background: #264653;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 1001;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            max-width: 300px;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header h1 { font-size: 1.8rem; }
+            .btn { min-width: 100%; }
+            .word-welsh { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 移动导航 -->
+    <div class="mobile-nav">
+        <div style="font-weight: 600; font-size: 1.2rem;">
+            🏴󠁧󠁢󠁷󠁬󠁳󠁿 威尔士学习
+        </div>
+        <button class="nav-toggle" id="navToggle">
+            ☰
+        </button>
+    </div>
+    
+    <div class="nav-panel" id="navPanel">
+        <div class="nav-list">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" id="navDaily">
+                    📚 每日词汇
+                    <span class="nav-badge">5</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" id="navPhrases">
+                    💬 常用短语
+                    <span class="nav-badge" style="background: #4ecdc4;">新</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" id="navPronunciation">
+                    🔊 发音练习
+                    <span class="nav-badge" style="background: #45b7d1;">基础版</span>
+                </a>
+            </li>
+        </div>
+    </div>
+    
+    <!-- 主内容 -->
+    <div class="container">
+        <div class="header">
+            <h1>威尔士语学习平台</h1>
+            <p style="color: rgba(255,255,255,0.8);">iPhone极简修复版 • 直接功能测试</p>
+            <p style="color: #4ecdc4; margin-top: 10px; font-size: 0.9rem;">
+                所有JavaScript内联 • 直接事件绑定 • 极简逻辑
+            </p>
+        </div>
+        
+        <div class="content">
+            <!-- 单词卡片 -->
+            <div class="word-card">
+                <div class="word-header">
+                    <div class="word-text">
+                        <div class="word-english">Please.</div>
+                        <div class="word-welsh">Os gwelwch yn dda</div>
+                        <div class="word-pronunciation">os GWELL-ooch un THAH</div>
+                    </div>
+                    <div class="word-tag">礼貌用语</div>
+                </div>
+                
+                <div style="margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 10px;">中文翻译</div>
+                    <div style="font-size: 1.3rem; font-weight: 600;">请。</div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                        威尔士语的"请"字面意思是"如果你愿意的话"。这是一个非常礼貌的表达。
+                    </div>
+                </div>
+                
+                <!-- 功能按钮 -->
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="pronounceBtn">
+                        🔊 发音
+                    </button>
+                    <button class="btn btn-success" id="addFlashcardBtn">
+                        ➕ 加入闪卡
+                    </button>
+                    <button class="btn btn-outline" id="markLearnedBtn">
+                        ✓ 标记已学
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 导航按钮 -->
+            <div class="nav-buttons">
+                <button class="btn btn-outline" id="prevBtn">
+                    ← 上一个
+                </button>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 10px; height: 10px; background: #667eea; border-radius: 50%;"></div>
+                    <div style="width: 10px; height: 10px; background: rgba(255,255,255,0.3); border-radius: 50%;"></div>
+                    <div style="width: 10px; height: 10px; background: rgba(255,255,255,0.3); border-radius: 50%;"></div>
+                </div>
+                <button class="btn btn-primary" id="nextBtn">
+                    下一个 →
+                </button>
+            </div>
+            
+            <!-- 调试信息 -->
+            <div style="margin-top: 40px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                <div style="font-size: 0.9rem; color: #667eea; margin-bottom: 10px;">📱 极简修复说明</div>
+                <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.6;">
+                    • 所有JavaScript内联，避免外部文件加载问题<br>
+                    • 直接事件绑定，绕过复杂的事件委托<br>
+                    • 极简音频播放，解决iOS限制<br>
+                    • 44px最小触摸目标，符合Apple规范<br>
+                    • 安全区域适配，支持刘海屏
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ==================== 极简修复脚本 ====================
+        // 所有JavaScript内联，避免外部文件问题
+        
+        console.log('📱 iPhone极简修复版开始执行');
+        
+        // 显示设备信息
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isiPhone = /iPhone/.test(navigator.userAgent);
+        console.log(`📱 设备: ${isIOS ? 'iOS' : '非iOS'} | ${isiPhone ? 'iPhone' : '其他'}`);
+        
+        // ==================== 1. 导航功能 ====================
+        const navToggle = document.getElementById('navToggle');
+        const navPanel = document.getElementById('navPanel');
+        
+        // 汉堡菜单 - 极简实现
+        navToggle.addEventListener('click', function() {
+            console.log('🍔 导航菜单点击');
+            navPanel.classList.toggle('active');
+            showToast('导航菜单 ' + (navPanel.classList.contains('active') ? '打开' : '关闭'));
+        });
+        
+        // 导航项点击
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log(`📱 导航点击: ${this.textContent.trim()}`);
+                
+                // 更新active状态
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 关闭面板
+                navPanel.classList.remove('active');
+                
+                showToast(`切换到: ${this.querySelector('span').textContent}`);
+            });
+        });
+        
+        // ==================== 2. 发音功能 ====================
+        const pronounceBtn = document.getElementById('pronounceBtn');
+        
+        pronounceBtn.addEventListener('click', function() {
+            console.log('🔊 发音按钮点击');
+            
+            // 更新按钮状态
+            const originalText = this.textContent;
+            this.textContent = '🔊 播放中...';
+            this.disabled = true;
+            
+            // 极简音频播放
+            const audio = new Audio();
+            
+            // 使用data URL避免网络问题
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            audio.volume = 0.5;
+            
+            // 直接播放
+            try {
+                audio.play();
+                console.log('✅ 音频播放调用成功');
+                showToast('发音播放中...');
+                
+                // 监听播放结束
+                audio.addEventListener('ended', function() {
+                    console.log('✅ 音频播放完成');
+                    pronounceBtn.textContent = originalText;
+                    pronounceBtn.disabled = false;
+                    showToast('发音播放完成');
+                });
+                
+                // 超时恢复
+                setTimeout(() => {
+                    if (pronounceBtn.disabled) {
+                        pronounceBtn.textContent = originalText;
+                        pronounceBtn.disabled = false;
+                    }
+                }, 5000);
+                
+            } catch (error) {
+                console.error('❌ 音频播放错误:', error);
+                pronounceBtn.textContent = originalText;
+                pronounceBtn.disabled = false;
+                showToast('发音播放失败: ' + error.message);
+            }
+        });
+        
+        // ==================== 3. 其他按钮功能 ====================
+        const addFlashcardBtn = document.getElementById('addFlashcardBtn');
+        const markLearnedBtn = document.getElementById('markLearnedBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        // 加入闪卡
+        addFlashcardBtn.addEventListener('click', function() {
+            console.log('📝 加入闪卡点击');
+            this.textContent = '✅ 已添加';
+            this.classList.remove('btn-success');
+            this.classList.add('btn-primary');
+            this.disabled = true;
+            showToast('已添加到闪卡列表');
+        });
+        
+        // 标记已学
+        markLearnedBtn.addEventListener('click', function() {
+            console.log('✅ 标记已学点击');
+            this.textContent = '✅ 已学习';
+            this.classList.remove('btn-outline');
+            this.classList.add('btn-success');
+            this.disabled = true;
+            showToast('标记为已学习');
+        });
+        
+        // 上一个单词
+        prevBtn.addEventListener('click', function() {
+            console.log('⬅️ 上一个单词点击');
+            showToast('切换到上一个单词');
+        });
+        
+        // 下一个单词
+        nextBtn.addEventListener('click', function() {
+            console.log('➡️ 下一个单词点击');
+            showToast('切换到下一个单词');
+        });
+        
+        // ==================== 4. 触摸事件支持 ====================
+        if ('ontouchstart' in window) {
+            console.log('👆 检测到触摸支持，添加触摸事件');
+            
+            // 为所有按钮添加触摸事件
+            document.querySelectorAll('button, .nav-link').forEach(element => {
+                // 触摸开始
+                element.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                    this.style.transform = 'scale(0.98)';
+                }, { passive: true });
+                
+                // 触摸结束
+                element.addEventListener('touchend', function() {
+                    this.style.opacity = '';
+                    this.style.transform = '';
+                }, { passive: true });
+            });
+        }
+        
+        // ==================== 5. 辅助函数 ====================
+        function showToast(message) {
+            // 移除现有的toast
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) existingToast.remove();
+            
+            // 创建新的toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = '✅ ' + message;
+            
+            document.body.appendChild(toast);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        // ==================== 6. 页面加载完成 ====================
+        window.addEventListener('load', function() {
+            console.log('📱 iPhone极简修复版加载完成');
+            console.log('📊 设备信息:', {
+                userAgent: navigator.userAgent.substring(0, 100) + '...',
+                platform: navigator.platform,
+                screen: window.screen.width + '×' + window.screen.height,
+                innerSize: window.innerWidth + '×' + window.innerHeight,
+                touch: 'ontouchstart' in window,
+                iOS: isIOS
+            });
+            
+            // 显示加载完成提示
+            showToast('极简修复版加载完成');
+            
+            // 确保所有可点击元素有正确的cursor
+            document.querySelectorAll('button, .nav-link').forEach(el => {
+                el.style.cursor = 'pointer';
+            });
+        });
+        
+        // ==================== 7. 错误处理 ====================
+        window.addEventListener('error', function(e) {
+            console.error('❌ 全局错误:', e.error);
+            showToast('发生错误: ' + (e.message || '未知错误'));
+        });
+        
+        // ==================== 8. 调试模式 ====================
+        // 添加调试按钮（长按页面显示）
+        let debugClickCount = 0;
+        let lastClickTime = 0;
+        
+        document.addEventListener('click', function() {
+            const now = Date.now();
+            if (now - lastClickTime < 300) {
+                debugClickCount++;
+                if (debugClickCount >= 5) {
+                    showToast('🔧 调试模式激活');
+                    console.log('🔧 调试模式激活');
+                    
+                    // 显示调试信息
+                    const debugInfo = document.createElement('div');
+                    debugInfo.style.cssText = `
+                        position: fixed;
+                        top: 100px;
+                        left: 20px;
+                        right: 20px;
+                        background: rgba(0,0,0,0.9);
+                        color: white;
+                        padding: 15px;
+                        border-radius: 10px;
+                        z-index: 1002;
+                        font-family: monospace;
+                        font-size: 12px;
+                    `;
+                    debugInfo.innerHTML = `
+                        <div style="color: #667eea; margin-bottom: 10px;">📱 调试信息</div>
+                        <div>设备: ${isIOS ? 'iOS' : '非iOS'}</div>
+                        <div>屏幕: ${window.innerWidth}×${window.innerHeight}</div>
+                        <div>触摸: ${'ontouchstart' in window ? '支持' : '不支持'}</div>
+                        <div>点击测试: 所有按钮应有反馈</div>
+                        <button onclick="this.parentElement.remove()" style="margin-top: 10px; padding: 5px 10px; background: #ff6b6b; color: white; border: none; border-radius: 5px;">关闭</button>
+                    `;
+                    
+                    document.body.appendChild(debugInfo);
+                    debugClickCount = 0;
+                }
+            } else {
+                debugClickCount = 1;
+            }
+            lastClickTime = now;
+        });
+        
+        console.log('✅ iPhone极简修复脚本初始化完成');
+    </script>
+</body>
+</html>

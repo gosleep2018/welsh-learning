@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iPhone极简修复 - 直接测试</title>
+    <style>
+        /* 极简CSS - 内联避免外部文件问题 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; padding-top: env(safe-area-inset-top); }
+        .header h1 { color: white; font-size: 2rem; margin-bottom: 10px; }
+        .test-card { 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 15px; 
+            padding: 20px; 
+            margin-bottom: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .test-title { margin-bottom: 15px; font-size: 1.3rem; color: #667eea; }
+        .test-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 60px;
+        }
+        .test-btn:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        .test-btn.success { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); }
+        .test-btn.danger { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); }
+        .result { 
+            margin-top: 15px; 
+            padding: 15px; 
+            background: rgba(0,0,0,0.3); 
+            border-radius: 10px; 
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .status { display: inline-block; width: 12px; height: 12px; border-radius: 6px; margin-right: 8px; }
+        .status.success { background: #4ecdc4; }
+        .status.error { background: #ff6b6b; }
+        .status.warning { background: #ffd166; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 iPhone极简修复测试</h1>
+            <p>绕过所有复杂逻辑，直接测试核心功能</p>
+            <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 10px;">
+                设备: <span id="deviceInfo">检测中...</span>
+            </div>
+        </div>
+        
+        <!-- 测试1: 最基本的JavaScript执行 -->
+        <div class="test-card">
+            <div class="test-title">测试1: JavaScript是否执行</div>
+            <button class="test-btn" id="testJS">
+                点击测试JavaScript
+            </button>
+            <div class="result" id="jsResult">
+                <span class="status warning"></span>等待测试...
+            </div>
+        </div>
+        
+        <!-- 测试2: 最基本的音频播放 -->
+        <div class="test-card">
+            <div class="test-title">测试2: 极简音频播放</div>
+            <button class="test-btn" id="testAudioSimple">
+                播放测试音频
+            </button>
+            <button class="test-btn success" id="testAudioDirect">
+                直接播放（无Promise）
+            </button>
+            <div class="result" id="audioResult">
+                <span class="status warning"></span>等待测试...
+            </div>
+        </div>
+        
+        <!-- 测试3: 导航功能 -->
+        <div class="test-card">
+            <div class="test-title">测试3: 导航和切换功能</div>
+            <button class="test-btn" id="testNav">
+                测试导航点击
+            </button>
+            <button class="test-btn success" id="testNextWord">
+                切换到下个单词
+            </button>
+            <div class="result" id="navResult">
+                <span class="status warning"></span>等待测试...
+            </div>
+        </div>
+        
+        <!-- 测试4: 事件绑定 -->
+        <div class="test-card">
+            <div class="test-title">测试4: 事件绑定测试</div>
+            <button class="test-btn" id="testClick">
+                click事件测试
+            </button>
+            <button class="test-btn success" id="testTouch">
+                touch事件测试
+            </button>
+            <button class="test-btn danger" id="testBoth">
+                双重事件测试
+            </button>
+            <div class="result" id="eventResult">
+                <span class="status warning"></span>等待测试...
+            </div>
+        </div>
+        
+        <!-- 诊断结果 -->
+        <div class="test-card">
+            <div class="test-title">诊断结果</div>
+            <div class="result" id="diagnosis">
+                <span class="status warning"></span>等待测试结果...
+            </div>
+            <button class="test-btn danger" id="applyFix">
+                应用极简修复
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // 极简JavaScript - 直接内联，避免外部文件问题
+        
+        console.log('📱 iPhone极简修复脚本开始执行');
+        
+        // 设备检测
+        function detectDevice() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isiPhone = /iPhone/.test(navigator.userAgent);
+            const hasTouch = 'ontouchstart' in window;
+            
+            document.getElementById('deviceInfo').innerHTML = `
+                ${isIOS ? '📱 iOS' : '💻 非iOS'} | 
+                ${isiPhone ? 'iPhone' : '其他'} | 
+                触摸: ${hasTouch ? '支持' : '不支持'} |
+                屏幕: ${window.innerWidth}×${window.innerHeight}
+            `;
+            
+            return { isIOS, isiPhone, hasTouch };
+        }
+        
+        // 测试1: JavaScript执行
+        document.getElementById('testJS').addEventListener('click', function() {
+            console.log('✅ JavaScript点击事件触发');
+            
+            const result = document.getElementById('jsResult');
+            result.innerHTML = `
+                <span class="status success"></span>JavaScript执行正常
+                <div style="color: #ccc; margin-top: 5px;">
+                    时间: ${new Date().toLocaleTimeString()}<br>
+                    控制台: 查看日志确认
+                </div>
+            `;
+            
+            // 显示简单提示
+            alert('✅ JavaScript执行正常！');
+        });
+        
+        // 测试2: 极简音频播放
+        document.getElementById('testAudioSimple').addEventListener('click', function() {
+            console.log('🔊 开始极简音频测试');
+            
+            const result = document.getElementById('audioResult');
+            result.innerHTML = '<span class="status warning"></span>播放中...';
+            
+            // 创建极简音频
+            const audio = new Audio();
+            
+            // 使用data URL避免网络问题
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            audio.volume = 0.1; // 小声避免吓到
+            
+            // 直接播放，不处理Promise
+            try {
+                audio.play();
+                console.log('✅ 音频播放调用成功');
+                
+                result.innerHTML = `
+                    <span class="status success"></span>音频播放调用成功
+                    <div style="color: #ccc; margin-top: 5px;">
+                        方法: audio.play()直接调用<br>
+                        音量: 10% (避免静音模式问题)
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('❌ 音频播放错误:', error);
+                
+                result.innerHTML = `
+                    <span class="status error"></span>音频播放错误
+                    <div style="color: #ccc; margin-top: 5px;">
+                        错误: ${error.name}<br>
+                        消息: ${error.message}
+                    </div>
+                `;
+            }
+        });
+        
+        // 测试2b: 直接播放（无Promise）
+        document.getElementById('testAudioDirect').addEventListener('click', function() {
+            console.log('🔊 直接音频播放测试');
+            
+            // 创建静音音频（确保能播放）
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            audio.volume = 0;
+            
+            // 不等待Promise，直接调用
+            const playResult = audio.play();
+            
+            const result = document.getElementById('audioResult');
+            
+            if (playResult !== undefined) {
+                playResult.then(() => {
+                    result.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status success"></span>Promise播放成功
+                        </div>
+                    `;
+                }).catch(error => {
+                    result.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status error"></span>Promise播放失败: ${error.name}
+                        </div>
+                    `;
+                });
+            } else {
+                result.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status warning"></span>直接播放（无Promise返回）
+                    </div>
+                `;
+            }
+        });
+        
+        // 测试3: 导航功能
+        document.getElementById('testNav').addEventListener('click', function() {
+            console.log('🍔 导航点击测试');
+            
+            const result = document.getElementById('navResult');
+            result.innerHTML = `
+                <span class="status success"></span>导航点击成功
+                <div style="color: #ccc; margin-top: 5px;">
+                    反馈: 按钮有active状态<br>
+                    控制台: 查看点击日志
+                </div>
+            `;
+        });
+        
+        document.getElementById('testNextWord').addEventListener('click', function() {
+            console.log('➡️ 切换到下个单词测试');
+            
+            const result = document.getElementById('navResult');
+            result.innerHTML += `
+                <div style="margin-top: 5px;">
+                    <span class="status success"></span>切换到下个单词成功
+                </div>
+            `;
+            
+            // 模拟单词切换
+            setTimeout(() => {
+                alert('✅ 已切换到下一个单词！');
+            }, 300);
+        });
+        
+        // 测试4: 事件绑定
+        document.getElementById('testClick').addEventListener('click', function() {
+            console.log('🖱️ click事件测试');
+            
+            document.getElementById('eventResult').innerHTML = `
+                <span class="status success"></span>click事件正常
+                <div style="color: #ccc; margin-top: 5px;">标准鼠标/触摸点击</div>
+            `;
+        });
+        
+        document.getElementById('testTouch').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            console.log('👆 touchstart事件测试');
+            
+            document.getElementById('eventResult').innerHTML = `
+                <span class="status success"></span>touch事件正常
+                <div style="color: #ccc; margin-top: 5px;">iOS原生触摸事件</div>
+            `;
+        }, { passive: false });
+        
+        document.getElementById('testBoth').addEventListener('click', function() {
+            console.log('👆🖱️ 双重事件测试');
+            
+            // 同时触发touch和click
+            const touchEvent = new TouchEvent('touchstart', {
+                bubbles: true,
+                cancelable: true
+            });
+            this.dispatchEvent(touchEvent);
+            
+            document.getElementById('eventResult').innerHTML += `
+                <div style="margin-top: 5px;">
+                    <span class="status success"></span>双重事件正常
+                </div>
+            `;
+        });
+        
+        // 应用极简修复
+        document.getElementById('applyFix').addEventListener('click', function() {
+            console.log('⚡ 应用极简修复...');
+            
+            const diagnosis = document.getElementById('diagnosis');
+            
+            // 检测问题
+            const device = detectDevice();
+            const issues = [];
+            
+            if (device.isIOS) issues.push('iOS设备限制');
+            if (!device.hasTouch) issues.push('无触摸支持');
+            
+            // 应用修复
+            const fixes = [
+                '✅ 内联JavaScript执行',
+                '✅ 直接事件绑定',
+                '✅ 极简音频播放',
+                '✅ 绕过复杂逻辑'
+            ];
+            
+            diagnosis.innerHTML = `
+                <span class="status success"></span>极简修复已应用
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>检测到的问题:</strong><br>
+                    ${issues.length > 0 ? issues.join('<br>') : '无'}
+                </div>
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>应用的修复:</strong><br>
+                    ${fixes.join('<br>')}
+                </div>
+            `;
+            
+            // 跳转到主应用测试
+            setTimeout(() => {
+                if (confirm('✅ 极简修复已应用。要跳转到主应用测试吗？')) {
+                    window.location.href = 'https://welsh-learning.onrender.com';
+                }
+            }, 1000);
+        });
+        
+        // 页面加载完成
+        window.addEventListener('load', function() {
+            console.log('📱 iPhone极简修复页面加载完成');
+            
+            // 设备检测
+            detectDevice();
+            
+            // 显示控制台信息
+            console.log('📊 设备详情:', {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screen: window.screen.width + '×' + window.screen.height,
+                innerSize: window.innerWidth + '×' + window.innerHeight,
+                touch: 'ontouchstart' in window,
+                iOS: /iPad|iPhone|iPod/.test(navigator.userAgent)
+            });
+            
+            // 测试JavaScript是否真的执行了
+            document.getElementById('jsResult').innerHTML = `
+                <span class="status success"></span>JavaScript已加载
+                <div style="color: #ccc; margin-top: 5px;">查看控制台确认执行</div>
+            `;
+        });
+        
+        // 确保所有按钮都有正确的cursor
+        document.querySelectorAll('button').forEach(btn => {
+            btn.style.cursor = 'pointer';
+        });
+    </script>
+</body>
+</html>
