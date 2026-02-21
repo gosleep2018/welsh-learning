@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>版本测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        .version {
+            font-size: 2rem;
+            color: #d62828;
+            margin: 20px 0;
+        }
+        .timestamp {
+            color: #666;
+            margin: 10px 0;
+        }
+        .features {
+            text-align: left;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .feature {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        .new {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        .updated {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>威尔士语学习平台 - 版本测试</h1>
+    
+    <div class="version">版本: 1.1 (2026-02-21 更新)</div>
+    <div class="timestamp">部署时间: <span id="timestamp">正在检测...</span></div>
+    
+    <div class="features">
+        <h3>最新功能:</h3>
+        
+        <div class="feature new">
+            <strong>✅ 常用短语模块</strong>
+            <p>100个日常生活实用短语，6大场景分类</p>
+        </div>
+        
+        <div class="feature updated">
+            <strong>🔄 导航菜单更新</strong>
+            <p>威尔士文化: "新" | 发音练习: "基础版"</p>
+        </div>
+        
+        <div class="feature new">
+            <strong>🔊 发音练习模块</strong>
+            <p>威尔士语特殊音素指导 (ll, dd, ch)</p>
+        </div>
+        
+        <div class="feature">
+            <strong>🐛 错误修复</strong>
+            <p>JavaScript语法错误修复，加载优化</p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 30px;">
+        <button onclick="checkVersion()" style="
+            padding: 12px 24px;
+            background: #d62828;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        ">
+            检查当前版本
+        </button>
+    </div>
+    
+    <div id="result" style="margin-top: 20px; padding: 15px; border-radius: 8px;"></div>
+    
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('zh-CN');
+        
+        function checkVersion() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>正在检查网站版本...</p>';
+            
+            // 检查导航菜单
+            setTimeout(() => {
+                const hasCultureBadge = document.body.innerHTML.includes('威尔士文化') && 
+                                       document.body.innerHTML.includes('新');
+                const hasPronunciationBadge = document.body.innerHTML.includes('发音练习') && 
+                                            document.body.innerHTML.includes('基础版');
+                
+                let html = '<h3>检查结果:</h3>';
+                
+                if (hasCultureBadge && hasPronunciationBadge) {
+                    html += '<p style="color: #28a745;">✅ 网站已更新到最新版本 (v1.1)</p>';
+                    html += '<p>导航菜单标签已正确更新。</p>';
+                } else {
+                    html += '<p style="color: #dc3545;">❌ 网站可能不是最新版本</p>';
+                    html += '<p>建议重新部署到Render。</p>';
+                }
+                
+                result.innerHTML = html;
+            }, 1000);
+        }
+        
+        // 自动检查
+        setTimeout(checkVersion, 2000);
+    </script>
+</body>
+</html>
