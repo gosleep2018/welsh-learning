@@ -29,25 +29,104 @@ class WelshLearningApp {
   async init() {
     console.log('🏴󠁧󠁢󠁷󠁬󠁳󠁿 威尔士学习应用初始化...');
     
-    // 初始化进度数据
-    this.progressData = this.loadProgress();
+    try {
+      // 先显示加载状态
+      this.showLoading(true);
+      
+      // 初始化进度数据
+      this.progressData = this.loadProgress();
+      
+      // 加载词汇数据（带超时）
+      await this.loadDataWithTimeout();
+      
+      // 从API加载服务器进度（如果可用，不阻塞主流程）
+      this.loadServerProgress().catch(err => {
+        console.warn('服务器进度加载失败，使用本地数据:', err);
+      });
+      
+      // 初始化UI
+      this.initUI();
+      
+      // 绑定事件
+      this.bindEvents();
+      
+      // 显示初始内容
+      this.showModule(this.config.currentModule);
+      
+      console.log('✅ 应用初始化完成');
+    } catch (error) {
+      console.error('❌ 应用初始化失败:', error);
+      this.showError('应用初始化失败，请刷新页面重试');
+    } finally {
+      // 隐藏加载状态
+      this.showLoading(false);
+    }
+  }
+  
+  // 带超时的数据加载
+  async loadDataWithTimeout() {
+    const timeout = 5000; // 5秒超时
     
-    // 加载词汇数据
-    await this.loadData();
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error('数据加载超时'));
+      }, timeout);
+      
+      this.loadData()
+        .then(() => {
+          clearTimeout(timer);
+          resolve();
+        })
+        .catch(err => {
+          clearTimeout(timer);
+          reject(err);
+        });
+    });
+  }
+  
+  // 显示/隐藏加载状态
+  showLoading(show) {
+    const loadingElement = document.getElementById('loadingScreen');
+    const mainContainer = document.getElementById('mainContainer');
     
-    // 从API加载服务器进度（如果可用）
-    await this.loadServerProgress();
-    
-    // 初始化UI
-    this.initUI();
-    
-    // 绑定事件
-    this.bindEvents();
-    
-    // 显示初始内容
-    this.showModule(this.config.currentModule);
-    
-    console.log('✅ 应用初始化完成');
+    if (loadingElement && mainContainer) {
+      if (show) {
+        loadingElement.style.display = 'flex';
+        mainContainer.style.display = 'none';
+      } else {
+        loadingElement.style.opacity = '0';
+        setTimeout(() => {
+          loadingElement.style.display = 'none';
+          mainContainer.style.display = 'block';
+        }, 500);
+      }
+    }
+  }
+  
+  // 显示错误信息
+  showError(message) {
+    const container = document.getElementById('moduleContent');
+    if (container) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h3 style="color: #e74c3c; margin-bottom: 15px;">加载失败</h3>
+          <p style="margin-bottom: 20px;">${message}</p>
+          <button onclick="location.reload()" style="
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+          ">
+            <i class="fas fa-redo"></i> 刷新页面
+          </button>
+        </div>
+      `;
+    }
   }
   
   // 从服务器加载进度
@@ -76,8 +155,10 @@ class WelshLearningApp {
   
   async loadData() {
     try {
-      // 示例数据 - 实际可以从服务器加载
-      this.data.dailyWords = [
+      console.log('📦 开始加载词汇数据...');
+      
+      // 硬编码的示例数据 - 确保总有数据
+      const sampleWords = [
         {
           id: 1,
           english: "hello",
@@ -165,13 +246,31 @@ class WelshLearningApp {
         }
       ];
       
+      // 确保数据不为空
+      this.data.dailyWords = sampleWords;
+      
       // 计算学习进度
       this.calculateProgress();
       
       console.log(`✅ 数据加载完成: ${this.data.dailyWords.length} 个单词`);
+      return true;
     } catch (error) {
-      console.error('❌ 数据加载失败:', error);
-      this.showError('数据加载失败，请刷新页面重试');
+      console.error('❌ 数据加载失败，使用备用数据:', error);
+      
+      // 使用最小化的备用数据
+      this.data.dailyWords = [
+        {
+          id: 1,
+          english: "hello",
+          welsh: "helo",
+          pronunciation: "HEH-lo",
+          ttsText: "helo",
+          category: "greetings"
+        }
+      ];
+      
+      this.calculateProgress();
+      return false;
     }
   }
   
