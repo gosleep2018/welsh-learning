@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>🧪 威尔士语学习 - 测试版 2.0-beta</title>
+  <meta name="description" content="威尔士语学习平台测试版 - 专门解决iPhone兼容性问题">
+  <meta name="keywords" content="威尔士语, 测试版, iPhone兼容性, 语言学习">
+  
+  <!-- 测试版样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 测试版图标 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+  
+  <!-- 预加载关键资源 -->
+  <link rel="preconnect" href="https://web-x0ya.onrender.com">
+  
+  <style>
+    /* 测试版特有样式 */
+    :root {
+      --test-primary: #ff6b6b;
+      --test-secondary: #4ecdc4;
+      --test-accent: #ffd166;
+      --test-bg: #1a1a2e;
+      --test-card: rgba(255,255,255,0.05);
+    }
+    
+    /* 测试版标识 */
+    .test-badge {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: var(--test-primary);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 10000;
+      box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+    }
+    
+    /* 测试版头部 */
+    .test-header {
+      background: linear-gradient(135deg, var(--test-primary) 0%, var(--test-secondary) 100%);
+      padding: 30px 20px;
+      text-align: center;
+      border-radius: 0 0 20px 20px;
+      margin-bottom: 30px;
+    }
+    
+    .test-header h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .test-header .subtitle {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+    }
+    
+    /* 调试面板 */
+    .debug-panel {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      max-height: 200px;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      border-radius: 10px;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-y: auto;
+      z-index: 9999;
+      display: none;
+    }
+    
+    .debug-panel.active {
+      display: block;
+    }
+    
+    .debug-toggle {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      background: var(--test-primary);
+      color: white;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 10000;
+    }
+    
+    /* 初始加载样式 */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--test-primary) 0%, var(--test-bg) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+    
+    .loading-logo {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    
+    .loading-text {
+      color: white;
+      font-size: 1.5rem;
+      margin-top: 20px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    /* 测试版卡片 */
+    .test-card {
+      background: var(--test-card);
+      border: 2px solid var(--test-primary);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .test-card h3 {
+      color: var(--test-primary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 测试版标识 -->
+  <div class="test-badge">
+    🧪 测试版 2.0-beta
+  </div>
+  
+  <!-- 调试面板 -->
+  <div class="debug-panel" id="debugPanel">
+    <div style="color: var(--test-secondary); margin-bottom: 10px; font-weight: bold;">
+      <i class="fas fa-bug"></i> 调试控制台
+    </div>
+    <div id="debugOutput"></div>
+  </div>
+  
+  <div class="debug-toggle" id="debugToggle">
+    <i class="fas fa-terminal"></i>
+  </div>
+  
+  <!-- 加载屏幕 -->
+  <div id="loadingScreen">
+    <div class="loading-logo">🧪</div>
+    <div class="loading-text">测试版加载中...</div>
+  </div>
+  
+  <!-- 主容器 -->
+  <div id="appContainer" style="display: none;">
+    <!-- 测试版头部 -->
+    <div class="test-header">
+      <h1>🧪 威尔士语学习</h1>
+      <div class="subtitle">测试版 2.0-beta • 专门解决iPhone兼容性问题</div>
+      <div style="margin-top: 15px; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+        <i class="fas fa-mobile-alt"></i> iPhone优化测试 • 
+        <i class="fas fa-code"></i> 独立代码库 • 
+        <i class="fas fa-flask"></i> 实验功能
+      </div>
+    </div>
+    
+    <div class="container">
+      <!-- 测试信息卡片 -->
+      <div class="test-card">
+        <h3><i class="fas fa-info-circle"></i> 测试版说明</h3>
+        <p style="color: rgba(255,255,255,0.8); line-height: 1.6;">
+          这是与正式版完全独立的测试版本，专门用于解决iPhone兼容性问题。
+          所有代码都在独立的目录中，不会影响正式版功能。
+        </p>
+        <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <span style="background: rgba(255,107,107,0.2); color: var(--test-primary); padding: 5px 10px; border-radius: 10px; font-size: 0.9rem;">
+            <i class="fas fa-code-branch"></i> 独立分支
+          </span>
+          <span style="background: rgba(78,205,196,0.2); color: var(--test-secondary); padding: 5px 10px; border-radius: 10px; font-size: 0.9rem;">
+            <i class="fas fa-mobile-alt"></i> iPhone优化
+          </span>
+          <span style="background: rgba(255,209,102,0.2); color: var(--test-accent); padding: 5px 10px; border-radius: 10px; font-size: 0.9rem;">
+            <i class="fas fa-flask"></i> 实验功能
+          </span>
+        </div>
+      </div>
+      
+      <!-- 主内容区域 -->
+      <div class="main-content">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <h3><i class="fas fa-compass"></i> 学习导航</h3>
+          </div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#" class="nav-link active" data-module="dailyWords">
+                <i class="fas fa-book-open"></i>
+                <span>每日词汇</span>
+                <span class="nav-badge">5</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="commonPhrases">
+                <i class="fas fa-comments"></i>
+                <span>常用短语</span>
+                <span class="nav-badge new">新</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="pronunciation">
+                <i class="fas fa-volume-up"></i>
+                <span>发音练习</span>
+                <span class="nav-badge basic">基础版</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="welshCulture">
+                <i class="fas fa-landmark"></i>
+                <span>威尔士文化</span>
+                <span class="nav-badge" style="background: #ffd166; color: #333;">新</span>
+              </a>
+            </li>
+          </ul>
+          
+          <!-- 测试版功能 -->
+          <div class="test-card" style="margin-top: 20px;">
+            <h4><i class="fas fa-tools"></i> 测试工具</h4>
+            <div style="margin-top: 10px;">
+              <button class="btn btn-outline" id="testAudio" style="width: 100%; margin-bottom: 10px;">
+                <i class="fas fa-volume-up"></i> 测试发音
+              </button>
+              <button class="btn btn-outline" id="testNavigation" style="width: 100%;">
+                <i class="fas fa-mouse-pointer"></i> 测试导航
+              </button>
+            </div>
+          </div>
+        </aside>
+        
+        <!-- 内容区域 -->
+        <main class="content-area">
+          <div id="dailyWordsModule">
+            <div class="module-header">
+              <h2><i class="fas fa-book-open"></i> 今日词汇</h2>
+              <div class="module-subtitle">第 <span style="color: var(--test-primary); font-weight: bold;">6</span> 天</div>
+            </div>
+            
+            <!-- 单词卡片 -->
+            <div class="word-card test-card">
+              <div class="word-header">
+                <div class="word-text">
+                  <div class="word-english">Please.</div>
+                  <div class="word-welsh">Os gwelwch yn dda</div>
+                  <div class="word-pronunciation">os GWELL-ooch un THAH</div>
+                </div>
+                <div class="word-tag">礼貌用语</div>
+              </div>
+              
+              <div class="word-details">
+                <div class="detail-row">
+                  <div class="detail-label">中文翻译</div>
+                  <div class="detail-value">请。</div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-label">词性</div>
+                  <div class="detail-value">礼貌用语</div>
+                </div>
+                
+                <div class="example-section">
+                  <div class="example-label">使用示例</div>
+                  <div class="example-content">
+                    <div class="example-item">
+                      <span class="example-bullet">•</span>
+                      Os gwelwch yn dda, rhowch y llyfr i mi. (请把书给我。)
+                    </div>
+                    <div class="example-item">
+                      <span class="example-bullet">•</span>
+                      A gaf i ddŵr, os gwelwch yn dda? (请给我一杯水，好吗？)
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 功能按钮 -->
+              <div class="button-group">
+                <button class="btn btn-primary" id="pronounceBtn">
+                  <i class="fas fa-volume-up"></i>
+                  发音
+                </button>
+                <button class="btn btn-success" id="addFlashcardBtn">
+                  <i class="fas fa-plus"></i>
+                  加入闪卡
+                </button>
+                <button class="btn btn-outline" id="markLearnedBtn">
+                  <i class="fas fa-check"></i>
+                  标记已学
+                </button>
+              </div>
+            </div>
+            
+            <!-- 学习提示 -->
+            <div class="study-tip test-card">
+              <h4><i class="fas fa-lightbulb"></i> 学习技巧</h4>
+              <p>威尔士语的"请"字面意思是"如果你愿意的话"。这是一个非常礼貌的表达，在正式场合和日常对话中都常用。</p>
+            </div>
+            
+            <!-- 导航按钮 -->
+            <div class="nav-buttons">
+              <button class="btn btn-outline" id="prevBtn">
+                <i class="fas fa-arrow-left"></i>
+                上一个
+              </button>
+              <div class="progress-dots">
+                <div class="progress-dot active"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+              </div>
+              <button class="btn btn-primary" id="nextBtn">
+                下一个
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 测试版JavaScript -->
+  <script src="js/app.js"></script>
+  
+  <!-- 测试版专用脚本 -->
+  <script>
+    // ==================== 测试版专用脚本 ====================
+    // 所有代码针对测试版优化，与正式版完全独立
+    
+    console.log('🧪 测试版 2.0-beta 开始加载');
+    
+    // 重写console.log以捕获到调试面板
+    const originalLog = console.log;
+    const originalError = console.error;
+    const debugOutput = document.getElementById('debugOutput');
+    
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      
+      const message = args.map(arg => {
+        if (typeof arg === 'object') {
+          try {
+            return JSON.stringify(arg, null, 2);
+          } catch {
+            return String(arg);
+          }
+        }
+        return String(arg);
+      }).join(' ');
+      
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.style.cssText = 'margin-bottom: 5px; font-size: 11px; color: #ccc;';
+      logEntry.innerHTML = `<span style="color: #4ecdc4;">[${timestamp}]</span> ${message}`;
+      
+      debugOutput.appendChild(logEntry);
+      debugOutput.scrollTop = debugOutput.scrollHeight;
+    };
+    
+    console.error = function(...args) {
+      originalError.apply(console, args);
+      
+      const message = args.map(arg => String(arg)).join(' ');
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.style.cssText = 'margin-bottom: 5px; font-size: 11px; color: #ff6b6b;';
+      logEntry.innerHTML = `<span style="color: #ff6b6b;">[${timestamp}] ❌</span> ${message}`;
+      
+      debugOutput.appendChild(logEntry);
+      debugOutput.scrollTop = debugOutput.scrollHeight;
+    };
+    
+    // 调试面板切换
+    document.getElementById('debugToggle').addEventListener('click', function() {
+      const panel = document.getElementById('debugPanel');
+      panel.classList.toggle('active');
+    });
+    
+    // 设备检测
+    function detectDevice() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isiPhone = /iPhone/.test(navigator.userAgent);
+      const hasTouch = 'ontouchstart' in window;
+      
+      console.log('📱 设备检测:', {
+        iOS: isIOS,
+        iPhone: isiPhone,
+        touch: hasTouch,
+        screen: `${window.innerWidth}×${window.innerHeight}`,
+        userAgent: navigator.userAgent.substring(0, 80) + '...'
+      });
+      
+      // 添加设备信息到调试面板
+      const deviceInfo = document.createElement('div');
+      deviceInfo.innerHTML = `
+        <div style="color: #ffd166; margin-bottom: 10px;">
+          <i class="fas fa-mobile-alt"></i> 设备信息
+        </div>
+        <div>系统: ${isIOS ? 'iOS' : '非iOS'}</div>
+        <div>设备: ${isiPhone ? 'iPhone' : '其他'}</div>
+        <div>触摸: ${hasTouch ? '支持' : '不支持'}</div>
+        <div>屏幕: ${window.innerWidth}×${window.innerHeight}</div>
+      `;
+      debugOutput.appendChild(deviceInfo);
+      
+      return { isIOS, isiPhone, hasTouch };
+    }
+    
+    // 测试工具
+    document.getElementById('testAudio').addEventListener('click', function() {
+      console.log('🔊 测试发音功能');
+      
+      // 创建测试音频
+      const audio = new Audio();
+      audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+      audio.volume = 0.1;
+      
+      audio.play().then(() => {
+        console.log('✅ 测试发音成功');
+        showTestToast('发音测试成功');
+      }).catch(error => {
+        console.error('❌ 测试发音失败:', error);
+        showTestToast(`发音测试失败: ${error.message}`, 'error');
+      });
+    });
+    
+    document.getElementById('testNavigation').addEventListener('click', function() {
+      console.log('🧭 测试导航功能');
+      
+      // 测试导航点击
+      const navLinks = document.querySelectorAll('.nav-link');
+      let activeIndex = -1;
+      
+      navLinks.forEach((link, index) => {
+        if (link.classList.contains('active')) {
+          activeIndex = index;
+        }
+      });
+      
+      // 切换到下一个导航项
+      const nextIndex = (activeIndex + 1) % navLinks.length;
+      
+      navLinks.forEach(link => link.classList.remove('active'));
+      navLinks[nextIndex].classList.add('active');
+      
+      console.log(`✅ 导航切换到: ${navLinks[nextIndex].querySelector('span').textContent}`);
+      showTestToast(`导航切换到: ${navLinks[nextIndex].querySelector('span').textContent}`);
+    });
+    
+    // 显示测试提示
+    function showTestToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        background: ${type === 'error' ? '#ff6b6b' : '#4ecdc4'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 1001;
+        animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        max-width: 300px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      `;
+      toast.textContent = `🧪 ${message}`;
+      
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+    
+    // 页面加载完成
+    window.addEventListener('load', function() {
+      console.log('🧪 测试版页面加载完成');
+      
+      // 设备检测
+      detectDevice();
+      
+      // 隐藏加载屏幕
+      setTimeout(() => {
+        document.getElementById('loadingScreen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loadingScreen').style.display = 'none';
+          document.getElementById('appContainer').style.display = 'block';
+          
+          console.log('✅ 测试版界面显示完成');
+          showTestToast('测试版加载完成');
+        }, 500);
+      }, 1000);
+      
+      // 确保所有按钮可点击
+      document.querySelectorAll('button, .nav-link').forEach(el => {
+        el.style.cursor = 'pointer';
+      });
+      
+      // 添加触摸事件支持
+      if ('ontouchstart' in window) {
+        console.log('👆 添加触摸事件支持');
+        
+        document.querySelectorAll('button, .nav-link').forEach(el => {
+          el.addEventListener('touchstart', function() {
+            this.style.opacity = '0.8';
+          }, { passive: true });
+          
+          el.addEventListener('touchend', function() {
+            this.style.opacity = '';
+          }, { passive: true });
+        });
+      }
+    });
+    
+    // 全局错误处理
+    window.addEventListener('error', function(e) {
+      console.error('❌ 全局错误:', e.error);
+      showTestToast(`发生错误: ${e.message}`, 'error');
+    });
+    
+    console.log('✅ 测试版脚本初始化完成');
+  </script>
+</body>
+</html>
