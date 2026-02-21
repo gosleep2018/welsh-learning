@@ -991,4 +991,19 @@ class WelshLearningApp {
         <p style="font-size: 1.2rem; margin-bottom: 30px;">
           正在开发中，即将推出...
         </p>
-        <div style="background: #f8f9
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px;">
+          <p>这个模块正在积极开发中，很快就会推出！</p>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// 页面加载完成后初始化应用
+document.addEventListener('DOMContentLoaded', function() {
+  // 检查是否已经初始化
+  if (!window.app) {
+    console.log('🚀 正在初始化威尔士学习应用...');
+    window.app = new WelshLearningApp();
+  }
+});
