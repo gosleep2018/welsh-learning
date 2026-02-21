@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>发音问题诊断测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .test-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .test-title h2 {
+            color: #333;
+            font-size: 1.8rem;
+        }
+        
+        .test-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .test-icon.audio {
+            background: #4ecdc4;
+            color: white;
+        }
+        
+        .test-icon.ios {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .test-icon.network {
+            background: #45b7d1;
+            color: white;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .test-area {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .test-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 18px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s;
+            min-height: 60px;
+        }
+        
+        .test-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        
+        .test-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .test-btn.success {
+            background: #4ecdc4;
+            color: white;
+        }
+        
+        .test-btn.warning {
+            background: #ffd166;
+            color: #333;
+        }
+        
+        .test-btn.danger {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            background: #333;
+            color: white;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.success {
+            background: #4ecdc4;
+        }
+        
+        .status-indicator.error {
+            background: #ff6b6b;
+        }
+        
+        .status-indicator.warning {
+            background: #ffd166;
+        }
+        
+        .audio-visualizer {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.3) 2px,
+                rgba(255,255,255,0.3) 4px
+            );
+            animation: wave 1s linear infinite;
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-4px); }
+        }
+        
+        .debug-console {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 200px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .debug-console.active {
+            display: block;
+        }
+        
+        .debug-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: #333;
+            color: white;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        .word-display {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .word-welsh {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .word-pronunciation {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .word-translation {
+            font-size: 1.5rem;
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .test-btn {
+                min-width: 100%;
+            }
+            
+            .debug-console {
+                width: calc(100% - 40px);
+                height: 150px;
+            }
+            
+            .word-welsh {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔊 发音问题诊断</h1>
+            <p>测试iPhone上的发音功能问题</p>
+        </div>
+        
+        <!-- 测试1: 基本发音测试 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon audio">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <h2>测试1: 基本发音功能</h2>
+            </div>
+            
+            <div class="test-description">
+                测试最基本的音频播放功能。如果这个测试失败，说明是iOS音频播放限制问题。
+            </div>
+            
+            <div class="test-area">
+                <div class="word-display">
+                    <div class="word-welsh">Os gwelwch yn dda</div>
+                    <div class="word-pronunciation">os GWELL-ooch un THAH</div>
+                    <div class="word-translation">请 (礼貌用语)</div>
+                </div>
+                
+                <div class="audio-visualizer" id="audioVisualizer1">
+                    <div class="audio-wave"></div>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn primary" id="testBasicAudio">
+                        <i class="fas fa-play-circle"></i>
+                        测试基本音频播放
+                    </button>
+                    <button class="test-btn warning" id="testSilentAudio">
+                        <i class="fas fa-volume-mute"></i>
+                        测试静音音频
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-result" id="basicAudioResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 测试2: TTS服务测试 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon network">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h2>测试2: TTS服务连接</h2>
+            </div>
+            
+            <div class="test-description">
+                测试Azure TTS服务是否可用。如果这个测试失败，说明是网络或服务问题。
+            </div>
+            
+            <div class="test-area">
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 10px;">TTS服务地址:</div>
+                    <div style="background: #333; color: white; padding: 10px; border-radius: 8px; font-family: monospace; word-break: break-all;">
+                        https://web-x0ya.onrender.com/tts?text=Os+gwelwch+yn+dda&lang=cy
+                    </div>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn primary" id="testTTSDirect">
+                        <i class="fas fa-external-link-alt"></i>
+                        直接测试TTS服务
+                    </button>
+                    <button class="test-btn success" id="testTTSAlternative">
+                        <i class="fas fa-exchange-alt"></i>
+                        测试备用TTS服务
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-result" id="ttsServiceResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 测试3: iOS特定测试 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon ios">
+                    <i class="fab fa-apple"></i>
+                </div>
+                <h2>测试3: iOS限制测试</h2>
+            </div>
+            
+            <div class="test-description">
+                iOS有严格的音频播放限制：必须在用户交互（如点击）后立即播放。
+                测试不同的播放策略。
+            </div>
+            
+            <div class="test-area">
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 10px;">iOS音频限制:</div>
+                    <ul style="color: #666; margin-left: 20px; line-height: 1.6;">
+                        <li>必须在用户交互后立即播放</li>
+                        <li>不能自动播放（需要用户点击）</li>
+                        <li>音量不能为0（静音模式可能阻止播放）</li>
+                        <li>需要正确的AudioContext</li>
+                    </ul>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn primary" id="testIOSImmediate">
+                        <i class="fas fa-bolt"></i>
+                        测试立即播放（推荐）
+                    </button>
+                    <button class="test-btn warning" id="testIOSPromise">
+                        <i class="fas fa-hourglass-half"></i>
+                        测试Promise播放
+                    </button>
+                    <button class="test-btn danger" id="testIOSAutoplay">
+                        <i class="fas fa-robot"></i>
+                        测试自动播放（应该失败）
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-result" id="iosTestResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 测试4: 事件绑定测试 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon" style="background: #667eea;">
+                    <i class="fas fa-mouse-pointer"></i>
+                </div>
+                <h2>测试4: 事件绑定测试</h2>
+            </div>
+            
+            <div class="test-description">
+                测试JavaScript事件绑定是否正确。iOS可能需要特定的触摸事件处理。
+            </div>
+            
+            <div class="test-area">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <button class="test-btn primary" id="testClickEvent">
+                        <i class="fas fa-hand-pointer"></i>
+                        click事件
+                    </button>
+                    <button class="test-btn success" id="testTouchEvent">
+                        <i class="fas fa-hand-point-up"></i>
+                        touchstart事件
+                    </button>
+                    <button class="test-btn warning" id="testBothEvents">
+                        <i class="fas fa-hands"></i>
+                        双重事件
+                    </button>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn danger" id="testAllEvents">
+                        <i class="fas fa-play-circle"></i>
+                        测试所有事件
+                    </button>
+                </div>
+            </div>
+            
+            <div class="test-result" id="eventTestResult">
+                <div><span class="status-indicator warning"></span>等待测试...</div>
+            </div>
+        </div>
+        
+        <!-- 诊断结果 -->
+        <div class="test-card">
+            <div class="test-title">
+                <div class="test-icon" style="background: #ff6b6b;">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <h2>诊断结果</h2>
+            </div>
+            
+            <div class="test-description">
+                根据以上测试结果，显示发音问题的根本原因。
+            </div>
+            
+            <div class="test-area">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 10px;">问题诊断:</div>
+                    <div id="diagnosisResult" style="color: #666; line-height: 1.6;">
+                        等待测试结果...
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
+                    <div style="font-weight: 600; margin-bottom: 10px;">建议解决方案:</div>
+                    <div id="solutionSuggestions" style="color: #666; line-height: 1.6;">
+                        根据测试结果提供解决方案...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 调试控制台 -->
+    <div class="debug-console" id="debugConsole">
+        <div style="color: #4ecdc4; margin-bottom: 10px; font-weight: 600;">
+            <i class="fas fa-terminal"></i> 调试控制台
+        </div>
+        <div id="consoleOutput"></div>
+    </div>
+    
+    <div class="debug-toggle" id="debugToggle">
+        <i class="fas fa-terminal"></i>
+    </div>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        // 调试控制台
+        const debugConsole = document.getElementById('debugConsole');
+        const consoleOutput = document.getElementById('consoleOutput');
+        const debugToggle = document.getElementById('debugToggle');
+        
+        // 重写console.log
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            
+            const message = args.map(arg => {
+                if (typeof arg === 'object') {
+                    return JSON.stringify(arg, null, 2);
+                }
+                return String(arg);
+            }).join(' ');
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.cssText = 'margin-bottom: 5px; font-size: 11px; color: #ccc;';
+            logEntry.innerHTML = `<span style="color: #4ecdc4;">[${timestamp}]</span> ${message}`;
+            
+            consoleOutput.appendChild(logEntry);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        };
+        
+        // 调试控制台切换
+        debugToggle.addEventListener('click', function() {
+            debugConsole.classList.toggle('active');
+        });
+        
+        // 测试状态
+        const testResults = {
+            basicAudio: null,
+            ttsService: null,
+            iosRestrictions: null,
+            eventBinding: null
+        };
+        
+        // 测试1: 基本发音测试
+        const testBasicAudio = document.getElementById('testBasicAudio');
+        const testSilentAudio = document.getElementById('testSilentAudio');
+        const audioVisualizer1 = document.getElementById('audioVisualizer1');
+        const basicAudioResult = document.getElementById('basicAudioResult');
+        
+        // 创建测试音频
+        function createTestAudio() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 440; // A4
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            
+            return { audioContext, oscillator, gainNode };
+        }
+        
+        testBasicAudio.addEventListener('click', function() {
+            console.log('🔊 测试基本音频播放...');
+            
+            // 更新按钮状态
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 播放中...';
+            this.disabled = true;
+            
+            // 显示音频可视化
+            audioVisualizer1.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)';
+            
+            try {
+                // 尝试使用Web Audio API
+                const { audioContext, oscillator } = createTestAudio();
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 1);
+                
+                console.log('✅ 基本音频播放成功');
+                
+                basicAudioResult.innerHTML = `
+                    <div><span class="status-indicator success"></span>基本音频播放成功</div>
+                    <div style="color: #ccc; margin-top: 5px;">时间: ${new Date().toLocaleTimeString()}</div>
+                    <div style="color: #ccc; margin-top: 5px;">使用: Web Audio API</div>
+                `;
+                
+                testResults.basicAudio = 'success';
+                
+            } catch (error) {
+                console.error('❌ 基本音频播放失败:', error);
+                
+                basicAudioResult.innerHTML = `
+                    <div><span class="status-indicator error"></span>基本音频播放失败</div>
+                    <div style="color: #ccc; margin-top: 5px;">错误: ${error.message}</div>
+                    <div style="color: #ccc; margin-top: 5px;">可能原因: iOS音频限制</div>
+                `;
+                
+                testResults.basicAudio = 'error';
+            }
+            
+            // 恢复按钮状态
+            setTimeout(() => {
+                this.innerHTML = originalHTML;
+                this.disabled = false;
+                audioVisualizer1.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                updateDiagnosis();
+            }, 1500);
+        });
+        
+        testSilentAudio.addEventListener('click', function() {
+            console.log('🔇 测试静音音频...');
+            
+            // 创建静音音频
+            const audio = new Audio();
+            audio.volume = 0; // 静音
+            
+            audio.play().then(() => {
+                console.log('✅ 静音音频播放成功');
+                basicAudioResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        静音音频播放成功
+                    </div>
+                `;
+            }).catch(error => {
+                console.error('❌ 静音音频播放失败:', error);
+                basicAudioResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator error"></span>
+                        静音音频播放失败: ${error.message}
+                    </div>
+                `;
+            });
+        });
+        
+        // 测试2: TTS服务测试
+        const testTTSDirect = document.getElementById('testTTSDirect');
+        const testTTSAlternative = document.getElementById('testTTSAlternative');
+        const ttsServiceResult = document.getElementById('ttsServiceResult');
+        
+        testTTSDirect.addEventListener('click', function() {
+            console.log('🌐 测试TTS服务连接...');
+            
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 连接中...';
+            this.disabled = true;
+            
+            const ttsUrl = 'https://web-x0ya.onrender.com/tts?text=Os+gwelwch+yn+dda&lang=cy';
+            
+            // 测试1: 检查服务是否可达
+            fetch(ttsUrl, { method: 'HEAD' })
+                .then(response => {
+                    console.log('📡 TTS服务响应:', response.status, response.statusText);
+                    
+                    if (response.ok) {
+                        // 测试2: 尝试播放音频
+                        const audio = new Audio(ttsUrl);
+                        
+                        audio.play().then(() => {
+                            console.log('✅ TTS音频播放成功');
+                            
+                            ttsServiceResult.innerHTML = `
+                                <div><span class="status-indicator success"></span>TTS服务连接成功</div>
+                                <div style="color: #ccc; margin-top: 5px;">状态: ${response.status} ${response.statusText}</div>
+                                <div style="color: #ccc; margin-top: 5px;">音频播放成功</div>
+                            `;
+                            
+                            testResults.ttsService = 'success';
+                            
+                        }).catch(error => {
+                            console.error('❌ TTS音频播放失败:', error);
+                            
+                            ttsServiceResult.innerHTML = `
+                                <div><span class="status-indicator error"></span>TTS服务连接成功但播放失败</div>
+                                <div style="color: #ccc; margin-top: 5px;">状态: ${response.status} ${response.statusText}</div>
+                                <div style="color: #ccc; margin-top: 5px;">播放错误: ${error.message}</div>
+                            `;
+                            
+                            testResults.ttsService = 'partial';
+                        });
+                        
+                    } else {
+                        console.error('❌ TTS服务响应错误:', response.status);
+                        
+                        ttsServiceResult.innerHTML = `
+                            <div><span class="status-indicator error"></span>TTS服务连接失败</div>
+                            <div style="color: #ccc; margin-top: 5px;">状态: ${response.status} ${response.statusText}</div>
+                        `;
+                        
+                        testResults.ttsService = 'error';
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ TTS服务网络错误:', error);
+                    
+                    ttsServiceResult.innerHTML = `
+                        <div><span class="status-indicator error"></span>TTS服务网络错误</div>
+                        <div style="color: #ccc; margin-top: 5px;">错误: ${error.message}</div>
+                    `;
+                    
+                    testResults.ttsService = 'error';
+                })
+                .finally(() => {
+                    this.innerHTML = originalHTML;
+                    this.disabled = false;
+                    updateDiagnosis();
+                });
+        });
+        
+        testTTSAlternative.addEventListener('click', function() {
+            console.log('🔄 测试备用TTS服务...');
+            
+            // 使用Google TTS作为备用
+            const text = encodeURIComponent('Os gwelwch yn dda');
+            const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=cy&q=${text}`;
+            
+            const audio = new Audio(googleTTSUrl);
+            
+            audio.play().then(() => {
+                console.log('✅ 备用TTS服务播放成功');
+                ttsServiceResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        备用TTS服务播放成功
+                    </div>
+                `;
+            }).catch(error => {
+                console.error('❌ 备用TTS服务播放失败:', error);
+                ttsServiceResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator error"></span>
+                        备用TTS服务播放失败: ${error.message}
+                    </div>
+                `;
+            });
+        });
+        
+        // 测试3: iOS限制测试
+        const testIOSImmediate = document.getElementById('testIOSImmediate');
+        const testIOSPromise = document.getElementById('testIOSPromise');
+        const testIOSAutoplay = document.getElementById('testIOSAutoplay');
+        const iosTestResult = document.getElementById('iosTestResult');
+        
+        testIOSImmediate.addEventListener('click', function() {
+            console.log('⚡ 测试iOS立即播放...');
+            
+            // 立即播放（推荐方式）
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='; // 静音音频
+            
+            // 立即调用play()
+            audio.play().then(() => {
+                console.log('✅ iOS立即播放成功');
+                
+                iosTestResult.innerHTML = `
+                    <div><span class="status-indicator success"></span>iOS立即播放成功</div>
+                    <div style="color: #ccc; margin-top: 5px;">策略: 用户交互后立即播放</div>
+                `;
+                
+                testResults.iosRestrictions = 'success';
+                
+            }).catch(error => {
+                console.error('❌ iOS立即播放失败:', error);
+                
+                iosTestResult.innerHTML = `
+                    <div><span class="status-indicator error"></span>iOS立即播放失败</div>
+                    <div style="color: #ccc; margin-top: 5px;">错误: ${error.message}</div>
+                `;
+                
+                testResults.iosRestrictions = 'error';
+            });
+            
+            updateDiagnosis();
+        });
+        
+        testIOSPromise.addEventListener('click', function() {
+            console.log('⏳ 测试iOS Promise播放...');
+            
+            // 使用Promise链
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            
+            // 添加事件监听器
+            audio.addEventListener('canplaythrough', () => {
+                audio.play().then(() => {
+                    console.log('✅ iOS Promise播放成功');
+                    iosTestResult.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status-indicator success"></span>
+                            iOS Promise播放成功
+                        </div>
+                    `;
+                }).catch(error => {
+                    console.error('❌ iOS Promise播放失败:', error);
+                    iosTestResult.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status-indicator error"></span>
+                            iOS Promise播放失败: ${error.message}
+                        </div>
+                    `;
+                });
+            });
+            
+            audio.load();
+        });
+        
+        testIOSAutoplay.addEventListener('click', function() {
+            console.log('🤖 测试iOS自动播放...');
+            
+            // 尝试自动播放（应该失败）
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            
+            // 不等待用户交互，直接播放
+            setTimeout(() => {
+                audio.play().then(() => {
+                    console.log('✅ iOS自动播放成功（意外）');
+                    iosTestResult.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status-indicator warning"></span>
+                            iOS自动播放成功（意外）
+                        </div>
+                    `;
+                }).catch(error => {
+                    console.log('✅ iOS自动播放失败（预期）:', error.message);
+                    iosTestResult.innerHTML += `
+                        <div style="margin-top: 5px;">
+                            <span class="status-indicator success"></span>
+                            iOS自动播放失败（预期）: ${error.message}
+                        </div>
+                    `;
+                });
+            }, 100);
+        });
+        
+        // 测试4: 事件绑定测试
+        const testClickEvent = document.getElementById('testClickEvent');
+        const testTouchEvent = document.getElementById('testTouchEvent');
+        const testBothEvents = document.getElementById('testBothEvents');
+        const testAllEvents = document.getElementById('testAllEvents');
+        const eventTestResult = document.getElementById('eventTestResult');
+        
+        testClickEvent.addEventListener('click', function() {
+            console.log('🖱️ 测试click事件...');
+            
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            
+            audio.play().then(() => {
+                console.log('✅ click事件播放成功');
+                eventTestResult.innerHTML = `
+                    <div><span class="status-indicator success"></span>click事件播放成功</div>
+                `;
+                testResults.eventBinding = 'click-success';
+            }).catch(error => {
+                console.error('❌ click事件播放失败:', error);
+                eventTestResult.innerHTML = `
+                    <div><span class="status-indicator error"></span>click事件播放失败: ${error.message}</div>
+                `;
+                testResults.eventBinding = 'click-error';
+            });
+            
+            updateDiagnosis();
+        });
+        
+        testTouchEvent.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            console.log('👆 测试touchstart事件...');
+            
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            
+            audio.play().then(() => {
+                console.log('✅ touchstart事件播放成功');
+                eventTestResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        touchstart事件播放成功
+                    </div>
+                `;
+                testResults.eventBinding = testResults.eventBinding ? 'both-success' : 'touch-success';
+            }).catch(error => {
+                console.error('❌ touchstart事件播放失败:', error);
+                eventTestResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator error"></span>
+                        touchstart事件播放失败: ${error.message}
+                    </div>
+                `;
+            });
+        }, { passive: false });
+        
+        testBothEvents.addEventListener('click', function() {
+            console.log('👆🖱️ 测试双重事件...');
+            
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+            
+            audio.play().then(() => {
+                console.log('✅ 双重事件播放成功');
+                eventTestResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator success"></span>
+                        双重事件播放成功
+                    </div>
+                `;
+                testResults.eventBinding = 'both-success';
+            }).catch(error => {
+                console.error('❌ 双重事件播放失败:', error);
+                eventTestResult.innerHTML += `
+                    <div style="margin-top: 5px;">
+                        <span class="status-indicator error"></span>
+                        双重事件播放失败: ${error.message}
+                    </div>
+                `;
+            });
+        });
+        
+        testAllEvents.addEventListener('click', function() {
+            console.log('🚀 测试所有事件...');
+            
+            testClickEvent.click();
+            setTimeout(() => testTouchEvent.dispatchEvent(new TouchEvent('touchstart')), 500);
+            setTimeout(() => testBothEvents.click(), 1000);
+        });
+        
+        // 更新诊断结果
+        function updateDiagnosis() {
+            const diagnosisResult = document.getElementById('diagnosisResult');
+            const solutionSuggestions = document.getElementById('solutionSuggestions');
+            
+            let diagnosis = '';
+            let solutions = '';
+            
+            // 分析测试结果
+            if (testResults.basicAudio === 'error') {
+                diagnosis += '• ❌ 基本音频播放失败 - iOS音频限制或Web Audio API问题<br>';
+                solutions += '• 🔧 使用HTML5 Audio元素代替Web Audio API<br>';
+            } else if (testResults.basicAudio === 'success') {
+                diagnosis += '• ✅ 基本音频播放正常<br>';
+            }
+            
+            if (testResults.ttsService === 'error') {
+                diagnosis += '• ❌ TTS服务不可用 - 网络或服务问题<br>';
+                solutions += '• 🌐 检查TTS服务地址或使用备用服务<br>';
+            } else if (testResults.ttsService === 'partial') {
+                diagnosis += '• ⚠️ TTS服务可用但播放失败 - iOS播放限制<br>';
+                solutions += '• 📱 确保在用户交互后立即播放音频<br>';
+            } else if (testResults.ttsService === 'success') {
+                diagnosis += '• ✅ TTS服务正常<br>';
+            }
+            
+            if (testResults.iosRestrictions === 'error') {
+                diagnosis += '• ❌ iOS播放限制 - 需要用户交互后立即播放<br>';
+                solutions += '• ⚡ 在click/touch事件处理函数中立即调用audio.play()<br>';
+            } else if (testResults.iosRestrictions === 'success') {
+                diagnosis += '• ✅ iOS播放策略正常<br>';
+            }
+            
+            if (testResults.eventBinding === 'click-error') {
+                diagnosis += '• ❌ click事件绑定失败<br>';
+                solutions += '• 🖱️ 确保按钮有正确的click事件监听器<br>';
+            } else if (testResults.eventBinding === 'touch-error') {
+                diagnosis += '• ❌ touch事件绑定失败<br>';
+                solutions += '• 👆 添加touchstart事件监听器并调用preventDefault()<br>';
+            } else if (testResults.eventBinding === 'both-success') {
+                diagnosis += '• ✅ 双重事件绑定正常<br>';
+                solutions += '• ✅ 同时使用click和touchstart事件<br>';
+            }
+            
+            // 如果没有测试结果
+            if (!testResults.basicAudio && !testResults.ttsService && !testResults.iosRestrictions && !testResults.eventBinding) {
+                diagnosis = '等待测试结果...';
+                solutions = '请运行上面的测试';
+            }
+            
+            diagnosisResult.innerHTML = diagnosis;
+            solutionSuggestions.innerHTML = solutions;
+        }
+        
+        // 页面加载完成
+        console.log('🔊 发音问题诊断页面加载完成');
+        console.log('📱 设备信息:', {
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            maxTouchPoints: navigator.maxTouchPoints,
+            audioContext: !!window.AudioContext || !!window.webkitAudioContext,
+            canPlayType: document.createElement('audio').canPlayType('audio/mpeg')
+        });
+        
+        // 检测iOS
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+        
+        if (isIOS()) {
+            console.log('📱 检测到iOS设备');
+            document.querySelector('.header p').innerHTML += '<br><span style="color: #ff6b6b;">📱 检测到iOS设备</span>';
+        }
+    </script>
+</body>
+</html>
