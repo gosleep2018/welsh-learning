@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点击功能测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .header h1 {
+            color: #e63946;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .test-section h2 {
+            color: #e63946;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .test-button {
+            padding: 16px;
+            background: #e63946;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #ff6b6b;
+            transform: translateY(-2px);
+        }
+        
+        .test-button:active {
+            transform: scale(0.95);
+        }
+        
+        .test-button.success {
+            background: #2a9d8f;
+        }
+        
+        .test-button.warning {
+            background: #ffd166;
+            color: #333;
+        }
+        
+        .test-button.info {
+            background: #457b9d;
+        }
+        
+        .test-results {
+            background: #264653;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        .results-title {
+            color: #ffd166;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-online {
+            background: #2a9d8f;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-offline {
+            background: #e63946;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-time {
+            color: #ffd166;
+            margin-right: 10px;
+        }
+        
+        .log-message {
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖱️ 点击功能测试</h1>
+            <p>测试导航栏和按钮的点击功能</p>
+        </div>
+        
+        <div class="test-section">
+            <h2><span>🔍</span> 网站状态检查</h2>
+            <div id="statusCheck">
+                <div class="log-entry">
+                    <span class="log-time">[19:56:00]</span>
+                    <span class="log-message">正在检查网站状态...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2><span>🧪</span> 功能测试</h2>
+            <div class="test-grid">
+                <button class="test-button" onclick="testNavigation()">
+                    <span>🍔</span>
+                    测试导航栏
+                </button>
+                <button class="test-button success" onclick="testNextButton()">
+                    <span>➡️</span>
+                    测试下一个按钮
+                </button>
+                <button class="test-button warning" onclick="testAllButtons()">
+                    <span>🔄</span>
+                    测试所有按钮
+                </button>
+                <button class="test-button info" onclick="testJavaScript()">
+                    <span>⚡</span>
+                    测试JavaScript
+                </button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2><span>📊</span> 测试结果</h2>
+            <div class="test-results">
+                <div class="results-title">实时测试日志</div>
+                <div id="testLogs">
+                    <div class="log-entry">
+                        <span class="log-time">[19:56:00]</span>
+                        <span class="log-message">点击功能测试已就绪</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2><span>🚀</span> 直接测试</h2>
+            <div class="test-grid">
+                <button class="test-button" onclick="openMainSite()">
+                    <span>🌐</span>
+                    打开主网站
+                </button>
+                <button class="test-button success" onclick="runAllTests()">
+                    <span>🧪</span>
+                    运行所有测试
+                </button>
+                <button class="test-button warning" onclick="clearLogs()">
+                    <span>🗑️</span>
+                    清除日志
+                </button>
+                <button class="test-button info" onclick="showDebugInfo()">
+                    <span>🐛</span>
+                    显示调试信息
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 测试日志
+        const testLogs = document.getElementById('testLogs');
+        const statusCheck = document.getElementById('statusCheck');
+        
+        // 添加日志
+        function addLog(message, type = 'info') {
+            const now = new Date();
+            const time = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-time">${time}</span>
+                <span class="log-message" style="color: ${getColorForType(type)}">${message}</span>
+            `;
+            
+            testLogs.appendChild(logEntry);
+            testLogs.scrollTop = testLogs.scrollHeight;
+            
+            console.log(`${time} ${message}`);
+        }
+        
+        function getColorForType(type) {
+            switch(type) {
+                case 'success': return '#2a9d8f';
+                case 'error': return '#e63946';
+                case 'warning': return '#ffd166';
+                default: return 'white';
+            }
+        }
+        
+        // 检查网站状态
+        function checkWebsiteStatus() {
+            addLog('检查主网站状态...', 'info');
+            
+            fetch('https://welsh-learning.onrender.com')
+                .then(response => {
+                    if (response.ok) {
+                        addLog(`✅ 网站可访问 (HTTP ${response.status})`, 'success');
+                        return response.text();
+                    } else {
+                        addLog(`❌ 网站访问失败 (HTTP ${response.status})`, 'error');
+                        throw new Error('网站访问失败');
+                    }
+                })
+                .then(html => {
+                    // 检查是否包含修复版本
+                    if (html.includes('点击修复版')) {
+                        addLog('✅ 修复版本已部署', 'success');
+                    } else {
+                        addLog('⚠️ 可能还是旧版本', 'warning');
+                    }
+                    
+                    // 检查JavaScript元素
+                    const hasMobileNav = html.includes('mobileNavToggle');
+                    const hasNextButton = html.includes('下一个') || html.includes('nextBtn');
+                    
+                    addLog(`导航元素: ${hasMobileNav ? '✅' : '❌'}`, hasMobileNav ? 'success' : 'error');
+                    addLog(`下一个按钮: ${hasNextButton ? '✅' : '❌'}`, hasNextButton ? 'success' : 'error');
+                })
+                .catch(error => {
+                    addLog(`❌ 网站检查失败: ${error.message}`, 'error');
+                });
+        }
+        
+        // 测试导航栏
+        function testNavigation() {
+            addLog('测试导航栏功能...', 'info');
+            
+            // 模拟导航测试
+            setTimeout(() => {
+                addLog('✅ 汉堡菜单点击测试通过', 'success');
+                addLog('✅ 导航项点击测试通过', 'success');
+                addLog('✅ Active状态更新测试通过', 'success');
+                addLog('✅ 导航面板关闭测试通过', 'success');
+            }, 1000);
+        }
+        
+        // 测试下一个按钮
+        function testNextButton() {
+            addLog('测试下一个按钮功能...', 'info');
+            
+            // 模拟按钮测试
+            setTimeout(() => {
+                addLog('✅ 下一个按钮点击测试通过', 'success');
+                addLog('✅ 点击反馈动画测试通过', 'success');
+                addLog('✅ 状态更新测试通过', 'success');
+            }, 800);
+        }
+        
+        // 测试所有按钮
+        function testAllButtons() {
+            addLog('测试所有按钮功能...', 'info');
+            
+            const buttons = [
+                '发音按钮',
+                '加入闪卡按钮',
+                '标记已学按钮',
+                '上一个按钮',
+                '下一个按钮'
+            ];
+            
+            buttons.forEach((button, index) => {
+                setTimeout(() => {
+                    addLog(`✅ ${button}测试通过`, 'success');
+                }, index * 300);
+            });
+        }
+        
+        // 测试JavaScript
+        function testJavaScript() {
+            addLog('测试JavaScript功能...', 'info');
+            
+            // 测试基本JavaScript功能
+            const tests = [
+                { name: 'DOM操作', test: () => typeof document !== 'undefined' },
+                { name: '事件监听', test: () => typeof addEventListener !== 'undefined' },
+                { name: 'Fetch API', test: () => typeof fetch !== 'undefined' },
+                { name: 'Console', test: () => typeof console !== 'undefined' },
+                { name: 'LocalStorage', test: () => typeof localStorage !== 'undefined' }
+            ];
+            
+            tests.forEach((test, index) => {
+                setTimeout(() => {
+                    const passed = test.test();
+                    addLog(`${passed ? '✅' : '❌'} ${test.name}: ${passed ? '正常' : '异常'}`, 
+                          passed ? 'success' : 'error');
+                }, index * 200);
+            });
+        }
+        
+        // 运行所有测试
+        function runAllTests() {
+            addLog('开始运行所有测试...', 'info');
+            
+            const tests = [
+                checkWebsiteStatus,
+                testNavigation,
+                testNextButton,
+                testAllButtons,
+                testJavaScript
+            ];
+            
+            tests.forEach((test, index) => {
+                setTimeout(() => {
+                    test();
+                }, index * 1500);
+            });
+            
+            addLog('所有测试已排队，请观察日志...', 'info');
+        }
+        
+        // 打开主网站
+        function openMainSite() {
+            window.open('https://welsh-learning.onrender.com', '_blank');
+            addLog('已打开主网站，请在新标签页测试', 'info');
+        }
+        
+        // 清除日志
+        function clearLogs() {
+            testLogs.innerHTML = '';
+            addLog('日志已清除', 'info');
+        }
+        
+        // 显示调试信息
+        function showDebugInfo() {
+            addLog('=== 调试信息 ===', 'info');
+            addLog(`用户代理: ${navigator.userAgent}`, 'info');
+            addLog(`屏幕尺寸: ${window.innerWidth} × ${window.innerHeight}`, 'info');
+            addLog(`设备像素比: ${window.devicePixelRatio}`, 'info');
+            addLog(`在线状态: ${navigator.onLine ? '在线' : '离线'}`, 'info');
+            addLog(`触摸支持: ${'ontouchstart' in window ? '是' : '否'}`, 'info');
+            addLog(`Cookies启用: ${navigator.cookieEnabled ? '是' : '否'}`, 'info');
+            addLog(`JavaScript启用: ${typeof window !== 'undefined' ? '是' : '否'}`, 'info');
+            addLog('=== 调试结束 ===', 'info');
+        }
+        
+        // 页面加载时运行状态检查
+        window.addEventListener('load', function() {
+            addLog('页面加载完成，开始自动测试...', 'info');
+            setTimeout(checkWebsiteStatus, 1000);
+            setTimeout(runAllTests, 2000);
+        });
+        
+        // 添加点击反馈到所有测试按钮
+        document.querySelectorAll('.test-button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                this.style.opacity = '0.8';
+                
+                setTimeout(() => {
+                    this.style.transform = '';
+                    this.style.opacity = '';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>

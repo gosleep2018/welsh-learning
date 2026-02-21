@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=375, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iPhone模拟测试</title>
+    <style>
+        /* iPhone 12/13/14 模拟尺寸 */
+        :root {
+            --iphone-width: 375px;
+            --iphone-height: 812px;
+            --safe-area-top: env(safe-area-inset-top, 47px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 34px);
+            --safe-area-left: env(safe-area-inset-left, 0px);
+            --safe-area-right: env(safe-area-inset-right, 0px);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            width: var(--iphone-width);
+            height: var(--iphone-height);
+            margin: 0 auto;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            border-radius: 40px;
+            box-shadow: 0 0 0 12px #333, 0 0 40px rgba(0,0,0,0.5);
+        }
+        
+        .iphone-frame {
+            width: 100%;
+            height: 100%;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            border-radius: 36px;
+        }
+        
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 210px;
+            height: var(--safe-area-top);
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 1000;
+        }
+        
+        .home-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            margin-bottom: 8px;
+        }
+        
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
+            padding-left: var(--safe-area-left);
+            padding-right: var(--safe-area-right);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .test-container {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 10px;
+        }
+        
+        .test-header h1 {
+            color: #e63946;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+        }
+        
+        .test-section h2 {
+            color: #e63946;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-list {
+            margin-left: 20px;
+            margin-top: 15px;
+        }
+        
+        .test-list li {
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid #e63946;
+        }
+        
+        .test-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .test-icon.pass {
+            background: #2a9d8f;
+            color: white;
+        }
+        
+        .test-icon.fail {
+            background: #e63946;
+            color: white;
+        }
+        
+        .test-icon.warning {
+            background: #ffd166;
+            color: #333;
+        }
+        
+        .visual-test {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px dashed #ddd;
+        }
+        
+        .mobile-nav-sim {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .nav-item-sim {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            border-left: 4px solid #e63946;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .nav-item-sim.active {
+            background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+            color: white;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            text-align: center;
+            color: #e63946;
+        }
+        
+        .nav-item-sim.active .nav-icon {
+            color: white;
+        }
+        
+        .nav-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .nav-badge {
+            background: #e63946;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .nav-item-sim.active .nav-badge {
+            background: white;
+            color: #e63946;
+        }
+        
+        .button-test {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 14px;
+            background: #e63946;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .test-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        
+        .test-btn.success {
+            background: #2a9d8f;
+        }
+        
+        .test-btn.warning {
+            background: #ffd166;
+            color: #333;
+        }
+        
+        .touch-test-area {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            font-size: 0.9rem;
+            color: #666;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .touch-test-area.active {
+            background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+            color: white;
+            border-color: #e63946;
+        }
+        
+        .test-results {
+            background: #264653;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        .results-title {
+            color: #ffd166;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .orientation-test {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 2px solid #e63946;
+        }
+        
+        @media (orientation: landscape) {
+            body {
+                width: 812px;
+                height: 375px;
+            }
+            
+            .test-container {
+                flex-direction: row;
+                gap: 20px;
+            }
+            
+            .test-section {
+                flex: 1;
+            }
+            
+            .orientation-test {
+                background: #ffd166;
+                color: #333;
+            }
+        }
+        
+        /* 模拟滚动测试 */
+        .scroll-test {
+            height: 200px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .scroll-content {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .scroll-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="notch"></div>
+        <div class="home-indicator"></div>
+        
+        <div class="screen-content">
+            <div class="test-container">
+                <div class="test-header">
+                    <h1>📱 iPhone适配测试</h1>
+                    <p>模拟iPhone 12/13/14 (375×812)</p>
+                </div>
+                
+                <div class="test-section">
+                    <h2><span>🔍</span> 适配检查清单</h2>
+                    <ul class="test-list">
+                        <li>
+                            <div class="test-icon" id="check1">?</div>
+                            <span>安全区域适配 (刘海屏)</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="check2">?</div>
+                            <span>Home指示器避让</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="check3">?</div>
+                            <span>触摸目标大小 (≥44px)</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="check4">?</div>
+                            <span>横竖屏切换适配</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="check5">?</div>
+                            <span>流畅滚动 (-webkit-overflow-scrolling)</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="check6">?</div>
+                            <span>点击反馈 (active状态)</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="test-section">
+                    <h2><span>👆</span> 触摸测试</h2>
+                    <div class="visual-test">
+                        <div class="mobile-nav-sim">
+                            <div class="nav-item-sim active" onclick="toggleActive(this)">
+                                <div class="nav-icon">📚</div>
+                                <div class="nav-text">每日词汇</div>
+                                <div class="nav-badge">5</div>
+                            </div>
+                            <div class="nav-item-sim" onclick="toggleActive(this)">
+                                <div class="nav-icon">💬</div>
+                                <div class="nav-text">常用短语</div>
+                                <div class="nav-badge" style="background:#2a9d8f;">新</div>
+                            </div>
+                            <div class="nav-item-sim" onclick="toggleActive(this)">
+                                <div class="nav-icon">🔊</div>
+                                <div class="nav-text">发音练习</div>
+                                <div class="nav-badge" style="background:#457b9d;">基础版</div>
+                            </div>
+                        </div>
+                        
+                        <div class="button-test">
+                            <button class="test-btn" onclick="testButtonClick(this)">
+                                <span>🔊</span> 发音
+                            </button>
+                            <button class="test-btn success" onclick="testButtonClick(this)">
+                                <span>➕</span> 加入闪卡
+                            </button>
+                            <button class="test-btn warning" onclick="testButtonClick(this)">
+                                <span>➡️</span> 下一个
+                            </button>
+                        </div>
+                        
+                        <div class="touch-test-area" id="touchArea" 
+                             ontouchstart="touchStart(this)" 
+                             ontouchend="touchEnd(this)">
+                            点击或触摸此区域测试
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="test-section">
+                    <h2><span>🔄</span> 滚动测试</h2>
+                    <div class="scroll-test">
+                        <div class="scroll-content">
+                            <div class="scroll-item">单词1: Hello → Helo</div>
+                            <div class="scroll-item">单词2: Thank you → Diolch</div>
+                            <div class="scroll-item">单词3: Please → Os gwelwch yn dda</div>
+                            <div class="scroll-item">单词4: Good morning → Bore da</div>
+                            <div class="scroll-item">单词5: Good night → Nos da</div>
+                            <div class="scroll-item">单词6: How are you? → Sut wyt ti?</div>
+                            <div class="scroll-item">单词7: I'm fine → Dw i'n iawn</div>
+                            <div class="scroll-item">单词8: Sorry → Mae'n ddrwg gen i</div>
+                            <div class="scroll-item">单词9: Excuse me → Esgusodwch fi</div>
+                            <div class="scroll-item">单词10: Goodbye → Hwyl</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="orientation-test" id="orientationTest">
+                    📱 当前: 竖屏模式
+                </div>
+                
+                <div class="test-results">
+                    <div class="results-title">测试日志</div>
+                    <div id="testLogs">
+                        <div>iPhone模拟测试已启动</div>
+                        <div>屏幕尺寸: 375×812px</div>
+                        <div>安全区域: 顶部47px, 底部34px</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 测试日志
+        const testLogs = document.getElementById('testLogs');
+        const orientationTest = document.getElementById('orientationTest');
+        
+        function addLog(message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            testLogs.appendChild(logEntry);
+            testLogs.scrollTop = testLogs.scrollHeight;
+        }
+        
+        // 运行适配检查
+        function runAdaptationChecks() {
+            console.log('🔍 运行iPhone适配检查...');
+            
+            const checks = [
+                { id: 'check1', test: testSafeArea, name: '安全区域适配' },
+                { id: 'check2', test: testHomeIndicator, name: 'Home指示器' },
+                { id: 'check3', test: testTouchTargets, name: '触摸目标大小' },
+                { id: 'check4', test: testOrientation, name: '横竖屏切换' },
+                { id: 'check5', test: testSmoothScroll, name: '流畅滚动' },
+                { id: 'check6', test: testClickFeedback, name: '点击反馈' }
+            ];
+            
+            checks.forEach((check, index) => {
+                setTimeout(() => {
+                    const result = check.test();
+                    const icon = document.getElementById(check.id);
+                    
+                    icon.textContent = result.pass ? '✓' : '✗';
+                    icon.className = `test-icon ${result.pass ? 'pass' : result.warning ? 'warning' : 'fail'}`;
+                    
+                    addLog(`${check.name}: ${result.message}`);
+                }, index * 500);
+            });
+        }
+        
+        // 测试安全区域
+        function testSafeArea() {
+            const hasSafeArea = CSS.supports('padding-top: env(safe-area-inset-top)');
+            const topPadding = getComputedStyle(document.querySelector('.screen-content')).paddingTop;
+            
+            return {
+                pass: hasSafeArea && topPadding !== '0px',
+                message: hasSafeArea ? `安全区域支持: ${topPadding}` : '不支持安全区域'
+            };
+        }
+        
+        // 测试Home指示器
+        function testHomeIndicator() {
+            const homeIndicator = document.querySelector('.home-indicator');
+            const bottomPadding = getComputedStyle(document.querySelector('.screen-content')).paddingBottom;
+            
+            return {
+                pass: homeIndicator && bottomPadding !== '0px',
+                message: homeIndicator ? `Home指示器区域: ${bottomPadding}` : '无Home指示器'
+            };
+        }
+        
+        // 测试触摸目标大小
+        function testTouchTargets() {
+            const buttons = document.querySelectorAll('.test-btn, .nav-item-sim');
+            let smallTargets = 0;
+            
+            buttons.forEach(button => {
+                const rect = button.getBoundingClientRect();
+                const minSize = Math.min(rect.width, rect.height);
+                if (minSize < 44) {
+                    smallTargets++;
+                }
+            });
+            
+            return {
+                pass: smallTargets === 0,
+                warning: smallTargets > 0,
+                message: smallTargets === 0 ? '所有触摸目标≥44px' : `${smallTargets}个目标<44px`
+            };
+        }
+        
+        // 测试横竖屏切换
+        function testOrientation() {
+            const isPortrait = window.innerHeight > window.innerWidth;
+            const supportsOrientation = 'onorientationchange' in window;
+            
+            return {
+                pass: supportsOrientation,
+                message: supportsOrientation ? 
+                    `当前: ${isPortrait ? '竖屏' : '横屏'}` : 
+                    '不支持方向检测'
+            };
+        }
+        
+        // 测试流畅滚动
+        function testSmoothScroll() {
+            const scrollElement = document.querySelector('.scroll-test');
+            const hasSmoothScroll = getComputedStyle(scrollElement).webkitOverflowScrolling === 'touch';
+            
+            return {
+                pass: hasSmoothScroll,
+                message: hasSmoothScroll ? '支持流畅滚动' : '不支持-webkit-overflow-scrolling'
+            };
+        }
+        
+        // 测试点击反馈
+        function testClickFeedback() {
+            const buttons = document.querySelectorAll('.test-btn, .nav-item-sim');
+            let hasFeedback = 0;
+            
+            buttons.forEach(button => {
+                const style = getComputedStyle(button);
+                if (style.transition.includes('transform') || style.transition.includes('opacity')) {
+                    hasFeedback++;
+                }
+            });
+            
+            return {
+                pass: hasFeedback > 0,
+                message: hasFeedback > 0 ? `${hasFeedback}个元素有点击反馈` : '无点击反馈'
+            };
+        }
+        
+        // 切换active状态
+        function toggleActive(element) {
+            document.querySelectorAll('.nav-item-sim').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            addLog(`导航点击: ${element.querySelector('.nav-text').textContent}`);
+        }
+        
+        // 测试按钮点击
+        function testButtonClick(button) {
+            button.style.transform = 'scale(0.95)';
+            button.style.opacity = '0.8';
+            
+            setTimeout(() => {
+                button.style.transform = '';
+                button.style.opacity = '';
+            }, 200);
+            
+            addLog(`按钮点击: ${button.textContent.trim()}`);
+        }
+        
+        // 触摸测试
+        function touchStart(element) {
+            element.classList.add('active');
+            addLog('触摸开始');
+        }
+        
+        function touchEnd(element) {
+            element.classList.remove('active');
+            addLog('触摸结束');
+        }
+        
+        // 监听方向变化
+        window.addEventListener('resize', function() {
+            const isPortrait = window.innerHeight > window.innerWidth;
+            orientationTest.textContent = isPortrait ? '📱 当前: 竖屏模式' : '🔄 当前: 横屏模式';
+            orientationTest.style.background = isPortrait ? '#f8f9fa' : '#ffd166';
+            orientationTest.style.color = isPortrait ? '#333' : '#333';
+            
+            addLog(`方向变化: ${isPortrait ? '竖屏' : '横屏'}`);
+        });
+        
+        // 页面加载时运行测试
+        window.addEventListener('load', function() {
+            addLog('iPhone模拟测试已启动');
+            addLog(`屏幕尺寸: ${window.innerWidth}×${window.innerHeight}px`);
+            
+            setTimeout(runAdaptationChecks, 1000);
+            
+            // 添加滚动测试
+            const scrollTest = document.querySelector('.scroll-test');
+            scrollTest.addEventListener('scroll', function() {
+                if (this.scrollTop > 50 && !this.dataset.scrolled) {
+                    this.dataset.scrolled = true;
+                    addLog('滚动测试通过');
+                }
+            });
+        });
+        
+        // 添加触摸事件监听
+        document.addEventListener('touchstart', function(e) {
+            // 记录触摸点
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                addLog(`触摸点: (${Math.round(touch.clientX)}, ${Math.round(touch.clientY)})`);
+            }
+        }, { passive: true });
+        
+        // 检查设备能力
+        addLog(`触摸支持: ${'ontouchstart' in window ? '是' : '否'}`);
+        addLog(`安全区域支持: ${CSS.supports('padding-top: env(safe-area-inset-top)') ? '是' : '否'}`);
+        addLog(`-webkit-overflow-scrolling: ${CSS.supports('-webkit-overflow-scrolling: touch') ? '是' : '否'}`);
+    </script>
+</body>
+</html>

@@ -2,149 +2,70 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="format-detection" content="telephone=no">
-    <title>威尔士语学习平台 - iPhone优化版</title>
+    <title>威尔士语学习平台 - 点击修复版</title>
     
     <!-- 主CSS -->
     <link rel="stylesheet" href="css/style.css">
-    
-    <!-- iPhone优化CSS -->
-    <link rel="stylesheet" href="css/iphone-optimization.css">
     
     <!-- Font Awesome图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* iPhone专用内联样式 */
-        :root {
-            --iphone-safe-area-top: env(safe-area-inset-top, 20px);
-            --iphone-safe-area-bottom: env(safe-area-inset-bottom, 20px);
-            --iphone-safe-area-left: env(safe-area-inset-left, 0px);
-            --iphone-safe-area-right: env(safe-area-inset-right, 0px);
-        }
-        
-        /* 强制iPhone优化 */
-        body {
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-            -webkit-touch-callout: none;
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-            font-synthesis: none;
-            overscroll-behavior: none;
-        }
-        
-        /* 安全区域适配 */
-        .header {
-            padding-top: calc(40px + var(--iphone-safe-area-top)) !important;
-        }
-        
-        .mobile-nav-header {
-            padding-top: var(--iphone-safe-area-top) !important;
-            height: calc(60px + var(--iphone-safe-area-top)) !important;
-        }
-        
-        .mobile-nav-toggle {
-            top: calc(20px + var(--iphone-safe-area-top)) !important;
-        }
-        
-        .content-area {
-            padding-bottom: calc(30px + var(--iphone-safe-area-bottom)) !important;
-        }
-        
-        /* 触摸目标优化 */
-        button, .btn {
-            min-height: 44px !important;
-            min-width: 44px !important;
-            padding: 12px 24px !important;
-        }
-        
-        .mobile-nav-link, .nav-link {
-            min-height: 44px !important;
-            padding: 12px 20px !important;
+        /* 确保所有按钮可点击 */
+        button, .btn, [role="button"] {
+            cursor: pointer !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1) !important;
         }
         
         /* 点击反馈 */
         .click-feedback:active {
-            transform: scale(0.97) !important;
-            opacity: 0.9 !important;
+            transform: scale(0.95) !important;
+            opacity: 0.8 !important;
             transition: transform 0.1s, opacity 0.1s !important;
         }
         
-        /* 流畅滚动 */
-        .mobile-nav-content,
-        .content-area,
-        .module-content {
-            -webkit-overflow-scrolling: touch !important;
-            overscroll-behavior: contain !important;
+        /* 确保导航可点击 */
+        .mobile-nav-toggle, .mobile-nav-close, 
+        .mobile-nav-link, .nav-link {
+            cursor: pointer !important;
         }
         
-        /* 横屏优化 */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .main-content {
-                flex-direction: row !important;
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none !important;
             }
             
-            .sidebar {
-                width: 35% !important;
-                max-height: 100vh !important;
-                overflow-y: auto !important;
+            .main-content {
+                margin-top: 70px;
+                flex-direction: column;
             }
             
             .content-area {
-                width: 65% !important;
-                max-height: 100vh !important;
-                overflow-y: auto !important;
-            }
-            
-            /* 横屏时调整字体大小 */
-            body {
-                font-size: 15px !important;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem !important;
-            }
-        }
-        
-        /* 小屏幕iPhone优化 */
-        @media (max-width: 375px) {
-            .header h1 {
-                font-size: 1.6rem !important;
-            }
-            
-            .subtitle {
-                font-size: 0.95rem !important;
-            }
-            
-            .word-card {
-                padding: 16px !important;
-            }
-            
-            .btn {
-                padding: 10px 18px !important;
-                font-size: 14px !important;
-            }
-        }
-        
-        /* 暗色模式支持 */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #000000 !important;
-                color: #ffffff !important;
-            }
-            
-            .sidebar,
-            .content-area,
-            .word-card {
-                background: #1c1c1e !important;
-                border-color: #38383a !important;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                margin-bottom: 0;
             }
             
             .header {
-                background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%) !important;
+                border-radius: 0;
+                margin-bottom: 0;
+                padding-top: 70px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header h1 span {
+                font-size: 2.2rem;
+            }
+            
+            .app-container {
+                padding: 0;
             }
         }
     </style>
@@ -195,6 +116,27 @@
                         <span class="mobile-nav-badge basic">基础版</span>
                     </a>
                 </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-module="wordList">
+                        <i class="fas fa-list"></i>
+                        <span>单词列表</span>
+                        <span class="mobile-nav-badge new">新</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-module="search">
+                        <i class="fas fa-search"></i>
+                        <span>搜索翻译</span>
+                        <span class="mobile-nav-badge new">新</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link" data-module="culture">
+                        <i class="fas fa-landmark"></i>
+                        <span>威尔士文化</span>
+                        <span class="mobile-nav-badge new">新</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -207,17 +149,47 @@
                 <span>🏴󠁧󠁢󠁷󠁬󠁳󠁿</span>
                 威尔士语学习平台
             </h1>
-            <div class="subtitle">iPhone深度优化 • 安全区域适配 • 触摸目标优化</div>
+            <div class="subtitle">点击修复版 • 所有按钮和导航均可点击</div>
             <div class="tagline">4周掌握100高频表达 • 能进行3分钟基础对话</div>
             <div style="margin-top: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                <i class="fas fa-mobile-alt"></i> iPhone优化版
-                <span style="margin: 0 10px;">•</span>
-                <i class="fas fa-calendar-alt"></i> <span id="currentDate"></span>
+                <i class="fas fa-calendar-alt"></i> 当前日期: <span id="currentDate"></span>
             </div>
         </header>
         
         <!-- 主内容 -->
         <div class="main-content">
+            <!-- 桌面端侧边栏 -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-compass"></i> 学习导航
+                    </h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" data-module="dailyWords">
+                                <i class="fas fa-book-open"></i>
+                                <span>每日词汇</span>
+                                <span class="badge">5</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="commonPhrases">
+                                <i class="fas fa-comments"></i>
+                                <span>常用短语</span>
+                                <span class="badge new">新</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="pronunciation">
+                                <i class="fas fa-volume-up"></i>
+                                <span>发音练习</span>
+                                <span class="badge basic">基础版</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+            
             <!-- 内容区域 -->
             <main class="content-area">
                 <div id="dailyWordsModule">
@@ -314,74 +286,74 @@
         </div>
     </div>
     
-    <!-- iPhone优化脚本 -->
-    <script src="js/iphone-optimizer.js"></script>
-    
-    <!-- 主JavaScript -->
+    <!-- 直接修复的JavaScript -->
     <script>
         // 确保DOM加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('📱 iPhone优化版加载...');
+            console.log('🚀 点击修复版加载...');
             
             // 设置当前日期
             const now = new Date();
             const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
             document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', options);
             
-            // 初始化导航
-            initNavigation();
+            // 修复移动端导航
+            fixMobileNavigation();
             
-            // 初始化按钮
-            initButtons();
+            // 修复桌面端导航
+            fixDesktopNavigation();
             
-            // 添加点击反馈类
-            document.querySelectorAll('button, .btn').forEach(btn => {
-                btn.addEventListener('touchstart', function() {
-                    this.classList.add('click-feedback');
-                });
-                
-                btn.addEventListener('touchend', function() {
-                    setTimeout(() => {
-                        this.classList.remove('click-feedback');
-                    }, 150);
-                });
-            });
+            // 修复所有按钮
+            fixAllButtons();
             
-            console.log('✅ iPhone优化版初始化完成');
+            console.log('✅ 点击修复完成');
+            showToast('点击修复已应用，请测试功能');
         });
         
-        // 初始化导航
-        function initNavigation() {
+        // 修复移动端导航
+        function fixMobileNavigation() {
             const toggle = document.getElementById('mobileNavToggle');
             const panel = document.getElementById('mobileNavPanel');
             const close = document.getElementById('mobileNavClose');
             
-            if (!toggle || !panel) return;
+            if (!toggle || !panel) {
+                console.warn('⚠️ 移动端导航元素未找到');
+                return;
+            }
+            
+            console.log('🔧 修复移动端导航...');
             
             // 汉堡菜单交互
             function toggleNav() {
                 panel.classList.toggle('active');
                 document.body.style.overflow = panel.classList.contains('active') ? 'hidden' : 'auto';
+                console.log('🍔 导航面板:', panel.classList.contains('active') ? '展开' : '隐藏');
             }
             
+            // 绑定事件
             toggle.addEventListener('click', toggleNav);
-            if (close) close.addEventListener('click', toggleNav);
+            
+            if (close) {
+                close.addEventListener('click', toggleNav);
+            }
             
             // 点击面板外部关闭
             panel.addEventListener('click', function(e) {
-                if (e.target === panel) toggleNav();
+                if (e.target === panel) {
+                    toggleNav();
+                }
             });
             
             // 导航项点击
             document.querySelectorAll('.mobile-nav-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
+                    console.log('📱 导航点击:', this.textContent.trim());
                     
                     // 更新active状态
-                    document.querySelectorAll('.mobile-nav-link').forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+                    updateActiveState(this);
                     
-                    // 关闭面板
+                    // 关闭导航面板
                     if (panel.classList.contains('active')) {
                         toggleNav();
                     }
@@ -391,15 +363,49 @@
             });
         }
         
-        // 初始化按钮
-        function initButtons() {
+        // 修复桌面端导航
+        function fixDesktopNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('💻 导航点击:', this.textContent.trim());
+                    
+                    // 更新active状态
+                    updateActiveState(this);
+                    
+                    showToast(`切换到: ${this.querySelector('span').textContent}`);
+                });
+            });
+        }
+        
+        // 更新active状态
+        function updateActiveState(activeLink) {
+            const module = activeLink.getAttribute('data-module');
+            
+            // 移除所有active类
+            document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 添加active类到对应链接
+            if (module) {
+                document.querySelectorAll(`[data-module="${module}"]`).forEach(link => {
+                    link.classList.add('active');
+                });
+            }
+        }
+        
+        // 修复所有按钮
+        function fixAllButtons() {
             // 发音按钮
             const pronounceBtn = document.getElementById('pronounceBtn');
             if (pronounceBtn) {
                 pronounceBtn.addEventListener('click', function() {
+                    console.log('🔊 发音按钮点击');
                     this.innerHTML = '<i class="fas fa-volume-up"></i> 播放中...';
                     this.disabled = true;
                     
+                    // 模拟发音
                     setTimeout(() => {
                         this.innerHTML = '<i class="fas fa-volume-up"></i> 发音';
                         this.disabled = false;
@@ -412,6 +418,7 @@
             const addFlashcardBtn = document.getElementById('addFlashcardBtn');
             if (addFlashcardBtn) {
                 addFlashcardBtn.addEventListener('click', function() {
+                    console.log('📝 加入闪卡按钮点击');
                     this.innerHTML = '<i class="fas fa-check"></i> 已添加';
                     this.classList.remove('btn-outline');
                     this.classList.add('btn-success');
@@ -424,6 +431,7 @@
             const markLearnedBtn = document.getElementById('markLearnedBtn');
             if (markLearnedBtn) {
                 markLearnedBtn.addEventListener('click', function() {
+                    console.log('✅ 标记已学按钮点击');
                     this.innerHTML = '<i class="fas fa-check-double"></i> 已学习';
                     this.classList.remove('btn-outline');
                     this.classList.add('btn-success');
@@ -436,6 +444,7 @@
             const prevBtn = document.getElementById('prevBtn');
             if (prevBtn) {
                 prevBtn.addEventListener('click', function() {
+                    console.log('⬅️ 上一个按钮点击');
                     showToast('切换到上一个单词');
                 });
             }
@@ -444,17 +453,38 @@
             const nextBtn = document.getElementById('nextBtn');
             if (nextBtn) {
                 nextBtn.addEventListener('click', function() {
+                    console.log('➡️ 下一个按钮点击');
                     showToast('切换到下一个单词');
                 });
             }
+            
+            // 为所有按钮添加点击反馈
+            document.querySelectorAll('button, .btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // 添加点击反馈类
+                    this.classList.add('click-feedback');
+                    
+                    // 移除反馈类
+                    setTimeout(() => {
+                        this.classList.remove('click-feedback');
+                    }, 100);
+                });
+            });
+            
+            console.log(`🔧 修复了 ${document.querySelectorAll('button, .btn').length} 个按钮`);
         }
         
         // 显示提示
         function showToast(message) {
+            // 移除旧的toast
+            const oldToasts = document.querySelectorAll('.fixed-toast');
+            oldToasts.forEach(toast => toast.remove());
+            
             const toast = document.createElement('div');
+            toast.className = 'fixed-toast';
             toast.style.cssText = `
                 position: fixed;
-                bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+                bottom: 100px;
                 right: 20px;
                 background: #264653;
                 color: white;
@@ -462,7 +492,7 @@
                 border-radius: 12px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.2);
                 z-index: 1000;
-                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+                animation: fixedSlideIn 0.3s ease, fixedFadeOut 0.3s ease 2.7s forwards;
                 max-width: 300px;
                 font-size: 0.9rem;
                 font-weight: 500;
@@ -471,11 +501,11 @@
             
             const style = document.createElement('style');
             style.textContent = `
-                @keyframes slideIn {
+                @keyframes fixedSlideIn {
                     from { transform: translateX(100%); opacity: 0; }
                     to { transform: translateX(0); opacity: 1; }
                 }
-                @keyframes fadeOut {
+                @keyframes fixedFadeOut {
                     from { opacity: 1; }
                     to { opacity: 0; }
                 }
@@ -491,14 +521,18 @@
         }
         
         // 添加调试信息
-        console.log('🔍 iPhone优化信息:');
-        console.log('- 安全区域支持:', CSS.supports('padding-top: env(safe-area-inset-top)'));
-        console.log('- 触摸支持:', 'ontouchstart' in window);
-        console.log('- 屏幕尺寸:', `${window.innerWidth}×${window.innerHeight}`);
-        console.log('- 设备像素比:', window.devicePixelRatio);
+        console.log('🔍 修复版页面状态:');
+        console.log('- 移动端导航:', {
+            toggle: document.getElementById('mobileNavToggle'),
+            panel: document.getElementById('mobileNavPanel'),
+            close: document.getElementById('mobileNavClose')
+        });
+        console.log('- 导航项:', document.querySelectorAll('.mobile-nav-link, .nav-link').length);
+        console.log('- 按钮:', document.querySelectorAll('button, .btn').length);
+        console.log('- 下一个按钮:', document.getElementById('nextBtn'));
         
-        // 确保所有可点击元素有正确的cursor
-        document.querySelectorAll('button, .btn, .mobile-nav-toggle, .mobile-nav-close, .mobile-nav-link')
+        // 确保所有元素都有正确的cursor
+        document.querySelectorAll('button, .btn, .mobile-nav-toggle, .mobile-nav-close, .mobile-nav-link, .nav-link')
             .forEach(el => {
                 el.style.cursor = 'pointer';
             });
