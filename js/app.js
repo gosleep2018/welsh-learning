@@ -991,7 +991,7 @@ class WelshLearningApp {
       dailyWords: '每日威尔士语词汇',
       wordList: '威尔士语单词列表',
       search: '搜索翻译',
-      commonPhrases: '常用短语',
+      commonPhrases: '日常实用短语',
       pronunciation: '发音练习',
       culture: '威尔士文化（政府交流背景）'
     };
@@ -1008,6 +1008,8 @@ class WelshLearningApp {
       this.showSearch();
     } else if (moduleName === 'culture') {
       this.showCulture();
+    } else if (moduleName === 'commonPhrases') {
+      this.showCommonPhrases();
     } else {
       this.showComingSoon(moduleName);
     }
@@ -2870,6 +2872,437 @@ class WelshLearningApp {
     
     audio.play().catch(err => {
       console.error('❌ 文化音频播放失败:', err);
+      this.showToast('音频播放失败', 'error');
+    });
+  }
+  
+  // 显示常用短语模块
+  showCommonPhrases() {
+    console.log('💬 显示常用短语模块');
+    
+    const container = document.getElementById('moduleContent');
+    if (!container) return;
+    
+    // 加载短语数据
+    const phrasesData = this.getCommonPhrasesData();
+    
+    let html = `
+      <div class="phrases-container">
+        <div class="phrases-header" style="text-align: center; margin-bottom: 40px;">
+          <h3 style="color: var(--welsh-red); margin-bottom: 15px;">
+            <i class="fas fa-comments"></i> 日常实用短语
+          </h3>
+          <p style="color: #666; margin-bottom: 25px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            100个日常生活必备威尔士语句子，涵盖问候、购物、餐饮、交通、紧急情况等场景。点击发音按钮学习正确发音。
+          </p>
+          <div style="
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+          ">
+            <span style="padding: 6px 12px; background: var(--welsh-red); color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-handshake"></i> 问候与礼貌
+            </span>
+            <span style="padding: 6px 12px; background: var(--welsh-green); color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-shopping-cart"></i> 购物与金钱
+            </span>
+            <span style="padding: 6px 12px; background: var(--welsh-blue); color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-utensils"></i> 食物与餐厅
+            </span>
+            <span style="padding: 6px 12px; background: var(--welsh-gold); color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-bus"></i> 交通出行
+            </span>
+            <span style="padding: 6px 12px; background: #e74c3c; color: white; border-radius: 20px; font-size: 0.9rem;">
+              <i class="fas fa-first-aid"></i> 紧急情况
+            </span>
+          </div>
+        </div>
+        
+        <div class="phrases-navigation" style="
+          position: sticky;
+          top: 20px;
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+          margin-bottom: 30px;
+          z-index: 100;
+        ">
+          <h4 style="color: var(--welsh-red); margin-bottom: 15px;">
+            <i class="fas fa-bookmark"></i> 快速导航
+          </h4>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    `;
+    
+    // 添加分类导航
+    phrasesData.categories.forEach(category => {
+      html += `
+        <a href="#${category.id}" style="padding: 8px 15px; background: #e8f4fc; border-radius: 20px; text-decoration: none; color: #3498db;">
+          ${category.name.chinese}
+        </a>
+      `;
+    });
+    
+    html += `
+          </div>
+        </div>
+        
+        <div class="phrases-stats" style="
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 10px;
+          margin-bottom: 30px;
+          text-align: center;
+        ">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
+            <div>
+              <div style="font-size: 2rem; font-weight: bold; color: var(--welsh-red);">100</div>
+              <div style="color: #666;">实用短语</div>
+            </div>
+            <div>
+              <div style="font-size: 2rem; font-weight: bold; color: var(--welsh-green);">6</div>
+              <div style="color: #666;">场景分类</div>
+            </div>
+            <div>
+              <div style="font-size: 2rem; font-weight: bold; color: var(--welsh-blue);">100%</div>
+              <div style="color: #666;">发音可用</div>
+            </div>
+            <div>
+              <div style="font-size: 2rem; font-weight: bold; color: var(--welsh-gold);">英/中/威</div>
+              <div style="color: #666;">三语对照</div>
+            </div>
+          </div>
+        </div>
+    `;
+    
+    // 添加各个分类的内容
+    phrasesData.categories.forEach(category => {
+      html += this.renderPhrasesCategory(category);
+    });
+    
+    html += `
+        <div class="phrases-footer" style="
+          margin-top: 50px;
+          padding: 30px;
+          background: #f8f9fa;
+          border-radius: 15px;
+          border-left: 4px solid var(--welsh-green);
+          text-align: center;
+        ">
+          <h4 style="color: var(--welsh-green); margin-bottom: 15px;">
+            <i class="fas fa-lightbulb"></i> 学习建议
+          </h4>
+          <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            text-align: left;
+            margin-top: 20px;
+          ">
+            <div style="padding: 15px; background: white; border-radius: 8px;">
+              <div style="font-weight: bold; color: var(--welsh-red); margin-bottom: 10px;">
+                <i class="fas fa-volume-up"></i> 发音练习
+              </div>
+              <div style="color: #666; font-size: 0.9rem;">
+                点击每个短语的发音按钮，跟读练习。每天练习5-10个短语，一周内掌握基本交流。
+              </div>
+            </div>
+            <div style="padding: 15px; background: white; border-radius: 8px;">
+              <div style="font-weight: bold; color: var(--welsh-green); margin-bottom: 10px;">
+                <i class="fas fa-scroll"></i> 场景记忆
+              </div>
+              <div style="color: #666; font-size: 0.9rem;">
+                按场景分类学习，想象实际使用情境。例如：在餐厅点餐时使用"食物与餐厅"分类的短语。
+              </div>
+            </div>
+            <div style="padding: 15px; background: white; border-radius: 8px;">
+              <div style="font-weight: bold; color: var(--welsh-blue); margin-bottom: 10px;">
+                <i class="fas fa-repeat"></i> 重复学习
+              </div>
+              <div style="color: #666; font-size: 0.9rem;">
+                每天复习前一天学过的短语。使用"搜索翻译"功能查找不熟悉的短语。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    // 绑定短语发音按钮
+    this.bindPhrasesAudioButtons();
+  }
+  
+  // 获取常用短语数据
+  getCommonPhrasesData() {
+    // 这里应该从外部文件加载，暂时使用内联数据
+    return {
+      categories: [
+        {
+          id: "greetings",
+          name: {
+            english: "Greetings & Basic Conversations",
+            chinese: "问候与基本对话"
+          },
+          phrases: [
+            {
+              id: 1,
+              english: "Hello!",
+              chinese: "你好！",
+              welsh: "Helo!",
+              pronunciation: "HEH-lo!",
+              ttsText: "Helo!"
+            },
+            {
+              id: 2,
+              english: "Good morning!",
+              chinese: "早上好！",
+              welsh: "Bore da!",
+              pronunciation: "BOR-eh dah!",
+              ttsText: "Bore da!"
+            },
+            {
+              id: 3,
+              english: "How are you?",
+              chinese: "你好吗？",
+              welsh: "Sut wyt ti?",
+              pronunciation: "sit oo-it tee?",
+              ttsText: "Sut wyt ti?"
+            },
+            {
+              id: 4,
+              english: "I'm fine, thank you.",
+              chinese: "我很好，谢谢。",
+              welsh: "Dw i'n iawn, diolch.",
+              pronunciation: "doo een yown, DEE-olch.",
+              ttsText: "Dw i'n iawn, diolch."
+            },
+            {
+              id: 5,
+              english: "What's your name?",
+              chinese: "你叫什么名字？",
+              welsh: "Beth ydy dy enw di?",
+              pronunciation: "beth UH-dee dee EN-oo dee?",
+              ttsText: "Beth ydy dy enw di?"
+            }
+          ]
+        },
+        {
+          id: "courtesy",
+          name: {
+            english: "Courtesy & Politeness",
+            chinese: "礼貌用语"
+          },
+          phrases: [
+            {
+              id: 6,
+              english: "Please.",
+              chinese: "请。",
+              welsh: "Os gwelwch yn dda.",
+              pronunciation: "os GWELL-ooch un THAH.",
+              ttsText: "Os gwelwch yn dda."
+            },
+            {
+              id: 7,
+              english: "Thank you.",
+              chinese: "谢谢。",
+              welsh: "Diolch.",
+              pronunciation: "DEE-olch.",
+              ttsText: "Diolch."
+            },
+            {
+              id: 8,
+              english: "You're welcome.",
+              chinese: "不客气。",
+              welsh: "Croeso.",
+              pronunciation: "KROY-so.",
+              ttsText: "Croeso."
+            },
+            {
+              id: 9,
+              english: "Excuse me.",
+              chinese: "打扰一下。",
+              welsh: "Esgusodwch fi.",
+              pronunciation: "es-GUS-od-ooch vee.",
+              ttsText: "Esgusodwch fi."
+            },
+            {
+              id: 10,
+              english: "I'm sorry.",
+              chinese: "对不起。",
+              welsh: "Mae'n ddrwg gen i.",
+              pronunciation: "mine THROOG gen ee.",
+              ttsText: "Mae'n ddrwg gen i."
+            }
+          ]
+        }
+      ]
+    };
+  }
+  
+  // 渲染短语分类
+  renderPhrasesCategory(category) {
+    let html = `
+      <div id="${category.id}" class="phrases-category" style="
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      ">
+        <h4 style="color: var(--welsh-red); margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #eee;">
+          <i class="fas fa-folder"></i> ${category.name.chinese} / ${category.name.english}
+          <span style="float: right; font-size: 0.9rem; color: #999;">
+            ${category.phrases.length} 个短语
+          </span>
+        </h4>
+        
+        <div class="phrases-list">
+    `;
+    
+    category.phrases.forEach((phrase, index) => {
+      const rowClass = index % 2 === 0 ? 'phrases-row-even' : 'phrases-row-odd';
+      
+      html += `
+        <div class="phrases-row ${rowClass}" style="
+          padding: 20px;
+          margin-bottom: 15px;
+          border-radius: 10px;
+          background: ${index % 2 === 0 ? '#f8f9fa' : 'white'};
+          border-left: 4px solid var(--welsh-green);
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="
+                  display: inline-block;
+                  width: 30px;
+                  height: 30px;
+                  background: var(--welsh-red);
+                  color: white;
+                  border-radius: 50%;
+                  text-align: center;
+                  line-height: 30px;
+                  font-weight: bold;
+                ">${phrase.id}</span>
+                <span style="color: #999; font-size: 0.9rem;">场景: ${category.name.chinese}</span>
+              </div>
+              
+              <div style="margin-bottom: 10px;">
+                <div style="font-size: 1.1rem; font-weight: bold; color: #333;">${phrase.english}</div>
+                <div style="color: #666; font-size: 0.95rem; margin-top: 5px;">${phrase.chinese}</div>
+              </div>
+            </div>
+            
+            <button class="btn-play-phrase" data-phrase-id="${phrase.id}" style="
+              padding: 8px 15px;
+              background: var(--welsh-green);
+              color: white;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              font-size: 0.9rem;
+            ">
+              <i class="fas fa-volume-up"></i> 发音
+            </button>
+          </div>
+          
+          <div style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+          ">
+            <div style="
+              padding: 15px;
+              background: #e8f4fc;
+              border-radius: 8px;
+              border-left: 3px solid var(--welsh-blue);
+            ">
+              <div style="font-weight: bold; color: var(--welsh-blue); margin-bottom: 8px;">
+                <i class="fas fa-language"></i> 威尔士语
+              </div>
+              <div style="font-size: 1.2rem; font-weight: bold; color: var(--welsh-red); margin-bottom: 5px;">
+                ${phrase.welsh}
+              </div>
+              <div style="color: #666; font-style: italic;">发音: ${phrase.pronunciation}</div>
+            </div>
+            
+            <div style="
+              padding: 15px;
+              background: #fff8e1;
+              border-radius: 8px;
+              border-left: 3px solid var(--welsh-gold);
+            ">
+              <div style="font-weight: bold; color: var(--welsh-gold); margin-bottom: 8px;">
+                <i class="fas fa-lightbulb"></i> 学习提示
+              </div>
+              <div style="color: #666; font-size: 0.9rem;">
+                点击"发音"按钮跟读练习。尝试在对应场景中使用这个短语。
+                ${phrase.id <= 15 ? '这是基础问候语，建议优先掌握。' : ''}
+                ${phrase.id >= 86 && phrase.id <= 100 ? '这是紧急情况用语，建议记住但希望用不上。' : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `
+        </div>
+      </div>
+    `;
+    
+    return html;
+  }
+  
+  // 绑定短语发音按钮
+  bindPhrasesAudioButtons() {
+    document.querySelectorAll('.btn-play-phrase').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const phraseId = parseInt(e.target.closest('.btn-play-phrase').dataset.phraseId);
+        
+        // 在所有分类中查找短语
+        const phrasesData = this.getCommonPhrasesData();
+        let foundPhrase = null;
+        
+        for (const category of phrasesData.categories) {
+          foundPhrase = category.phrases.find(p => p.id === phraseId);
+          if (foundPhrase) break;
+        }
+        
+        if (foundPhrase && foundPhrase.ttsText) {
+          this.playPhraseAudio(foundPhrase);
+          
+          // 视觉反馈
+          const originalHTML = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 播放中';
+          button.disabled = true;
+          
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+          }, 2000);
+        }
+      });
+    });
+  }
+  
+  // 播放短语音频
+  playPhraseAudio(phrase) {
+    if (!phrase || !phrase.ttsText) return;
+    
+    const ttsUrl = `${this.config.api.tts}?text=${encodeURIComponent(phrase.ttsText)}&voice=${this.config.tts.voice}`;
+    const audio = new Audio(ttsUrl);
+    
+    audio.play().catch(err => {
+      console.error('❌ 短语音频播放失败:', err);
       this.showToast('音频播放失败', 'error');
     });
   }
