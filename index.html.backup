@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>🏴󠁧󠁢󠁷󠁬󠁳󠁿 威尔士语学习 | 面向英语使用者的快速入门平台</title>
+  <meta name="description" content="专为英语使用者设计的威尔士语快速入门平台，包含词根词缀分析、记忆技巧、扩展学习和Azure TTS发音">
+  <meta name="keywords" content="威尔士语, Welsh, Cymraeg, 语言学习, 词根词缀, 记忆技巧, TTS发音">
+  
+  <!-- 样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 图标 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴󠁧󠁢󠁷󠁬󠁳󠁿</text></svg>">
+  
+  <!-- 预加载关键资源 -->
+  <link rel="preconnect" href="https://web-x0ya.onrender.com">
+  
+  <style>
+    /* 初始加载样式 */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #008751 0%, #1a1a2e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+    
+    .loading-logo {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    
+    .loading-text {
+      color: white;
+      font-size: 1.5rem;
+      margin-top: 20px;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+  </style>
+</head>
+<body>
+  <!-- 加载屏幕 -->
+  <div id="loadingScreen">
+    <div class="loading-logo">🏴󠁧󠁢󠁷󠁬󠁳󠁿</div>
+    <div class="spinner"></div>
+    <div class="loading-text">正在加载威尔士学习平台...</div>
+  </div>
+
+  <!-- 主容器 -->
+  <div class="container" style="display: none;" id="mainContainer">
+    <!-- 头部 -->
+    <header class="header">
+      <h1>
+        <span>🏴󠁧󠁢󠁷󠁬󠁳󠁿</span>
+        威尔士语学习平台
+      </h1>
+      <div class="subtitle">面向英语使用者的快速入门 • 词根词缀分析 • 记忆技巧 • Azure TTS发音</div>
+      <div class="tagline">4周掌握100高频表达 • 能进行3分钟基础对话</div>
+      <div style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+        <i class="fas fa-calendar-alt"></i> 当前日期: <span id="currentDate"></span>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <!-- 侧边栏 - 学习导航 -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">
+            <i class="fas fa-compass"></i> 学习导航
+          </h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#" class="nav-link active" data-module="dailyWords">
+                <i class="fas fa-book-open"></i>
+                <span>每日词汇</span>
+                <span class="badge">5</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="commonPhrases">
+                <i class="fas fa-comments"></i>
+                <span>常用短语</span>
+                <span class="badge">新</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="pronunciation">
+                <i class="fas fa-volume-up"></i>
+                <span>发音练习</span>
+                <span class="badge">基础版</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="wordList">
+                <i class="fas fa-list"></i>
+                <span>单词列表</span>
+                <span class="badge">新</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="search">
+                <i class="fas fa-search"></i>
+                <span>搜索翻译</span>
+                <span class="badge">新</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-module="culture">
+                <i class="fas fa-landmark"></i>
+                <span>威尔士文化</span>
+                <span class="badge">新</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">
+            <i class="fas fa-sliders-h"></i> 学习设置
+          </h3>
+          <div class="settings">
+            <div class="setting-item">
+              <label class="toggle-label">
+                <input type="checkbox" id="togglePrefix" checked>
+                <span>显示词根词缀</span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggleMemory" checked>
+                <span>显示记忆技巧</span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggleExtensions" checked>
+                <span>显示扩展学习</span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggleAutoPlay">
+                <span>自动播放发音</span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label for="learningMode">学习模式:</label>
+              <select id="learningMode" class="form-select">
+                <option value="quick">快速模式</option>
+                <option value="balanced" selected>平衡模式</option>
+                <option value="deep">深度模式</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <h3 class="sidebar-title">
+            <i class="fas fa-chart-line"></i> 学习进度
+          </h3>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">
+            进度: 0/5 单词 (0%)
+          </div>
+          <div id="progressStats"></div>
+          <div style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+            <i class="fas fa-bullseye"></i> 目标: 4周掌握100高频表达
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+          <h4 style="margin-bottom: 10px; color: var(--welsh-red);">
+            <i class="fas fa-info-circle"></i> 学习提示
+          </h4>
+          <p style="font-size: 0.9rem; line-height: 1.5;">
+            作为英语使用者，你可以利用同源词和相似发音加速学习威尔士语。重点关注发音规则和常用表达。
+          </p>
+        </div>
+      </aside>
+
+      <!-- 主学习区 -->
+      <main class="learning-area">
+        <div class="section-header">
+          <h2 class="section-title" id="moduleTitle">每日威尔士语词汇</h2>
+          <div class="controls">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span style="color: #666; font-size: 0.9rem;">
+                <i class="fas fa-volume-up"></i> Azure TTS发音
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div id="moduleContent">
+          <!-- 内容会动态加载到这里 -->
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>加载学习内容中...</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <p>
+        <strong>🏴󠁧󠁢󠁷󠁬󠁳󠁿 威尔士语学习平台 v1.0</strong> • 
+        专为英语使用者设计的快速入门工具
+      </p>
+      <p style="margin-top: 10px; opacity: 0.8;">
+        <i class="fas fa-code"></i> 独立项目 • 
+        <i class="fas fa-volume-up"></i> Azure TTS发音 • 
+        <i class="fas fa-graduation-cap"></i> 词根词缀分析
+      </p>
+      <div class="footer-links">
+        <a href="#" class="footer-link" onclick="app.showModule('dailyWords')">每日词汇</a>
+        <a href="#" class="footer-link" onclick="alert('功能开发中')">学习计划</a>
+        <a href="#" class="footer-link" onclick="alert('功能开发中')">发音指南</a>
+        <a href="#" class="footer-link" onclick="alert('功能开发中')">文化介绍</a>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.6;">
+        &copy; 2026 威尔士学习项目 • 数据: 示例词汇 • 版本: 1.0.0
+      </p>
+    </footer>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/api-client.js"></script>
+  <script src="js/emergency-fix.js"></script>
+  <script src="js/scroll-fix.js"></script>
+  <script src="js/iphone-emergency-fix.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    // 隐藏加载屏幕，显示主内容
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('loadingScreen').style.opacity = '0';
+        document.getElementById('mainContainer').style.display = 'block';
+        
+        setTimeout(function() {
+          document.getElementById('loadingScreen').style.display = 'none';
+        }, 500);
+      }, 1000);
+    });
+    
+    // 全局应用实例
+    window.app = null;
+    document.addEventListener('DOMContentLoaded', function() {
+      window.app = new WelshLearningApp();
+    });
+  </script>
+</body>
+</html>
