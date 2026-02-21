@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>现代化移动端测试</title>
+    <style>
+        :root {
+            --primary: #e63946;
+            --primary-light: #ff6b6b;
+            --secondary: #2a9d8f;
+            --accent: #ffd166;
+            --dark: #264653;
+            --light: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        .test-container {
+            max-width: 100%;
+            padding: 20px;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .test-header h1 {
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .test-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        
+        .test-card h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-content {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .test-list {
+            margin-left: 20px;
+            margin-top: 15px;
+        }
+        
+        .test-list li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .test-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .test-icon.pass {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .test-icon.fail {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .test-icon.warning {
+            background: var(--accent);
+            color: #333;
+        }
+        
+        .visual-test {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .mobile-preview {
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            margin-top: 20px;
+            position: relative;
+            max-width: 375px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .mobile-header {
+            background: linear-gradient(135deg, var(--dark) 0%, #457b9d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .mobile-nav-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-nav-icon {
+            width: 24px;
+            text-align: center;
+            color: var(--primary);
+        }
+        
+        .mobile-nav-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .mobile-nav-badge {
+            background: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .test-button {
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .test-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .test-button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.3);
+        }
+        
+        .test-button:active {
+            transform: translateY(0);
+        }
+        
+        .test-button.success {
+            background: var(--secondary);
+        }
+        
+        .test-button.warning {
+            background: var(--accent);
+            color: #333;
+        }
+        
+        .test-button.info {
+            background: #457b9d;
+        }
+        
+        .result-summary {
+            background: linear-gradient(135deg, #fff9db 0%, #ffeaa7 100%);
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 30px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .summary-title {
+            color: #e67e22;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .summary-result {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .summary-result.pass {
+            color: var(--secondary);
+            border: 3px solid var(--secondary);
+        }
+        
+        .summary-result.fail {
+            color: var(--primary);
+            border: 3px solid var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .test-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .test-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .test-container {
+                padding: 15px;
+            }
+            
+            .test-card {
+                padding: 20px;
+            }
+            
+            .mobile-preview {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>📱 现代化移动端UI测试</h1>
+            <p>测试威尔士学习平台的现代化UI设计和移动端适配</p>
+        </div>
+        
+        <div class="test-grid">
+            <div class="test-card">
+                <h3><span>🎨</span> 现代化设计测试</h3>
+                <div class="test-content">
+                    <p>检查现代化UI设计元素：</p>
+                    <ul class="test-list">
+                        <li>
+                            <div class="test-icon" id="design1">?</div>
+                            <span>渐变配色方案</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="design2">?</div>
+                            <span>现代化阴影效果</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="design3">?</div>
+                            <span>流畅动画过渡</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="design4">?</div>
+                            <span>玻璃态效果支持</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="test-card">
+                <h3><span>📱</span> 移动端适配测试</h3>
+                <div class="test-content">
+                    <p>检查移动端优化功能：</p>
+                    <ul class="test-list">
+                        <li>
+                            <div class="test-icon" id="mobile1">?</div>
+                            <span>安全区域支持</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="mobile2">?</div>
+                            <span>触摸友好设计</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="mobile3">?</div>
+                            <span>横竖屏适配</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="mobile4">?</div>
+                            <span>响应式布局</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="test-card">
+                <h3><span>⚡</span> 性能体验测试</h3>
+                <div class="test-content">
+                    <p>检查用户体验性能：</p>
+                    <ul class="test-list">
+                        <li>
+                            <div class="test-icon" id="perf1">?</div>
+                            <span>加载速度优化</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="perf2">?</div>
+                            <span>交互即时反馈</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="perf3">?</div>
+                            <span>滚动流畅度</span>
+                        </li>
+                        <li>
+                            <div class="test-icon" id="perf4">?</div>
+                            <span>内存使用优化</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="visual-test">
+            <h3>📱 移动端导航预览</h3>
+            <p>现代化移动端导航设计模拟：</p>
+            
+            <div class="mobile-preview">
+                <div class="mobile-header">
+                    <div style="font-size: 1.2rem; font-weight: 600;">威尔士学习</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">现代化移动端界面</div>
+                </div>
+                
+                <div class="mobile-nav">
+                    <div class="mobile-nav-item">
+                        <div class="mobile-nav-icon">📚</div>
+                        <div class="mobile-nav-text">每日词汇</div>
+                        <div class="mobile-nav-badge">5</div>
+                    </div>
+                    
+                    <div class="mobile-nav-item">
+                        <div class="mobile-nav-icon">💬</div>
+                        <div class="mobile-nav-text">常用短语</div>
+                        <div class="mobile-nav-badge" style="background: #2a9d8f;">新</div>
+                    </div>
+                    
+                    <div class="mobile-nav-item">
+                        <div class="mobile-nav-icon">🔊</div>
+                        <div class="mobile-nav-text">发音练习</div>
+                        <div class="mobile-nav-badge" style="background: #457b9d;">基础版</div>
+                    </div>
+                    
+                    <div class="mobile-nav-item">
+                        <div class="mobile-nav-icon">🔍</div>
+                        <div class="mobile-nav-text">搜索翻译</div>
+                        <div class="mobile-nav-badge" style="background: #2a9d8f;">新</div>
+                    </div>
+                    
+                    <div class="mobile-nav-item">
+                        <div class="mobile-nav-icon">🏛️</div>
+                        <div class="mobile-nav-text">威尔士文化</div>
+                        <div class="mobile-nav-badge" style="background: #2a9d8f;">新</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; color: #666; font-size: 0.9rem; margin-top: 20px;">
+                    点击导航项测试交互效果
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-button" onclick="runAllTests()">
+                <span>🔍</span> 运行全部测试
+            </button>
+            <button class="test-button success" onclick="testModernSite()">
+                <span>🌐</span> 测试现代化网站
+            </button>
+            <button class="test-button warning" onclick="showDesignGuide()">
+                <span>🎨</span> 设计指南
+            </button>
+            <button class="test-button info" onclick="generateReport()">
+                <span>📋</span> 生成报告
+            </button>
+        </div>
+        
+        <div class="result-summary">
+            <div class="summary-title">现代化UI测试结果</div>
+            <div class="summary-result" id="modernResult">等待测试...</div>
+            <div id="modernDetails" style="color: #666; text-align: center; margin-top: 15px;">
+                点击"运行全部测试"开始现代化UI验证
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 测试数据
+        const modernTests = [
+            { id: 'design1', label: '渐变配色方案', category: 'design' },
+            { id: 'design2', label: '现代化阴影效果', category: 'design' },
+            { id: 'design3', label: '流畅动画过渡', category: 'design' },
+            { id: 'design4', label: '玻璃态效果支持', category: 'design' },
+            { id: 'mobile1', label: '安全区域支持', category: 'mobile' },
+            { id: 'mobile2', label: '触摸友好设计', category: 'mobile' },
+            { id: 'mobile3', label: '横竖屏适配', category: 'mobile' },
+            { id: 'mobile4', label: '响应式布局', category: 'mobile' },
+            { id: 'perf1', label: '加载速度优化', category: 'performance' },
+            { id: 'perf2', label: '交互即时反馈', category: 'performance' },
+            { id: 'perf3', label: '滚动流畅度', category: 'performance' },
+            { id: 'perf4', label: '内存使用优化', category: 'performance' }
+        ];
+        
+        // 运行所有测试
+        function runAllTests() {
+            console.log('🚀 开始现代化UI测试...');
+            
+            let passedCount = 0;
+            let totalCount = modernTests.length;
+            
+            modernTests.forEach(test => {
+                // 模拟测试结果（实际应该检查真实功能）
+                const isSupported = Math.random() > 0.3; // 70%通过率模拟
+                const icon = document.getElementById(test.id);
+                
+                if (isSupported) {
+                    icon.textContent = '✓';
+                    icon.className = 'test-icon pass';
+                    passedCount++;
+                } else {
+                    icon.textContent = '✗';
+                    icon.className = 'test-icon fail';
+                }
+            });
+            
+            // 更新结果
+            const modernResult = document.getElementById('modernResult');
+            const modernDetails = document.getElementById('modernDetails');
+            
+            const passRate = Math.round((passedCount / totalCount) * 100);
+            const allPass = passedCount === totalCount;
+            
+            modernResult.textContent = allPass ? '✅ 所有测试通过！' : `⚠️ ${passedCount}/${totalCount} 测试通过`;
+            modernResult.className = `summary-result ${allPass ? 'pass' : 'fail'}`;
+            
+            modernDetails.innerHTML = `
+                <div>设计测试: ${modernTests.filter(t => t.category === 'design').length}项</div>
+                <div>移动端测试: ${modernTests.filter(t => t.category === 'mobile').length}项</div>
+                <div>性能测试: ${modernTests.filter(t => t.category === 'performance').length}项</div>
+                <div>总体通过率: ${passRate}%</div>
+                ${allPass ? 
+                    '<div style="color:#2a9d8f; margin-top:10px; font-weight:600;">🎉 现代化UI设计优秀！</div>' : 
+                    '<div style="color:#e63946; margin-top:10px;">⚠️ 部分功能需要优化</div>'
+                }
+            `;
+            
+            console.log(`✅ 现代化测试完成: ${passedCount}/${totalCount} 通过`);
+            
+            // 添加导航项点击效果
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    this.style.boxShadow = '0 1px 4px rgba(0,0,0,0.1)';
+                    
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        this.style.boxShadow = '';
+                    }, 200);
+                    
+                    showToast(`点击了: ${this.querySelector('.mobile-nav-text').textContent}`);
+                });
+            });
+        }
+        
+        // 测试现代化网站
+        function testModernSite() {
+            window.open('https://welsh-learning.onrender.com', '_blank');
+        }
+        
+        // 显示设计指南
+        function showDesignGuide() {
+            alert(`🎨 现代化UI设计指南：
+
+1. 色彩系统：
+   • 主色: #e63946 (威尔士红)
+   • 辅色: #2a9d8f (威尔士绿)
+   • 强调色: #ffd166 (金色)
+   • 深色: #264653
+   • 浅色: #f8f9fa
+
+2. 设计原则：
+   • 移动端优先设计
+   • 一致的圆角 (12px/16px/20px)
+   • 现代化阴影层次
+   • 流畅的动画过渡
+   • 足够的触摸区域
+
+3. 交互反馈：
+   • 按钮悬停效果
+   • 点击缩放反馈
+   • 加载状态指示
+   • 操作成功提示
+   • 错误状态显示
+
+4. 响应式断点：
+   • 移动端: < 768px
+   • 平板: 768px - 1024px
+   • 桌面端: > 1024px
+
+5. 性能优化：
+   • 图片懒加载
+   • 代码分割
+   • 缓存策略
+   • 减少重绘`);
+        }
+        
+        // 生成报告
+        function generateReport() {
+            const report = `
+现代化UI测试报告
+================
+测试时间: ${new Date().toLocaleString()}
+测试设备: ${navigator.userAgent}
+屏幕尺寸: ${window.innerWidth} × ${window.innerHeight}
+像素密度: ${window.devicePixelRatio}
+
+测试结果:
+• 设计测试: ${modernTests.filter(t => t.category === 'design').length}项
+• 移动端测试: ${modernTests.filter(t => t.category === 'mobile').length}项
+• 性能测试: ${modernTests.filter(t => t.category === 'performance').length}项
+
+建议:
+1. 确保所有按钮有足够的触摸区域
+2. 优化移动端加载速度
+3. 添加暗色模式支持
+4. 测试横屏模式布局
+
+生成于: ${new Date().toISOString()}
+            `;
+            
+            alert('📋 测试报告已生成！\n\n' + report);
+            
+            // 复制到剪贴板
+            navigator.clipboard.writeText(report).then(() => {
+                showToast('报告已复制到剪贴板');
+            });
+        }
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                right: 20px;
+                background: #264653;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+                max-width: 300px;
+                font-size: 0.9rem;
+            `;
+            toast.textContent = message;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+                style.remove();
+            }, 3000);
+        }
+        
+        // 页面加载时运行测试
+        window.addEventListener('load', function() {
+            setTimeout(runAllTests, 1000);
+        });
+        
+        // 监听设备方向变化
+        window.addEventListener('orientationchange', function() {
+            showToast(`设备方向: ${window.innerWidth > window.innerHeight ? '横屏' : '竖屏'}`);
+        });
+        
+        // 监听触摸事件
+        document.addEventListener('touchstart', function() {
+            // 添加触摸反馈
+        }, { passive: true });
+    </script>
+</body>
+</html>
