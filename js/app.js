@@ -68,6 +68,32 @@ class WelshLearningApp {
     const shuffled = this.seededShuffle(allWords, seed);
     return shuffled.slice(0, count);
   }
+  // 使用备用数据
+  useFallbackData() {
+    console.log('🔄 使用备用数据...');
+    
+    // 最小化的备用数据
+    const fallbackWords = [
+      {
+        id: 1,
+        english: "hello",
+        welsh: "helo",
+        pronunciation: "HEH-lo",
+        ttsText: "helo",
+        category: "greetings"
+      }
+    ];
+    
+    this.data.dailyWords = fallbackWords;
+    console.log('✅ 备用数据已加载:', this.data.dailyWords.length, '个单词');
+    
+    // 应用每日轮换选择（如果启用）
+    if (this.config.settings.enableDailyRotation) {
+      const dailyWords = this.selectDailyWords(this.data.dailyWords);
+      console.log('🔄 每日单词选择完成:', dailyWords.length, '个单词');
+      this.data.dailyWords = dailyWords;
+    }
+  }
   
   async init() {
     console.log('🏴󠁧󠁢󠁷󠁬󠁳󠁿 威尔士学习应用初始化...');
@@ -125,21 +151,26 @@ class WelshLearningApp {
   
   // 带超时的数据加载
   async loadDataWithTimeout() {
-    const timeout = 5000; // 5秒超时
+    const timeout = 10000; // 增加到10秒超时
     
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const timer = setTimeout(() => {
-        reject(new Error('数据加载超时'));
+        console.warn('⚠️ 数据加载超时，使用备用数据');
+        this.useFallbackData();
+        clearTimeout(timer);
+        resolve(false); // 超时但使用了备用数据
       }, timeout);
       
       this.loadData()
-        .then(() => {
+        .then((success) => {
           clearTimeout(timer);
-          resolve();
+          resolve(success);
         })
         .catch(err => {
+          console.warn('⚠️ 数据加载失败，使用备用数据:', err.message);
           clearTimeout(timer);
-          reject(err);
+          this.useFallbackData();
+          resolve(false); // 失败但使用了备用数据
         });
     });
   }
