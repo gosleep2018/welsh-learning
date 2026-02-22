@@ -4,7 +4,44 @@ class WelshLearningApp {
     this.config = {
       api: {
         tts: 'https://web-x0ya.onrender.com/tts'
-      },
+      }
+  // 获取日期种子（每年中的第几天）
+  getDayOfYear() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    return Math.floor(diff / oneDay);
+  }
+
+  // 获取每日种子（基于年、月、日）
+  getDailySeed() {
+    const now = new Date();
+    return now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+  }
+
+  // 根据种子从数组中确定性地选择子集
+  seededShuffle(array, seed) {
+    let currentSeed = seed;
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      currentSeed = (currentSeed * 9301 + 49297) % 233280;
+      const j = Math.floor(currentSeed / 233280 * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
+  // 选择每日单词
+  selectDailyWords(allWords, count = this.config.settings.dailyWordsCount || 5) {
+    if (!this.config.settings.enableDailyRotation) {
+      return allWords.slice(0, count);
+    }
+    const seed = this.getDailySeed();
+    const shuffled = this.seededShuffle(allWords, seed);
+    return shuffled.slice(0, count);
+  }
+,
       tts: {
         voice: 'cy-GB-NiaNeural', // 威尔士语女性语音（Azure支持）
         language: 'cy-GB', // 威尔士语（英国）
@@ -15,7 +52,9 @@ class WelshLearningApp {
         showMemoryHints: true,
         showExtensions: true,
         autoPlayAudio: false,
-        learningMode: 'balanced' // quick, balanced, deep
+        learningMode: 'balanced' // quick, balanced, deep,
+        dailyWordsCount: 5,
+        enableDailyRotation: true
       },
       currentModule: 'dailyWords',
       currentWordIndex: 0
@@ -908,6 +947,12 @@ class WelshLearningApp {
       
       // 确保数据不为空
       this.data.dailyWords = sampleWords;
+      // 应用每日轮换选择
+      if (this.config.settings.enableDailyRotation) {
+        const dailyWords = this.selectDailyWords(this.data.dailyWords);
+        console.log('🔄 每日单词选择完成:', dailyWords.length, '个单词');
+        this.data.dailyWords = dailyWords;
+      }
       console.log('📦 数据已赋值到 this.data.dailyWords');
       
       // 计算学习进度
